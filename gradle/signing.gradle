@@ -1,0 +1,31 @@
+// Release signing shared by :app and :wear.
+// The phone and watch apps must be signed with the SAME key (and use the same applicationId),
+// or the Wear Data Layer will not connect them. The keystore and its passwords stay outside
+// this repo. Default location: ../keys/keystore.properties next to the project folder;
+// another path can be given with -Pagap.keystore.properties=<file>.
+// Without the file, release builds come out unsigned and debug builds are unaffected.
+
+def propsPath = project.findProperty("agap.keystore.properties") ?: rootProject.file("../keys/keystore.properties").path
+def propsFile = file(propsPath)
+
+if (propsFile.exists()) {
+    def props = new Properties()
+    propsFile.withInputStream { props.load(it) }
+    android {
+        signingConfigs {
+            release {
+                storeFile = file(props.getProperty("storeFile"))
+                storePassword = props.getProperty("storePassword")
+                keyAlias = props.getProperty("keyAlias")
+                keyPassword = props.getProperty("keyPassword")
+            }
+        }
+        buildTypes {
+            release {
+                signingConfig = signingConfigs.release
+            }
+        }
+    }
+} else {
+    logger.lifecycle("AGAP: ${propsFile} not found, so ${project.path} release builds are unsigned.")
+}

@@ -59,3 +59,73 @@ Gradle wrapper, so it opens in Android Studio. Only app source, README and build
 contract, research documents and consent letters stay outside. Gradle memory is capped
 (`org.gradle.jvmargs=-Xmx2g`, `org.gradle.workers.max=2`, added in Phase 1) because the build PC has a very
 small page file.
+
+## D-007 Build versions (Phase 1, 2026-10-27)
+
+Checked against Google's Maven repository and the Android docs on 2026-10-27; newest stable at the time.
+
+| Item | Version | Note |
+|---|---|---|
+| Android Gradle plugin | 9.4.1 | Needs Gradle 9.6.0+. Opening the project needs **Android Studio Quail 4 (2026.1.4) or newer**. |
+| Gradle (wrapper) | 9.8.2 | `distributionSha256Sum` pinned in `gradle-wrapper.properties`. |
+| compileSdk / targetSdk | 36 / 36 | API 37 exists; 36 kept (D-002). The Infinix runs Android 15 (API 35). |
+| minSdk | 29 phone, 30 watch | Contract 1.1 (Android 10+); Wear OS 3 is API 30. |
+| Java | 17 source and target | Contract 1.1. |
+| androidx.appcompat | 1.8.0 | |
+| com.google.android.material | 1.14.0 | Material 3 for Views. |
+| junit | 4.13.2 | JVM unit tests. |
+
+- Build scripts are Groovy (`build.gradle`) with a version catalog (`gradle/libs.versions.toml`), so the project
+  holds no Kotlin at all.
+- `android.builtInKotlin=false`: AGP 9 turns built-in Kotlin on by default; AGAP has no Kotlin sources. AGP
+  prints a warning that this flag goes away in AGP 10 (KNOWN-ISSUES K-001).
+- `local.properties` (SDK path) is machine-specific and not committed, as in any Android Studio project.
+
+## D-008 Package name (Phase 1, 2026-10-27)
+
+applicationId `ph.agap.app` for **both** the phone and the watch app (code namespaces `ph.agap.app` and
+`ph.agap.wear`). The app is not published on the Play Store, so the name only has to be unique on the test
+devices and identical in both apps. It must not change after the first install at the client, or the old
+app and its Event History stay behind as a separate app.
+
+## D-009 Screen structure (Phase 1, 2026-10-27)
+
+- One `MainActivity` with bottom navigation (Home, Captions, Alerts, History), as in the mockups. Only the
+  selected tab's screen exists (fragments are replaced, not hidden). Live Captions and Sound Alerts will be
+  tabs, so switching tabs stops one before the other starts (contract 1.10).
+- Settings, Sound Categories, Vibration Patterns, Demonstration Mode and About are separate activities with
+  a Back arrow. Home also lists Settings as a labelled row, not only as the top-bar icon.
+- Portrait is locked: the test phone stands on a stand, and every trial should look the same. Android 16+
+  ignores the lock only on large screens. Lint's orientation warnings are switched off in `app/lint.xml`.
+
+## D-010 Themes and text size (Phase 1, 2026-10-27)
+
+- Two themes: light (`Theme.AGAP`) and high contrast (`Theme.AGAP.HighContrast`). Layouts use theme
+  attributes (`?attr/agapText`, `?attr/agapSurface`...) that each theme maps to the palette names in
+  `colors.xml`, so every later screen gets both looks without extra work. Category row attributes are already
+  defined for Phases 3 and 6.
+- High contrast has no thin purple: icons and selected text are white; purple only fills the Home icon
+  circles, the selected tab and buttons, always behind white. Slider tracks are grey there.
+- The bottom bar has no elevation, because Material 3 would tint it lavender.
+- Text size: five steps (0.85, 1.0, 1.2, 1.45, 1.75) that **multiply** the phone's own font size, applied
+  to the whole app through the font scale. Default step "Normal" (1.0). When the text size or display mode
+  changes, every open screen rebuilds itself when it comes back into view.
+- Edge-to-edge on every Android version (Android 15 forces it anyway); the top bar and screen edges are padded
+  for the system bars in `BaseActivity`.
+
+## D-011 Settings storage and defaults (Phase 1, 2026-10-27)
+
+- SharedPreferences file `agap_settings`: `text_size_level` (0-4, default 1), `high_contrast` (default off),
+  `vibration_on` (default on), `alert_threshold_percent` (10-90 in steps of 5, default **50**). Values are
+  clamped when read. The mockup showed 60%; 50% is the starting point until Phase 3 measures real YAMNet scores
+  for the test sounds, and it can be tuned under contract 1.12.
+- No INTERNET permission. `allowBackup="false"` plus data-extraction rules that exclude everything from cloud
+  backup and device transfer, so settings and the Event History stay on the phone (contract 1.2).
+
+## D-012 Tests and test devices (Phase 1, 2026-10-27)
+
+- Unit tests are plain JUnit 4 on the JVM. `SettingsStore` takes a `SharedPreferences`, and the test uses an
+  in-memory version, so no Robolectric is needed yet (smaller download, less memory).
+- With no phone available (D-005), screens are checked on an Android 15 emulator: virtual device `AGAP_API35`,
+  Google Play x86_64 image (revision 9), 2 GB RAM, 1080x2400 at 420 dpi, accelerated by the Windows Hypervisor
+  Platform. The emulator says nothing about the Infinix's speed or microphone; those checks stay with the client.

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="screen_padding">16dp</dimen>
+    <dimen name="row_min_height">64dp</dimen>
+    <dimen name="card_gap">16dp</dimen>
+    <dimen name="icon_circle">64dp</dimen>
+</resources>

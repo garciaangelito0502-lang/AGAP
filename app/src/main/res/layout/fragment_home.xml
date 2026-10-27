@@ -1,0 +1,277 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="@dimen/screen_padding">
+
+        <TextView
+            android:id="@+id/greeting"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:accessibilityHeading="true"
+            android:textAppearance="@style/TextAppearance.AGAP.Headline" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="@dimen/card_gap"
+            android:text="@string/home_intro"
+            android:textAppearance="@style/TextAppearance.AGAP.BodySecondary" />
+
+        <!-- Live Captions -->
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/card_captions"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/card_gap"
+            android:clickable="true"
+            android:focusable="true">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:minHeight="104dp"
+                android:orientation="horizontal"
+                android:padding="20dp">
+
+                <FrameLayout
+                    android:layout_width="@dimen/icon_circle"
+                    android:layout_height="@dimen/icon_circle"
+                    android:layout_marginEnd="16dp"
+                    android:background="@drawable/bg_icon_circle">
+
+                    <ImageView
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:layout_gravity="center"
+                        android:importantForAccessibility="no"
+                        android:src="@drawable/ic_captions"
+                        app:tint="?attr/agapOnIconCircle" />
+                </FrameLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/home_captions_title"
+                        android:textAppearance="@style/TextAppearance.AGAP.Title" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/home_captions_text"
+                        android:textAppearance="@style/TextAppearance.AGAP.BodySecondary" />
+                </LinearLayout>
+
+                <ImageView
+                    style="@style/Widget.AGAP.Chevron"
+                    android:importantForAccessibility="no" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- Sound Alerts -->
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/card_alerts"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/card_gap"
+            android:clickable="true"
+            android:focusable="true">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:minHeight="104dp"
+                android:orientation="horizontal"
+                android:padding="20dp">
+
+                <FrameLayout
+                    android:layout_width="@dimen/icon_circle"
+                    android:layout_height="@dimen/icon_circle"
+                    android:layout_marginEnd="16dp"
+                    android:background="@drawable/bg_icon_circle">
+
+                    <ImageView
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:layout_gravity="center"
+                        android:importantForAccessibility="no"
+                        android:src="@drawable/ic_alerts"
+                        app:tint="?attr/agapOnIconCircle" />
+                </FrameLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/home_alerts_title"
+                        android:textAppearance="@style/TextAppearance.AGAP.Title" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/home_alerts_text"
+                        android:textAppearance="@style/TextAppearance.AGAP.BodySecondary" />
+                </LinearLayout>
+
+                <ImageView
+                    style="@style/Widget.AGAP.Chevron"
+                    android:importantForAccessibility="no" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- Status: AGAP has no internet permission at all -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/card_gap"
+            android:background="@drawable/bg_status_chip"
+            android:drawablePadding="8dp"
+            android:gravity="center_vertical"
+            android:minHeight="48dp"
+            android:paddingStart="16dp"
+            android:paddingEnd="20dp"
+            android:text="@string/home_offline"
+            android:textAppearance="@style/TextAppearance.AGAP.Body"
+            app:drawableStartCompat="@drawable/ic_check"
+            app:drawableTint="?attr/agapAccent" />
+
+        <!-- Other screens -->
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingTop="4dp"
+                android:paddingBottom="4dp">
+
+                <LinearLayout
+                    android:id="@+id/row_categories"
+                    style="@style/Widget.AGAP.Row">
+
+                    <ImageView
+                        style="@style/Widget.AGAP.RowIcon"
+                        android:importantForAccessibility="no"
+                        android:src="@drawable/ic_category" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/categories_title"
+                        android:textAppearance="@style/TextAppearance.AGAP.Body" />
+
+                    <ImageView
+                    style="@style/Widget.AGAP.Chevron"
+                    android:importantForAccessibility="no" />
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginEnd="16dp"
+                    android:background="?attr/agapOutline" />
+
+                <LinearLayout
+                    android:id="@+id/row_vibration"
+                    style="@style/Widget.AGAP.Row">
+
+                    <ImageView
+                        style="@style/Widget.AGAP.RowIcon"
+                        android:importantForAccessibility="no"
+                        android:src="@drawable/ic_vibration" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/vibration_title"
+                        android:textAppearance="@style/TextAppearance.AGAP.Body" />
+
+                    <ImageView
+                    style="@style/Widget.AGAP.Chevron"
+                    android:importantForAccessibility="no" />
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginEnd="16dp"
+                    android:background="?attr/agapOutline" />
+
+                <LinearLayout
+                    android:id="@+id/row_demo"
+                    style="@style/Widget.AGAP.Row">
+
+                    <ImageView
+                        style="@style/Widget.AGAP.RowIcon"
+                        android:importantForAccessibility="no"
+                        android:src="@drawable/ic_play" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/demo_title"
+                        android:textAppearance="@style/TextAppearance.AGAP.Body" />
+
+                    <ImageView
+                    style="@style/Widget.AGAP.Chevron"
+                    android:importantForAccessibility="no" />
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginEnd="16dp"
+                    android:background="?attr/agapOutline" />
+
+                <LinearLayout
+                    android:id="@+id/row_settings"
+                    style="@style/Widget.AGAP.Row">
+
+                    <ImageView
+                        style="@style/Widget.AGAP.RowIcon"
+                        android:importantForAccessibility="no"
+                        android:src="@drawable/ic_tune" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/home_settings"
+                        android:textAppearance="@style/TextAppearance.AGAP.Body" />
+
+                    <ImageView
+                    style="@style/Widget.AGAP.Chevron"
+                    android:importantForAccessibility="no" />
+                </LinearLayout>
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+    </LinearLayout>
+</ScrollView>

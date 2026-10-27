@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- AGAP colour palette (approved design note, 2026-10-27). Layouts use these names, or theme
+     attributes that point to them, never raw colour values. If a colour changes, rerun the
+     contrast and colour-blindness checks and update the design note. -->
+<resources>
+    <!-- Light theme -->
+    <color name="brand">#4A148C</color>
+    <color name="on_brand">#FFFFFF</color>
+    <color name="brand_tint">#EDE7F6</color>
+    <color name="background">#FAFAF7</color>
+    <color name="surface">#FFFFFF</color>
+    <color name="text">#1B1B1F</color>
+    <color name="text_secondary">#4A4A50</color>
+    <color name="outline">#74747A</color>
+
+    <!-- Categories: strong fill (whole alert screen), on_strong (text on it), tint + ink (rows) -->
+    <color name="emergency_strong">#B71C1C</color>
+    <color name="emergency_on_strong">#FFFFFF</color>
+    <color name="emergency_tint">#FDECEA</color>
+    <color name="emergency_ink">#8E1414</color>
+
+    <color name="traffic_strong">#F57C00</color>
+    <color name="traffic_on_strong">#1B1B1F</color>
+    <color name="traffic_tint">#FFF0DD</color>
+    <color name="traffic_ink">#7A3A00</color>
+
+    <color name="household_strong">#29B6F6</color>
+    <color name="household_on_strong">#1B1B1F</color>
+    <color name="household_tint">#E1F5FE</color>
+    <color name="household_ink">#01579B</color>
+
+    <!-- High-contrast theme (also the watch) -->
+    <color name="hc_background">#000000</color>
+    <color name="hc_surface">#121212</color>
+    <color name="hc_text">#FFFFFF</color>
+    <color name="hc_text_secondary">#C8C8CC</color>
+    <color name="hc_outline">#8E8E93</color>
+    <color name="hc_emergency">#FF6B66</color>
+    <color name="hc_traffic">#FFB74D</color>
+    <color name="hc_household">#4FC3F7</color>
+</resources>

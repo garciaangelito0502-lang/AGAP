@@ -4,8 +4,8 @@ Last updated: 2026-10-27
 
 | Phase | Name | Status | Date finished | Build/APK version |
 |---|---|---|---|---|
-| 0 | Environment and plan | Blocked (no phone on adb yet; everything else done) | | none (no app code) |
-| 1 | Project skeleton and shell UI | Not started | | |
+| 0 | Environment and plan | Blocked (no physical phone on adb yet; emulator used instead; everything else done) | | none (no app code) |
+| 1 | Project skeleton and shell UI | Done (checked on the emulator; Infinix check pending with the client) | 2026-10-27 | 0.1.0 debug (phone and watch) |
 | 2 | Live Captions, English | Not started | | |
 | 3 | Sound Alerts engine | Not started | | |
 | 4 | Live Captions, Filipino | Not started | | |

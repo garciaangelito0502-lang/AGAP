@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<lint>
+    <!-- Portrait is locked on purpose: the test phone stands on a stand and every trial must
+         look the same (docs/DECISIONS.md). Android 16 ignores the lock only on large screens. -->
+    <issue id="LockedOrientationActivity" severity="ignore" />
+    <issue id="DiscouragedApi">
+        <ignore path="src/main/AndroidManifest.xml" />
+    </issue>
+</lint>

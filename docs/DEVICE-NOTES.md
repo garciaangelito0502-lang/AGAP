@@ -9,6 +9,16 @@
 To fill in when a phone is connected: `adb -s <serial> shell getprop ro.product.model`,
 `getprop ro.build.version.release`, `df -h /data`, `cat /proc/meminfo | head -1`.
 
+## Emulator (used while no phone is available)
+
+| Date | Name | Android | Screen | RAM | Data partition | adb serial |
+|---|---|---|---|---|---|---|
+| 2026-10-27 | `AGAP_API35` (Google Play x86_64 image, revision 9) | 15 (API 35) | 1080x2400, 420 dpi | 2 GB | 6 GB | emulator-5554 |
+
+Accelerated by the Windows Hypervisor Platform. Start it with
+`emulator -avd AGAP_API35 -no-boot-anim -no-snapshot-save` from the SDK's `emulator` folder. It uses about
+3-4 GB of the build PC's memory: do not run it next to a Gradle build when free memory is under about 3 GB.
+
 ## Client's test phone (from the Methods, not yet seen)
 
 Infinix Hot 70, Android 15, 8 GB RAM, 128 GB storage. The client restarts it before tests. Every check

@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">AGAP</string>
+    <string name="navigate_up">Back</string>
+
+    <!-- Bottom navigation -->
+    <string name="nav_home">Home</string>
+    <string name="nav_captions">Captions</string>
+    <string name="nav_alerts">Alerts</string>
+    <string name="nav_history">History</string>
+
+    <!-- Home -->
+    <string name="home_greeting_morning">Good morning!</string>
+    <string name="home_greeting_afternoon">Good afternoon!</string>
+    <string name="home_greeting_evening">Good evening!</string>
+    <string name="home_intro">Choose a mode. AGAP listens only while its screen is open.</string>
+    <string name="home_captions_title">Live Captions</string>
+    <string name="home_captions_text">Speech to text in English or Filipino</string>
+    <string name="home_alerts_title">Sound Alerts</string>
+    <string name="home_alerts_text">Screen and vibration alerts for 13 sounds</string>
+    <string name="home_offline">Works offline</string>
+    <string name="home_settings">Settings</string>
+
+    <!-- Screen titles -->
+    <string name="captions_title">Live Captions</string>
+    <string name="alerts_title">Sound Alerts</string>
+    <string name="history_title">Event History</string>
+    <string name="categories_title">Sound Categories</string>
+    <string name="vibration_title">Vibration Patterns</string>
+    <string name="demo_title">Demonstration Mode</string>
+    <string name="settings_title">Settings</string>
+    <string name="about_title">About AGAP and credits</string>
+
+    <!-- Screens not built yet -->
+    <string name="placeholder_captions">Live Captions will show spoken English or Filipino as text here. This screen is not built yet.</string>
+    <string name="placeholder_alerts">Sound Alerts will listen for the 13 sounds and show an alert here. This screen is not built yet.</string>
+    <string name="placeholder_history">Every alert will be listed here with its date and time. This screen is not built yet.</string>
+    <string name="placeholder_categories">The 13 sounds AGAP detects, in three groups: Emergency, Traffic, and Household/Entry. This screen is not built yet.</string>
+    <string name="placeholder_vibration">The vibration pattern used for each group of sounds. This screen is not built yet.</string>
+    <string name="placeholder_demo">Sample captions and alerts for presentations, without using the microphone. Demonstration alerts are not saved. This screen is not built yet.</string>
+
+    <!-- Settings -->
+    <string name="settings_section_display">Display</string>
+    <string name="settings_section_alerts">Alerts</string>
+    <string name="settings_text_size">Text size</string>
+    <string name="settings_text_size_sample">Captions look like this.</string>
+    <string name="settings_text_size_small_a">A</string>
+    <string name="settings_text_size_large_a">A</string>
+    <string-array name="text_size_names">
+        <item>Small</item>
+        <item>Normal</item>
+        <item>Large</item>
+        <item>Larger</item>
+        <item>Largest</item>
+    </string-array>
+    <string name="settings_text_size_value">Text size: %1$s</string>
+    <string name="settings_display_mode">Display mode</string>
+    <string name="settings_mode_standard">Standard</string>
+    <string name="settings_mode_high_contrast">High contrast</string>
+    <string name="settings_mode_selected">%1$s, selected</string>
+    <string name="settings_mode_not_selected">%1$s, not selected</string>
+    <string name="settings_selected_mark">✓</string>
+    <string name="settings_vibration">Vibration</string>
+    <string name="settings_vibration_text">Vibrate with each alert</string>
+    <string name="settings_threshold">Alert threshold: %1$d%%</string>
+    <string name="settings_threshold_text">How sure AGAP must be before it alerts. Higher means fewer false alerts but more missed quiet sounds.</string>
+    <string name="settings_threshold_value">%1$d%%</string>
+
+    <!-- About -->
+    <string name="about_text">AGAP (Advancing Greater Access to Communication for Persons with Hearing Impairments) is a research prototype made for a student study at Pasig City Science High School.\n\nIt is a supplementary tool. It is not a medical device, and it is not the only way to notice emergencies. Keep using other ways to notice alarms and warnings.\n\nAGAP works without the internet. It does not record or save audio, has no user accounts, and keeps its alert history on this phone.</string>
+    <string name="about_credits_title">Credits and licences</string>
+    <string name="about_credits">YAMNet sound model, Google: Apache License 2.0.\nMediaPipe Audio Classifier, Google: Apache License 2.0.\nVosk speech recognition and the Vosk Filipino model (vosk-model-tl-ph-generic): CC BY-NC-SA 4.0, non-commercial use only.\nAndroidX and Material Components for Android, Google: Apache License 2.0.\nMaterial icons, Google: Apache License 2.0.</string>
+    <string name="about_version">Version %1$s</string>
+</resources>

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Theme attributes. Each theme (light and high contrast) maps them to palette colours, so a
+     layout written once works in both themes. -->
+<resources>
+    <attr name="agapBackground" format="color" />
+    <attr name="agapSurface" format="color" />
+    <attr name="agapText" format="color" />
+    <attr name="agapTextSecondary" format="color" />
+    <attr name="agapOutline" format="color" />
+    <attr name="agapTopBar" format="color" />
+    <attr name="agapOnTopBar" format="color" />
+    <!-- Icons, selected text and selection borders on a surface. Light: brand purple.
+         High contrast: white, because purple is never used as thin text or icons on black. -->
+    <attr name="agapAccent" format="color" />
+    <!-- Circle behind the big Home icons, and the icon on it -->
+    <attr name="agapIconCircle" format="color" />
+    <attr name="agapOnIconCircle" format="color" />
+
+    <!-- Category rows: background, ink (text, icon and 1dp border) -->
+    <attr name="agapEmergencyRow" format="color" />
+    <attr name="agapEmergencyInk" format="color" />
+    <attr name="agapTrafficRow" format="color" />
+    <attr name="agapTrafficInk" format="color" />
+    <attr name="agapHouseholdRow" format="color" />
+    <attr name="agapHouseholdInk" format="color" />
+</resources>
