@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="@dimen/screen_padding">
+
+    <!-- Language: one at a time, chosen before Start -->
+    <com.google.android.material.button.MaterialButtonToggleGroup
+        android:id="@+id/language_group"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:checkedButton="@id/lang_english"
+        app:selectionRequired="true"
+        app:singleSelection="true">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/lang_english"
+            style="@style/Widget.AGAP.ToggleButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/captions_lang_english" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/lang_filipino"
+            style="@style/Widget.AGAP.ToggleButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:enabled="false"
+            android:text="@string/captions_lang_filipino" />
+    </com.google.android.material.button.MaterialButtonToggleGroup>
+
+    <TextView
+        android:id="@+id/language_note"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:text="@string/captions_filipino_later"
+        android:textAppearance="@style/TextAppearance.AGAP.BodySecondary" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:gravity="center_vertical"
+        android:minHeight="32dp"
+        android:orientation="horizontal">
+
+        <View
+            android:id="@+id/status_dot"
+            android:layout_width="14dp"
+            android:layout_height="14dp"
+            android:layout_marginEnd="10dp"
+            android:background="@drawable/bg_status_dot"
+            android:importantForAccessibility="no" />
+
+        <TextView
+            android:id="@+id/status_text"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:accessibilityLiveRegion="polite"
+            android:textAppearance="@style/TextAppearance.AGAP.Title" />
+    </LinearLayout>
+
+    <!-- Permission, language pack and error messages -->
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/message_card"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:visibility="gone">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <TextView
+                android:id="@+id/message_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="@style/TextAppearance.AGAP.Body" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/message_action"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp" />
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
+
+    <!-- The captions, on plain white or black only. The padding keeps scrolled text off the
+         box's rounded border. -->
+    <ScrollView
+        android:id="@+id/caption_scroll"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="12dp"
+        android:layout_weight="1"
+        android:background="@drawable/bg_caption_box"
+        android:clipToPadding="true"
+        android:fillViewport="true"
+        android:paddingVertical="10dp">
+
+        <TextView
+            android:id="@+id/caption_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/captions_empty"
+            android:lineHeight="34sp"
+            android:paddingHorizontal="20dp"
+            android:paddingVertical="10dp"
+            android:textAppearance="@style/TextAppearance.AGAP.Caption"
+            android:textColorHint="?attr/agapTextSecondary" />
+    </ScrollView>
+
+    <LinearLayout
+        android:id="@+id/alerts_paused_note"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:background="@drawable/bg_note"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:padding="12dp"
+        android:visibility="gone">
+
+        <ImageView
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginEnd="12dp"
+            android:importantForAccessibility="no"
+            android:src="@drawable/ic_info"
+            app:tint="?attr/agapAccent" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/captions_alerts_paused"
+            android:textAppearance="@style/TextAppearance.AGAP.BodySecondary" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:orientation="horizontal">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/clear_button"
+            style="@style/Widget.AGAP.Button.Outlined"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="12dp"
+            android:text="@string/captions_clear"
+            android:visibility="gone"
+            app:icon="@drawable/ic_delete" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/start_stop"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:minHeight="64dp"
+            android:text="@string/captions_start"
+            app:icon="@drawable/ic_mic"
+            app:iconGravity="textStart" />
+    </LinearLayout>
+</LinearLayout>

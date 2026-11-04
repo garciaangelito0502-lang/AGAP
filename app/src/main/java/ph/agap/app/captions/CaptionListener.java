@@ -1,0 +1,30 @@
+package ph.agap.app.captions;
+
+/** What a {@link CaptionEngine} reports back. Called on the main thread. */
+public interface CaptionListener {
+
+    /** Why listening stopped on its own. */
+    enum Failure {
+        /** The microphone permission was taken away. */
+        PERMISSION,
+        /** The offline language pack is missing or was removed. */
+        LANGUAGE_PACK,
+        /** The recognizer kept failing; restarting did not help. */
+        RECOGNIZER
+    }
+
+    /** The microphone is open and the engine is waiting for speech. */
+    void onListening();
+
+    /** The words heard so far in the current sentence. They can still change. */
+    void onPartial(String text);
+
+    /** The final words of a sentence. They replace the partial text. */
+    void onFinal(String text);
+
+    /** A sentence ended without final words (silence or a restart): keep what was shown. */
+    void onSegmentEnd();
+
+    /** Listening stopped by itself and will not restart. */
+    void onFailed(Failure failure);
+}

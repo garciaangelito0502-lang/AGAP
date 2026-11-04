@@ -134,3 +134,52 @@ app and its Event History stay behind as a separate app.
 - With no phone available (D-005), screens are checked on an Android 15 emulator: virtual device `AGAP_API35`,
   Google Play x86_64 image (revision 9), 2 GB RAM, 1080x2400 at 420 dpi, accelerated by the Windows Hypervisor
   Platform. The emulator says nothing about the Infinix's speed or microphone; those checks stay with the client.
+
+## D-013 English captions engine (Phase 2, 2026-11-04)
+
+- Contract 1.3: English uses Google's on-device recognizer, or Vosk's English model if offline Google
+  recognition is not available on the test phone.
+- AGAP uses Android's own on-device recognizer (`SpeechRecognizer.createOnDeviceSpeechRecognizer`) when
+  `isOnDeviceRecognitionAvailable` is true. On the Xiaomi 13 (HyperOS 3) it is **false**: the system registers
+  no on-device recognizer. Other non-Pixel phones, the Infinix included, may be the same.
+- Then AGAP binds to Google's speech service directly ("Speech Services by Google", `com.google.android.tts`,
+  first; the Google app second) and sets `EXTRA_PREFER_OFFLINE`, which Android documents as "only use an
+  offline speech recognition engine". On the Xiaomi this service is also the phone's default recognizer.
+- `checkRecognitionSupport` says whether the English pack is installed. On the Xiaomi: en-US installed,
+  30 languages offered offline (googletts 20260928.02). Filipino is not offered, so Filipino stays with Vosk
+  (Phase 4). If the pack is missing, the screen offers a one-time download (`triggerModelDownload`, needs
+  internet once, contract 1.2). Another installed English variant is used if en-US is not installed.
+- Evidence: in airplane mode (Wi-Fi off, no default network, ping failed) English captions worked on the
+  Xiaomi: 6 of 6 sentences read by a person, and the same results from the PC's synthetic voice as online.
+- Both calls need Android 13 (API 33), so English captions need Android 13+ until D-014.
+- Risk: the service is another app and could in principle use the network when the phone is online. AGAP
+  itself has no INTERNET permission. The research protocol tests with Wi-Fi and data off, and the Phase 8
+  offline proof does the same.
+- The service answered one support check with an error and then two results; the check now answers once and
+  lets a real result win over an early error.
+
+## D-014 Vosk English fallback moved to Phase 4 (2026-11-04, owner's choice)
+
+- The Phase 2 plan asked for a Vosk English fallback on phones without Google offline English (below API 33).
+  Both known phones have Google offline English. Vosk is integrated in Phase 4 for Filipino, so the English
+  model (about 40 MB) is added then with the same engine, instead of integrating Vosk twice.
+- Until then such phones show a plain message: "Offline English captions need Android 13 or newer" or "This
+  phone has no offline Google speech recognizer for English" (K-008).
+
+## D-015 How captions run and are shown (Phase 2, 2026-11-04)
+
+- Android's recognizer hears one sentence per session. The engine starts the next session at once after each
+  result and after silence (NO_MATCH, SPEECH_TIMEOUT). Other errors: a new recognizer after 250 ms times the
+  attempt number; 5 failed sessions in a row with no words stop captions with a message. A silence result in
+  under 400 ms counts as a failure, so a broken recognizer cannot spin.
+- `Transcript`: finished lines never change. The partial line is replaced by its final words, or kept as it is
+  when a session ends without them, so a restart neither drops nor repeats words already shown.
+- Partial words are lighter and underlined (not colour alone). Each sentence is its own paragraph with a
+  half-line gap. Auto-scroll only when the view is already at the bottom, so reading back is not disturbed.
+- Start clears the page. After Stop the text stays until Clear or the next Start, also across tab switches
+  (activity-scoped ViewModel). Memory only; no FLAG_SECURE, so the research team can take screenshots.
+- Listening stops when the screen leaves view (fragment onStop). `FLAG_KEEP_SCREEN_ON` is set only while
+  listening.
+- Logs (tag `AGAP/Captions`) hold event names, error codes, word counts and timings, never caption text.
+- No formatting extra is set; the recognizer still writes numbers as digits (K-006).
+- `CaptionRelay` passes the newest caption line to one listener; the watch link registers there in Phase 7.

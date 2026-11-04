@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Filled buttons: purple, or a faint grey when they cannot be used yet -->
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:alpha="0.12" android:color="?attr/agapText" android:state_enabled="false" />
+    <item android:color="@color/brand" />
+</selector>

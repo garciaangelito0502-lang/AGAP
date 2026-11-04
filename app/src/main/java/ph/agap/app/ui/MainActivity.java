@@ -12,6 +12,7 @@ import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import ph.agap.app.R;
+import ph.agap.app.ui.captions.CaptionsFragment;
 import ph.agap.app.ui.home.HomeFragment;
 import ph.agap.app.ui.settings.SettingsActivity;
 
@@ -95,8 +96,7 @@ public class MainActivity extends BaseActivity {
 
     private Fragment createScreen(@IdRes int tabId) {
         if (tabId == R.id.nav_captions) {
-            return PlaceholderFragment.newInstance(
-                    R.string.captions_title, R.string.placeholder_captions, R.drawable.ic_captions);
+            return new CaptionsFragment();
         } else if (tabId == R.id.nav_alerts) {
             return PlaceholderFragment.newInstance(
                     R.string.alerts_title, R.string.placeholder_alerts, R.drawable.ic_alerts);

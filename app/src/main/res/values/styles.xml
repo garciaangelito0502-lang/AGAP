@@ -82,9 +82,32 @@
 
     <!-- Filled button: purple with white text in both themes -->
     <style name="Widget.AGAP.Button" parent="Widget.Material3.Button">
-        <item name="backgroundTint">@color/brand</item>
-        <item name="android:textColor">@color/on_brand</item>
+        <item name="backgroundTint">@color/button_background</item>
+        <item name="android:textColor">@color/button_text</item>
+        <item name="iconTint">@color/button_text</item>
         <item name="android:textSize">18sp</item>
+        <item name="android:minHeight">56dp</item>
+    </style>
+
+    <!-- Outlined button: purple outline and text (white in high contrast) -->
+    <style name="Widget.AGAP.Button.Outlined" parent="Widget.Material3.Button.OutlinedButton">
+        <item name="android:textColor">?attr/agapAccent</item>
+        <item name="iconTint">?attr/agapAccent</item>
+        <item name="strokeColor">?attr/agapAccent</item>
+        <item name="strokeWidth">2dp</item>
+        <item name="android:textSize">18sp</item>
+        <item name="android:minHeight">56dp</item>
+    </style>
+
+    <!-- One button of a toggle group, such as the caption language -->
+    <style name="Widget.AGAP.ToggleButton" parent="Widget.Material3.Button.OutlinedButton">
+        <item name="backgroundTint">@color/toggle_background</item>
+        <item name="android:textColor">@color/toggle_text</item>
+        <item name="iconTint">@color/toggle_text</item>
+        <item name="strokeColor">@color/toggle_stroke</item>
+        <item name="strokeWidth">2dp</item>
+        <item name="android:textSize">18sp</item>
+        <item name="android:textStyle">bold</item>
         <item name="android:minHeight">56dp</item>
     </style>
 

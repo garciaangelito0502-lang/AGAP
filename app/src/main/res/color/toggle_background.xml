@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Language toggle: the chosen language is filled purple with white text, in both themes -->
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:color="@color/brand" android:state_checked="true" />
+    <item android:color="?attr/agapSurface" />
+</selector>

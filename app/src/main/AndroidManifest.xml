@@ -1,6 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <!-- Live Captions and Sound Alerts listen only while their screen is open (contract 1.10). -->
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+
+    <!-- Lets the app see the phone's speech recognition service (Android 11+ package visibility). -->
+    <queries>
+        <intent>
+            <action android:name="android.speech.RecognitionService" />
+        </intent>
+    </queries>
+
     <!-- No INTERNET permission: AGAP works fully offline (contract 1.2).
          allowBackup is off so settings and the alert history never leave the phone. -->
     <application

@@ -31,8 +31,32 @@
     <string name="settings_title">Settings</string>
     <string name="about_title">About AGAP and credits</string>
 
+    <!-- Live Captions -->
+    <string name="captions_lang_english">English</string>
+    <string name="captions_lang_filipino">Filipino</string>
+    <string name="captions_filipino_later">Filipino comes in the next test build.</string>
+    <string name="captions_status_idle">Not listening · English</string>
+    <string name="captions_status_starting">Starting… · English</string>
+    <string name="captions_status_listening">Listening · English</string>
+    <string name="captions_empty">Tap Start and speak. The words appear here.</string>
+    <string name="captions_alerts_paused">Sound Alerts are paused while captions are on.</string>
+    <string name="captions_start">Start</string>
+    <string name="captions_stop">Stop</string>
+    <string name="captions_clear">Clear</string>
+    <string name="captions_mic_explain">AGAP needs the microphone to turn speech into captions. Listening stays on this phone: nothing is recorded, saved or sent.</string>
+    <string name="captions_allow_mic">Allow microphone</string>
+    <string name="captions_mic_blocked">Microphone access is off for AGAP, so captions cannot start. Turn it on in the phone\'s settings: Permissions, then Microphone.</string>
+    <string name="captions_open_settings">Open app settings</string>
+    <string name="captions_checking">Checking speech recognition on this phone…</string>
+    <string name="captions_pack_missing">English captions need Google\'s offline English speech pack, which is not on this phone yet. Connect to Wi-Fi once and download it. After that, captions work with no internet.</string>
+    <string name="captions_download_pack">Download English pack</string>
+    <string name="captions_pack_downloading">The English speech pack is downloading. Keep the phone online until it finishes, then tap Check again.</string>
+    <string name="captions_check_again">Check again</string>
+    <string name="captions_old_android">Offline English captions need Android 13 or newer. This phone has an older version.</string>
+    <string name="captions_no_recognizer">This phone has no offline Google speech recognizer for English, so English captions cannot run here.</string>
+    <string name="captions_failed">Captions stopped because speech recognition kept failing. Tap Start to try again.</string>
+
     <!-- Screens not built yet -->
-    <string name="placeholder_captions">Live Captions will show spoken English or Filipino as text here. This screen is not built yet.</string>
     <string name="placeholder_alerts">Sound Alerts will listen for the 13 sounds and show an alert here. This screen is not built yet.</string>
     <string name="placeholder_history">Every alert will be listed here with its date and time. This screen is not built yet.</string>
     <string name="placeholder_categories">The 13 sounds AGAP detects, in three groups: Emergency, Traffic, and Household/Entry. This screen is not built yet.</string>

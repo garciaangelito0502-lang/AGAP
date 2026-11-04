@@ -30,6 +30,8 @@
         <item name="agapAccent">@color/brand</item>
         <item name="agapIconCircle">@color/brand_tint</item>
         <item name="agapOnIconCircle">@color/brand</item>
+        <item name="agapCaptionBackground">@color/surface</item>
+        <item name="agapNote">@color/brand_tint</item>
         <item name="agapEmergencyRow">@color/emergency_tint</item>
         <item name="agapEmergencyInk">@color/emergency_ink</item>
         <item name="agapTrafficRow">@color/traffic_tint</item>
@@ -79,6 +81,8 @@
         <item name="agapAccent">@color/hc_text</item>
         <item name="agapIconCircle">@color/brand</item>
         <item name="agapOnIconCircle">@color/on_brand</item>
+        <item name="agapCaptionBackground">@color/hc_background</item>
+        <item name="agapNote">@color/hc_surface</item>
         <item name="agapEmergencyRow">@color/hc_surface</item>
         <item name="agapEmergencyInk">@color/hc_emergency</item>
         <item name="agapTrafficRow">@color/hc_surface</item>

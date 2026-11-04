@@ -18,6 +18,12 @@ Google's speech services are installed (`com.google.android.tts`, the Google app
 Xiaomi blocks `adb install` until **Developer options > Install via USB** is on (stock HyperOS asks for a
 signed-in Mi account first). Until then `adb install` fails with `INSTALL_FAILED_USER_RESTRICTED`, and each
 install may show an "Install via USB?" prompt on the phone that has to be accepted.
+Install via USB was turned on 2026-11-04; installs now succeed.
+
+Speech recognition on this phone (2026-11-04): no system on-device recognizer
+(`SpeechRecognizer.isOnDeviceRecognitionAvailable` is false). Default recognizer: Speech Services by Google
+(`com.google.android.tts`, googletts 20260928.02), which has the en-US offline pack installed (D-013).
+The phone dropped off adb for a few seconds several times while testing (K-009).
 
 ## Emulator (used while no phone is available)
 

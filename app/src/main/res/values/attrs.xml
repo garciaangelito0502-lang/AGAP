@@ -15,6 +15,10 @@
     <!-- Circle behind the big Home icons, and the icon on it -->
     <attr name="agapIconCircle" format="color" />
     <attr name="agapOnIconCircle" format="color" />
+    <!-- Behind caption text: plain white (light) or plain black (high contrast) -->
+    <attr name="agapCaptionBackground" format="color" />
+    <!-- Background of small info notes -->
+    <attr name="agapNote" format="color" />
 
     <!-- Category rows: background, ink (text, icon and 1dp border) -->
     <attr name="agapEmergencyRow" format="color" />
