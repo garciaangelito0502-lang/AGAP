@@ -1,6 +1,6 @@
 # AGAP progress
 
-Last updated: 2026-10-27
+Last updated: 2026-11-04 (schedule reset; work resumes 2026-11-07 at Phase 2)
 
 | Phase | Name | Status | Date finished | Build/APK version |
 |---|---|---|---|---|
@@ -14,10 +14,14 @@ Last updated: 2026-10-27
 | 7 | Wear OS companion | Not started | | |
 | 8 | Offline proof, hardening and tests | Not started | | |
 | 9 | Release build, install guide and turnover | Not started | | |
-| 10 | Support and tuning until 2026-11-23 | Not started | | |
+| 10 | Support and tuning until 2026-12-07 | Not started | | |
 
-Milestones (contract section 5): **M1** 2026-10-28 first phone test build (after Phase 3),
-**M2** 2026-11-03 complete test build of phone and watch (after Phase 7),
-**M3** 2026-11-07 final build and turnover (Phase 9), support until 2026-11-23 (Phase 10).
+Milestones (schedule of 2026-11-04; the contract section 5 dates of 10-28, 11-03, 11-07 and 11-23 have passed):
+**M1** 2026-11-08 first phone test build (after Phase 3; the group installs it on the Infinix 11-09),
+**M2** 2026-11-18 complete test build of phone and watch (after Phase 7),
+**M3** 2026-11-21 final build and turnover (Phase 9), support until 2026-12-07 (Phase 10).
+The group's testing: alpha (2 days) 11-19 to 11-20 on M2, beta (1 week) 11-23 to 11-29 on 1.0, their data collection from 11-30.
+Phase targets: 2 on 11-07, 3 on 11-08, 4 on 11-09 to 11-11, 5 on 11-12 to 11-14, 6 on 11-15, 7 on 11-16 to 11-18,
+8 on 11-19 to 11-20, 9 on 11-21. Student copy: `reports/AGAP-Timeline-from-2026-11-07.pdf` (outside this repo).
 
 Phase notes: [docs/phases/](docs/phases/). Contract checklist: [docs/SPEC-CHECKLIST.md](docs/SPEC-CHECKLIST.md).

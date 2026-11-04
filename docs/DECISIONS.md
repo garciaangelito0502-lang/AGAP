@@ -27,6 +27,7 @@ Android 15 (API 35). Final versions are recorded here in Phase 1 after a test bu
   `AB:39:7C:85:59:D5:1D:52:32:1E:39:61:9C:1C:A5:77:58:17:F8:5F:CE:94:B2:C2:33:20:77:55:B9:2D:80:64`.
 - Passwords are in `D:\Project\AGAP\keys\keystore.properties` next to it. Neither file is ever committed
   (`.gitignore` blocks `*.jks`, `*.keystore`, `*.p12`, `keystore.properties`).
+- Backed up off the build PC by the developer on 2026-10-27.
 - Why one key: the phone and watch apps must share the applicationId **and** the signing key, or the Wear Data
   Layer will not connect them. Debug builds of both modules use the same debug keystore on the build PC, so
   this also holds during development.

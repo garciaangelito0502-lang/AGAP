@@ -23,7 +23,7 @@ Last updated: 2026-10-27 (Phase 1). Emulator = Android 15 virtual device `AGAP_A
 | 1.9 | Demonstration Mode, clearly labelled, no microphone, alerts not saved | 5 | No | not verified | Placeholder screen reachable from Home |
 | 1.10 | One microphone user at a time; listening only with app on screen; screen kept on | 2, 3, 8 | No | not verified; Infinix: pending: client checks it | Structure ready: only one tab's screen exists at a time (D-009) |
 | 1.11 | Wear OS 3+ watch app: alerts with category vibration, live caption text; Bluetooth, no internet | 7 | Partly | not possible (no watch, D-005) | Phase 1: `:wear` shell builds; same applicationId and same signing key as the phone, checked with `apksigner` for debug and release |
-| 1.12 | Testing support until 2026-11-23: bug fixes, threshold and class tuning | 10 | No | not verified | |
+| 1.12 | Testing support until 2026-12-07 (contract: 2026-11-23; schedule reset 2026-11-04): bug fixes, threshold and class tuning | 10 | No | not verified | |
 | 1.13 | Turnover: source on GitHub, phone and watch APKs, English install guide, remote help | 9 | Partly | not verified | Standard Gradle project with wrapper; README has build steps. Not pushed |
 
 ## Annex A alerts
