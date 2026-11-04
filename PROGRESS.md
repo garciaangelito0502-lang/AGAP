@@ -1,10 +1,10 @@
 # AGAP progress
 
-Last updated: 2026-11-04 (schedule reset; work resumes 2026-11-07 at Phase 2)
+Last updated: 2026-11-04 (schedule reset; Phase 0 done with a development phone; work resumes 2026-11-07 at Phase 2)
 
 | Phase | Name | Status | Date finished | Build/APK version |
 |---|---|---|---|---|
-| 0 | Environment and plan | Blocked (no physical phone on adb yet; emulator used instead; everything else done) | | none (no app code) |
+| 0 | Environment and plan | Done (development phone Xiaomi 13 on adb since 2026-11-04; no watch) | 2026-11-04 | none (no app code) |
 | 1 | Project skeleton and shell UI | Done (checked on the emulator; Infinix check pending with the client) | 2026-10-27 | 0.1.0 debug (phone and watch) |
 | 2 | Live Captions, English | Not started | | |
 | 3 | Sound Alerts engine | Not started | | |

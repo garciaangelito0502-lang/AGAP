@@ -1,6 +1,7 @@
 # Phase 00: Environment and plan
 
-Status: **Blocked** on one step (no phone on adb). Date: 2026-10-27.
+Status: **Done** on 2026-11-04. Started 2026-10-27, when one step stayed blocked (no phone on adb); that step
+is closed under "Completed on 2026-11-04" at the end of this note.
 
 ## Goal and what was built
 
@@ -56,3 +57,15 @@ on a watch, a Gradle build (no project yet).
 
 Phase 1, Project skeleton and shell UI: Gradle project with `:app` (and the `:wear` shell), wrapper, palette in
 `colors.xml`, Home screen with navigation to the other screens, no listening yet.
+
+## Completed on 2026-11-04
+
+The open step is closed. A development phone, a Xiaomi 13 (`2211133G`) on Android 16 / HyperOS 3, was
+connected over USB and `adb devices -l` lists it as `device` (serial `44647d98`). Its model, Android version,
+free storage (97 GB) and RAM (11 GB) are in DEVICE-NOTES.md; D-005 has the update. The toolchain was checked
+again the same day: `java -version` 17.0.20.1, adb 1.0.41, platform android-36, build-tools 36.0.0, Git 2.56.0.
+There is still no Wear OS watch, so watch checks stay "not possible".
+
+The Xiaomi is not the Infinix: Infinix items in SPEC-CHECKLIST.md stay "pending: client checks it". Xiaomi
+blocks `adb install` until Install via USB is turned on in Developer options (DEVICE-NOTES.md); the first try
+with the Phase 1 debug APK failed with `INSTALL_FAILED_USER_RESTRICTED` for that reason.

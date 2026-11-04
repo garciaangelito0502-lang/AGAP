@@ -2,6 +2,8 @@
 
 One line per notable change, newest first.
 
+- 2026-11-04 Phase 0 done: development phone Xiaomi 13 (Android 16) connected over USB and recorded in DEVICE-NOTES.md; still no watch.
+
 - 2026-10-27 Phase 1: Gradle project (AGP 9.4.1, Gradle 9.8.2 wrapper) with `:app` and `:wear`, one shared release-signing script, version catalog.
 - 2026-10-27 Phase 1: phone app 0.1.0: Home, bottom navigation (Home, Captions, Alerts, History), Settings (text size, high contrast, vibration, alert threshold), About, placeholders for the screens of later phases; light and high-contrast themes; "AGAP" text launcher icon.
 - 2026-10-27 Phase 1: `SettingsStore` with 6 JVM unit tests; lint fixes (decorative icons hidden from screen readers, data-extraction rules, no duplicate backgrounds).

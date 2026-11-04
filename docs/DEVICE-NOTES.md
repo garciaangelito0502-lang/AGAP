@@ -5,9 +5,19 @@
 | Date | Model | Android | Free storage | RAM | adb serial | How connected |
 |---|---|---|---|---|---|---|
 | 2026-10-27 | none available | | | | | `adb devices` lists nothing |
+| 2026-11-04 | Xiaomi 13 (`2211133G`, codename fuxi), arm64-v8a | 16 (API 36), HyperOS 3 (`OS3.0.2.0.WMCCNXM`, xiaomi.eu build), security patch 2025-12-05 | 97 GB of 224 GB | 11 GB (MemTotal 11,462,892 kB) | `44647d98` | USB, `adb devices` shows `device` |
 
-To fill in when a phone is connected: `adb -s <serial> shell getprop ro.product.model`,
-`getprop ro.build.version.release`, `df -h /data`, `cat /proc/meminfo | head -1`.
+Read with `adb -s <serial> shell getprop ro.product.model`, `getprop ro.build.version.release`,
+`df -h /data` (in Git Bash set `MSYS_NO_PATHCONV=1`, or `/data` becomes a Windows path),
+`cat /proc/meminfo | head -1`.
+
+The Xiaomi 13 is the development phone from 2026-11-04 (D-005). It is much faster than the Infinix Hot 70 and
+runs Android 16, not 15, so speed, microphone and battery results on it do not stand in for the Infinix.
+Google's speech services are installed (`com.google.android.tts`, the Google app), which Phase 2 needs.
+
+Xiaomi blocks `adb install` until **Developer options > Install via USB** is on (stock HyperOS asks for a
+signed-in Mi account first). Until then `adb install` fails with `INSTALL_FAILED_USER_RESTRICTED`, and each
+install may show an "Install via USB?" prompt on the phone that has to be accepted.
 
 ## Emulator (used while no phone is available)
 
@@ -33,6 +43,7 @@ times), then USB debugging, plug in with a data cable, and allow the computer's 
 | Date | Model | Wear OS | Status |
 |---|---|---|---|
 | 2026-10-27 | none available | | No watch and no watch emulator. On-device watch checks are "not possible". |
+| 2026-11-04 | none available | | Asked again: still no watch and no watch emulator. On-device watch checks stay "not possible". |
 
 A Wear OS watch is debugged over Wi-Fi (Settings > Developer options > Wireless debugging, Wear OS 3+).
 

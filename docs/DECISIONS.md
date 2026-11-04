@@ -52,6 +52,10 @@ text icon. If the client sends Figma exports or a logo later, this entry is upda
   within 2 days of each test build (contract 6.2).
 - No Wear OS watch and no watch emulator. The watch app is still built (contract 1.11), but its on-device
   verification is recorded as "not possible" unless a watch becomes available.
+- Update 2026-11-04: the development phone is a Xiaomi 13 on Android 16 (DEVICE-NOTES.md). Checks run on it
+  are marked "my phone" in SPEC-CHECKLIST.md. It does not replace the Infinix: Infinix items stay "pending:
+  client checks it", and each milestone still gets the client's test checklist. Still no Wear OS watch
+  (asked again on 2026-11-04).
 
 ## D-006 Repository layout (Phase 0, 2026-10-27)
 

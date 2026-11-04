@@ -6,7 +6,8 @@ One row for each contract item 1.1 to 1.13 and each Annex A alert. Updated every
 - **Verified on:** emulator / my phone / Infinix / watch / not verified. "Pending: client checks it" means the
   check needs the client's Infinix Hot 70 and is in the milestone test checklist for the client's team.
 
-Last updated: 2026-10-27 (Phase 1). Emulator = Android 15 virtual device `AGAP_API35` (D-012).
+Last updated: 2026-11-04 (Phase 0 done). Emulator = Android 15 virtual device `AGAP_API35` (D-012). "My phone" = the
+development Xiaomi 13 on Android 16 (D-005, DEVICE-NOTES.md); nothing is verified on it yet.
 
 ## Contract section 1
 
