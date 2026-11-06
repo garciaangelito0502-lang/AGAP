@@ -2,6 +2,11 @@
 
 One line per notable change, newest first.
 
+- 2026-11-07 Phase 5: phone app 0.5.0: full-screen alert over the app (icon, label, category, confidence, time, vibration rhythm, Dismiss); Sound Alerts keeps listening behind it (D-028).
+- 2026-11-07 Phase 5: one vibration pattern per category, played as an alarm, honouring the Vibration setting (D-031); `VIBRATE` permission.
+- 2026-11-07 Phase 5: Event History in Room 2.8.5 with both times to the millisecond (shown time from the frame-commit callback, D-029), day-grouped list, detail view with response time, clear with confirmation; schema exported to `app/schemas/` (D-030).
+- 2026-11-07 Phase 5: Demonstration Mode: banner on every screen, sample captions, 13 sample alerts, microphone never opened, nothing saved, off after a restart (D-032).
+- 2026-11-07 Phase 5: 16 Material Symbols icons and 3 badge shapes (D-033); 14 new JVM unit tests (80 in total) and an instrumented DAO test (4 tests) run with `am instrument` (D-034). Unused placeholder screen removed.
 - 2026-11-07 Phase 4: phone app 0.4.0 (debug, 431 MB): Filipino Live Captions with Vosk `vosk-model-tl-ph-generic-0.6` bundled in the APK; language picker enabled; one-time unpack to the phone's storage with a progress bar, a free-storage check and a clean restart after an interrupted unpack.
 - 2026-11-07 Phase 4: Vosk English fallback (`vosk-model-small-en-us-0.15`) for phones without Google offline English (closes K-008); the screen says when it is in use.
 - 2026-11-07 Phase 4: `VoskCaptionEngine` feeds the microphone to Vosk itself instead of Vosk's `SpeechService` (D-025); punctuation-only words dropped from Vosk results (D-026); only one Vosk model kept in memory, with a fix for a cross-language race (D-024).

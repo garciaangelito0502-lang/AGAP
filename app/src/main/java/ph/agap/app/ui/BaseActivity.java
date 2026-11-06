@@ -16,6 +16,7 @@ import androidx.core.view.WindowInsetsControllerCompat;
 import com.google.android.material.appbar.MaterialToolbar;
 
 import ph.agap.app.R;
+import ph.agap.app.demo.DemoMode;
 import ph.agap.app.settings.SettingsStore;
 
 /**
@@ -51,11 +52,33 @@ public abstract class BaseActivity extends AppCompatActivity {
         bars.setAppearanceLightNavigationBars(!settings.isHighContrast());
     }
 
+    // Demonstration Mode can be switched on or off while this screen is in view.
+    private final Runnable demoChanged = () -> {
+        DemoBanner.update(findViewById(R.id.demo_banner));
+        onDemoModeChanged();
+    };
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        DemoMode.addListener(demoChanged);
+    }
+
     @Override
     protected void onResume() {
         super.onResume();
         rebuildIfLookChanged();
+        DemoBanner.update(findViewById(R.id.demo_banner));
     }
+
+    @Override
+    protected void onStop() {
+        DemoMode.removeListener(demoChanged);
+        super.onStop();
+    }
+
+    /** Called when Demonstration Mode is switched while this screen is started. */
+    protected void onDemoModeChanged() { }
 
     /** Rebuilds this screen if the text size or display mode changed since it was built. */
     protected void rebuildIfLookChanged() {

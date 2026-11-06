@@ -29,6 +29,14 @@
     <color name="household_tint">#E1F5FE</color>
     <color name="household_ink">#01579B</color>
 
+    <!-- Info tiles on the full-screen alert: a darker band on red (white text), a lighter band on
+         orange and light blue (near-black text). Contrast stays above 4.5 : 1 in both. -->
+    <color name="alert_tile_on_dark">#33000000</color>
+    <color name="alert_tile_on_light">#66FFFFFF</color>
+
+    <!-- Demonstration Mode banner: brand purple with lighter purple stripes, white text -->
+    <color name="demo_stripe">#5E2A9E</color>
+
     <!-- High-contrast theme (also the watch) -->
     <color name="hc_background">#000000</color>
     <color name="hc_surface">#121212</color>

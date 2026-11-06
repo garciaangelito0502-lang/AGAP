@@ -27,7 +27,9 @@ folder and run the `app` configuration. From a command line:
 ```
 gradlew assembleDebug          (Windows)
 ./gradlew assembleDebug        (macOS, Linux)
-gradlew testDebugUnitTest      unit tests
+gradlew testDebugUnitTest      unit tests (on the computer)
+gradlew assembleDebugAndroidTest   instrumented tests, then install both APKs and run
+    adb shell am instrument -w ph.agap.app.test/androidx.test.runner.AndroidJUnitRunner
 ```
 
 The phone APK is written to `app/build/outputs/apk/debug/`, the watch APK to `wear/build/outputs/apk/debug/`.

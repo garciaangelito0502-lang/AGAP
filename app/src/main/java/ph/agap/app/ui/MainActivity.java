@@ -15,6 +15,7 @@ import ph.agap.app.R;
 import ph.agap.app.captions.VoskModelManager;
 import ph.agap.app.ui.alerts.AlertsFragment;
 import ph.agap.app.ui.captions.CaptionsFragment;
+import ph.agap.app.ui.history.HistoryFragment;
 import ph.agap.app.ui.home.HomeFragment;
 import ph.agap.app.ui.settings.SettingsActivity;
 
@@ -25,6 +26,10 @@ import ph.agap.app.ui.settings.SettingsActivity;
 public class MainActivity extends BaseActivity {
 
     private static final String STATE_TAB = "tab";
+
+    /** Intent extra: which tab to open (TAB_CAPTIONS), used by Demonstration Mode's sample captions. */
+    public static final String EXTRA_TAB = "tab";
+    public static final String TAB_CAPTIONS = "captions";
 
     private BottomNavigationView nav;
     private MaterialToolbar bar;
@@ -49,6 +54,11 @@ public class MainActivity extends BaseActivity {
                 startActivity(new Intent(this, SettingsActivity.class));
                 return true;
             }
+            if (item.getItemId() == R.id.action_clear_history) {
+                Fragment screen = getSupportFragmentManager().findFragmentById(R.id.fragment_container);
+                if (screen instanceof HistoryFragment) ((HistoryFragment) screen).confirmClear();
+                return true;
+            }
             return false;
         });
 
@@ -62,10 +72,23 @@ public class MainActivity extends BaseActivity {
 
         if (savedInstanceState == null) {
             showTab(R.id.nav_home);
+            openRequestedTab(getIntent());
         } else {
             // The fragment manager has already restored the tab's screen.
             currentTab = savedInstanceState.getInt(STATE_TAB, R.id.nav_home);
             updateChrome();
+        }
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        openRequestedTab(intent);
+    }
+
+    private void openRequestedTab(@Nullable Intent intent) {
+        if (intent != null && TAB_CAPTIONS.equals(intent.getStringExtra(EXTRA_TAB))) {
+            nav.setSelectedItemId(R.id.nav_captions);
         }
     }
 
@@ -102,6 +125,7 @@ public class MainActivity extends BaseActivity {
 
     private void updateChrome() {
         bar.setTitle(titleFor(currentTab));
+        bar.getMenu().findItem(R.id.action_clear_history).setVisible(currentTab == R.id.nav_history);
         backToHome.setEnabled(currentTab != R.id.nav_home);
     }
 
@@ -111,8 +135,7 @@ public class MainActivity extends BaseActivity {
         } else if (tabId == R.id.nav_alerts) {
             return new AlertsFragment();
         } else if (tabId == R.id.nav_history) {
-            return PlaceholderFragment.newInstance(
-                    R.string.history_title, R.string.placeholder_history, R.drawable.ic_history);
+            return new HistoryFragment();
         }
         return new HomeFragment();
     }

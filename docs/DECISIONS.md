@@ -330,3 +330,69 @@ app and its Event History stay behind as a separate app.
 - In preferences `agap_debug` (set over adb; release builds ignore both): boolean `force_vosk_english` makes
   English use the Vosk fallback on a phone that has Google offline English; long `fake_free_mb` stands in for the
   free storage so the low-storage message can be checked on a phone with plenty of room.
+
+## D-028 The alert screen is a full-screen dialog over the app, not a new screen (Phase 5, 2026-11-07)
+
+- A new activity would stop the Alerts tab, and leaving the tab stops listening (contract 1.10, D-009), so
+  detection would pause after every alert during the group's trials. `AlertOverlayFragment` is a full-screen
+  `DialogFragment`: Sound Alerts keeps listening behind it, and a newer alert replaces the one shown. Every alert
+  is still recorded with its own shown time; the screen says how many came while it was open.
+- Same strong category colours in both display modes (design note); no window animation, no flashing; only the
+  badge pulses (scale 1.0-1.07, once a second). Dismiss button 72dp high; the middle scrolls at large text sizes.
+- An alert dialog restored by Android after the app was rebuilt is closed at once, so an old alert is never
+  recorded twice.
+
+## D-029 "Alert shown" is the time the alert's frame reaches the display (Phase 5)
+
+- `shownAtMillis` is taken in a frame-commit callback (`ViewTreeObserver.registerFrameCommitCallback`, Android 10
+  and newer, so every supported phone) registered just before the first draw of the alert. If no callback comes
+  within 1 s, the draw time is used and the log says "fallback". Both times are `System.currentTimeMillis()`.
+- Measured on the Xiaomi 13: 55-130 ms from detection to shown when the alert screen opens (10 alerts; 130 ms was
+  the first after the app started), 17-22 ms when a new alert replaces one on screen (5 alerts). The detection
+  time itself is taken after YAMNet has scored the window (D-018), so the classifier's own 5-30 ms are not in it.
+
+## D-030 Event History: Room 2.8.5, one table, written on one background thread (Phase 5)
+
+- `androidx.room` 2.8.5 (latest stable on Google Maven, 2026-11-07) with its Java annotation processor;
+  RecyclerView 1.4.0 for the list. The schema is exported to `app/schemas/` (in git) for later migrations.
+- Table `alert_events`: id, label, category, confidence, detectedAtMillis, shownAtMillis (contract 1.6), plus
+  `yamnetClass` and `thresholdPercent`, so the group and the tuning in Phase 10 can see what YAMNet heard and
+  which threshold was set. Newest first by detection time, then by id.
+- `HistoryRepository` reads and writes on one thread, so writes keep their order and the screen never waits.
+  `AlertRecorder` (plain Java, unit-tested) saves every real alert, false ones included, and never a demo alert.
+- Clear history asks first and states the number of alerts. No export (brief): see SCOPE-FLAGS.
+
+## D-031 Vibration patterns and how they play (Phase 5)
+
+- From the design note's proposal, as data in `VibrationPatterns` (also for the guide in Phase 6 and the watch in
+  Phase 7): Emergency 600 ms on x3 with 250 ms gaps, then 900 ms off, repeating until dismissed; Traffic 150-120-150
+  ms pairs with 600 ms pauses, three times; Household/Entry 500 ms then 150 ms, 700 ms pause, twice.
+- Played as an alarm (`USAGE_ALARM`), so the phone vibrates in silent mode too: for a deaf user the vibration is the
+  alert. The Emergency repeat stops after 60 s if nobody dismisses it. Off when Vibration is off in Settings; the
+  alert screen then says "Vibration: Off". Needs the `VIBRATE` permission (normal, no prompt).
+- Not yet tuned by feel on the Infinix; the group's feedback can change the timings (contract 1.12).
+
+## D-032 Demonstration Mode lives in memory only (Phase 5)
+
+- On from the Demonstration screen, off with Exit, and always off after the app is closed or the phone restarts, so
+  a test session can never start in Demonstration Mode by accident. A striped banner is on every screen and on the
+  alert screen while it is on.
+- The microphone is never opened: Live Captions plays a fixed English or Filipino sample script word by word
+  (`DemoCaptionEngine`, same screen path as real captions), and Sound Alerts cannot start. Sample alerts (13 chips,
+  confidence 92%) use the same alert screen and vibration, are logged as "not saved", and never reach the history.
+
+## D-033 Icons (Phase 5)
+
+- 13 alert icons and 3 category icons from Google's Material Symbols (filled, Apache 2.0, the family already credited
+  in About), converted to vector drawables: local_fire_department, detector_smoke, e911_emergency, campaign,
+  taxi_alert, local_shipping, directions_car, doorbell, door_front, ring_volume, alarm, timer, wine_bar;
+  categories priority_high, directions_car, notifications. The classic Material Icons set has no smoke detector or
+  doorbell. Badge shapes (octagon, diamond, circle) are drawn in the app.
+
+## D-034 Instrumented tests run with `am instrument`, not `connectedDebugAndroidTest` (Phase 5)
+
+- The connected-test task uninstalls the app afterwards, which deletes the unpacked speech models and the history.
+  Instead: install the app and `app-debug-androidTest.apk`, then
+  `adb shell am instrument -w ph.agap.app.test/androidx.test.runner.AndroidJUnitRunner`. The DAO test uses an
+  in-memory database, so the phone's real history is not touched. On the Xiaomi the test APK's first install needs
+  the "Install via USB" prompt accepted on the phone.

@@ -31,17 +31,20 @@ import java.util.Date;
 import java.util.Locale;
 
 import ph.agap.app.R;
-import ph.agap.app.alerts.AlertCategory;
 import ph.agap.app.alerts.AlertDetector;
 import ph.agap.app.alerts.AlertEvent;
 import ph.agap.app.alerts.SoundAlertEngine;
+import ph.agap.app.demo.DemoMode;
 import ph.agap.app.mic.MicOwner;
 import ph.agap.app.settings.SettingsStore;
+import ph.agap.app.ui.info.DemoModeActivity;
 
 /**
- * Sound Alerts, minimal version: Start/Stop, a listening indicator and the last detected alert as
- * text. The full alert screen, vibration and Event History come in Phase 5. Listening stops when
- * this screen leaves the display, and the screen stays on while listening (contract 1.10).
+ * Sound Alerts: Start/Stop, a listening indicator and the last detected alert. Each alert opens
+ * the full-screen alert with its vibration (AlertOverlayFragment), which also saves it to the
+ * Event History; listening goes on behind it. Listening stops when this screen leaves the display,
+ * and the screen stays on while listening (contract 1.10). In Demonstration Mode the microphone is
+ * never opened (contract 1.9).
  */
 public class AlertsFragment extends Fragment implements SoundAlertEngine.Listener, MicOwner.User {
 
@@ -49,6 +52,7 @@ public class AlertsFragment extends Fragment implements SoundAlertEngine.Listene
     @Nullable private SoundAlertEngine engine;
     private boolean heardReady;
     private float threshold;
+    private int thresholdPercent;
 
     private View statusDot;
     private TextView statusText;
@@ -129,13 +133,15 @@ public class AlertsFragment extends Fragment implements SoundAlertEngine.Listene
     }
 
     private void startListening() {
-        if (engine != null || !hasMic()) return;
+        if (engine != null || !hasMic() || DemoMode.isOn()) return;
         String stopped = MicOwner.take(this);
         model.micNote = stopped == null ? null : getString(R.string.mic_other_stopped, stopped);
         model.failure = null;
         model.sessionCount = 0;
         heardReady = false;
-        threshold = SettingsStore.from(requireContext()).getAlertThreshold();
+        SettingsStore settings = SettingsStore.from(requireContext());
+        threshold = settings.getAlertThreshold();
+        thresholdPercent = settings.getAlertThresholdPercent();
         engine = new SoundAlertEngine(requireContext(), model.annex());
         engine.start(threshold, this);
         showLastEvent();
@@ -181,6 +187,8 @@ public class AlertsFragment extends Fragment implements SoundAlertEngine.Listene
             model.lastEvent = result.event;
             model.sessionCount++;
             showLastEvent();
+            // The full-screen alert with vibration; it saves the alert once it is on screen.
+            AlertOverlayFragment.show(requireActivity(), result.event, thresholdPercent, false);
         }
         if (result.best == null) {
             closestNow.setText(R.string.alerts_closest_none);
@@ -210,8 +218,8 @@ public class AlertsFragment extends Fragment implements SoundAlertEngine.Listene
             lastCard.setCardBackgroundColor(themeColor(R.attr.agapSurface));
             lastCard.setStrokeColor(themeColor(R.attr.agapOutline));
         } else {
-            int row = rowAttr(event.category());
-            int ink = themeColor(inkAttr(event.category()));
+            int row = AlertLooks.rowAttr(event.category());
+            int ink = themeColor(AlertLooks.inkAttr(event.category()));
             lastLabel.setText(event.label());
             lastLabel.setTextAppearance(R.style.TextAppearance_AGAP_Headline);
             lastLabel.setTextColor(ink);
@@ -245,12 +253,15 @@ public class AlertsFragment extends Fragment implements SoundAlertEngine.Listene
         }
         startStop.setText(listening ? R.string.captions_stop : R.string.captions_start);
         startStop.setIconResource(listening ? R.drawable.ic_stop : R.drawable.ic_mic);
-        startStop.setEnabled(listening || hasMic());
+        startStop.setEnabled(listening || (hasMic() && !DemoMode.isOn()));
         showMessage();
     }
 
     private void showMessage() {
-        if (model.micNote != null) {
+        if (DemoMode.isOn() && engine == null) {
+            message(getString(R.string.alerts_demo_note), R.string.alerts_demo_open,
+                    v -> startActivity(new Intent(requireContext(), DemoModeActivity.class)));
+        } else if (model.micNote != null) {
             message(model.micNote, 0, null);
         } else if (model.failure != null && engine == null) {
             message(getString(R.string.alerts_failed, model.failure), 0, null);
@@ -287,24 +298,6 @@ public class AlertsFragment extends Fragment implements SoundAlertEngine.Listene
 
     private static String formatTime(long millis) {
         return new SimpleDateFormat("HH:mm:ss.SSS", Locale.getDefault()).format(new Date(millis));
-    }
-
-    @AttrRes
-    private static int rowAttr(AlertCategory category) {
-        switch (category) {
-            case EMERGENCY: return R.attr.agapEmergencyRow;
-            case TRAFFIC: return R.attr.agapTrafficRow;
-            default: return R.attr.agapHouseholdRow;
-        }
-    }
-
-    @AttrRes
-    private static int inkAttr(AlertCategory category) {
-        switch (category) {
-            case EMERGENCY: return R.attr.agapEmergencyInk;
-            case TRAFFIC: return R.attr.agapTrafficInk;
-            default: return R.attr.agapHouseholdInk;
-        }
     }
 
     private int themeColor(@AttrRes int attr) {

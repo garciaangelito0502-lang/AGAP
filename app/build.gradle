@@ -11,8 +11,18 @@ android {
         applicationId = "ph.agap.app"
         minSdk = 29
         targetSdk = 36
-        versionCode = 4
-        versionName = "0.4.0"
+        versionCode = 5
+        versionName = "0.5.0"
+
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        // Room writes the Event History schema to app/schemas, kept in git, so later changes to
+        // the database can be checked against it.
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments += ["room.schemaLocation": "$projectDir/schemas".toString()]
+            }
+        }
 
         // MediaPipe's native libraries are 22-38 MB per processor type, so only phone processors
         // (64- and 32-bit ARM) are packed; the x86_64 emulator is not needed now (D-017).
@@ -62,9 +72,16 @@ dependencies {
     implementation libs.material
     implementation libs.mediapipe.tasks.audio
     implementation libs.vosk.android
+    implementation libs.room.runtime
+    annotationProcessor libs.room.compiler
+    implementation libs.androidx.recyclerview
 
     testImplementation libs.junit
     testImplementation libs.json
+
+    androidTestImplementation libs.junit
+    androidTestImplementation libs.androidx.test.runner
+    androidTestImplementation libs.androidx.test.ext.junit
 }
 
 // ---- Vosk speech models bundled in the APK (fetched, not committed) ----

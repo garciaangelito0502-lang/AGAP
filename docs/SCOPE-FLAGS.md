@@ -5,4 +5,4 @@ the client's written approval and is billable extra work (contract section 3).
 
 | Date | Flag | Reason it came up | Status |
 |---|---|---|---|
-| | None yet | | |
+| 2026-11-07 | Export the Event History (for example a CSV file) | The group reads each alert's times from the detail view; with many trials an export would save copying. The brief says no export unless asked. Not built. | Open, needs the client's request |

@@ -86,11 +86,82 @@
     <string name="alerts_mic_blocked">Microphone access is off for AGAP, so Sound Alerts cannot start. Turn it on in the phone\'s settings: Permissions, then Microphone.</string>
     <string name="alerts_failed">Sound Alerts stopped: %1$s. Tap Start to try again.</string>
 
+    <string name="alerts_demo_note">Demonstration Mode is on, so the microphone stays off and Sound Alerts cannot start. Show sample alerts from the Demonstration screen.</string>
+    <string name="alerts_demo_open">Open Demonstration</string>
+
+    <!-- Full-screen alert -->
+    <string name="alert_confidence">Confidence %1$d%%</string>
+    <string name="alert_detected">Detected</string>
+    <string name="alert_vibration">Vibration</string>
+    <string name="alert_vibration_off">Off</string>
+    <string name="alert_dismiss">Dismiss</string>
+    <string name="alert_footer_saved">Saved to Event History</string>
+    <string name="alert_footer_demo">Demonstration: not saved</string>
+    <plurals name="alert_more">
+        <item quantity="one">%1$d alert while this screen was open. It is in Event History.</item>
+        <item quantity="other">%1$d alerts while this screen was open. All are in Event History.</item>
+    </plurals>
+    <plurals name="alert_more_demo">
+        <item quantity="one">%1$d sample alert while this screen was open.</item>
+        <item quantity="other">%1$d sample alerts while this screen was open.</item>
+    </plurals>
+
+    <!-- Vibration patterns (same patterns on the watch, Phase 7) -->
+    <string name="vibration_emergency">Emergency vibration: long, long, long. Repeats until you dismiss the alert, for up to one minute.</string>
+    <string name="vibration_traffic">Traffic vibration: short-short, pause. Three times.</string>
+    <string name="vibration_household">Household/Entry vibration: long-short, pause. Twice.</string>
+
+    <!-- Event History -->
+    <string name="history_clear">Clear history</string>
+    <string name="history_empty_title">No alerts yet</string>
+    <string name="history_empty_body">Every alert from Sound Alerts is saved here, with the time the sound was detected and the time the alert was shown. Sample alerts from Demonstration Mode are not saved.</string>
+    <plurals name="history_hint">
+        <item quantity="one">%1$d alert, newest first. Tap an alert to see its exact times.</item>
+        <item quantity="other">%1$d alerts, newest first. Tap an alert to see its exact times.</item>
+    </plurals>
+    <string name="history_today">Today, %1$s</string>
+    <string name="history_yesterday">Yesterday, %1$s</string>
+    <string name="history_row_details">%1$s · %2$d%%</string>
+    <string name="history_row_description">%1$s, %2$s, confidence %3$d%%, at %4$s. Opens details.</string>
+    <string name="history_clear_title">Clear Event History?</string>
+    <plurals name="history_clear_message">
+        <item quantity="one">This deletes %1$d alert from this phone. It cannot be undone. Copy down any results you need first.</item>
+        <item quantity="other">This deletes all %1$d alerts from this phone. It cannot be undone. Copy down any results you need first.</item>
+    </plurals>
+    <string name="history_clear_cancel">Cancel</string>
+    <string name="history_clear_confirm">Delete all</string>
+    <string name="history_already_empty">Event History is already empty.</string>
+
+    <!-- Alert details -->
+    <string name="detail_title">Alert details</string>
+    <string name="detail_date">Date</string>
+    <string name="detail_confidence">Confidence</string>
+    <string name="detail_detected">Sound detected</string>
+    <string name="detail_shown">Alert shown</string>
+    <string name="detail_response">Response time</string>
+    <string name="detail_response_ms">%1$d ms</string>
+    <string name="detail_heard_as">Heard as (YAMNet)</string>
+    <string name="detail_threshold">Alert threshold</string>
+    <string name="detail_percent">%1$d%%</string>
+    <string name="detail_note">Both times come from the phone\'s clock, to the millisecond. Response time = alert shown minus sound detected.</string>
+
+    <!-- Demonstration Mode -->
+    <string name="demo_banner_title">Demonstration Mode</string>
+    <string name="demo_banner_detail">Sample alerts only · microphone off · not saved</string>
+    <string name="demo_intro">Demonstration Mode is a backup for presentations, for when live detection is not reliable in the room.\n\nWhile it is on, a striped banner shows on every screen, the microphone stays off, Live Captions plays sample sentences, and you can show any of the 13 alerts by hand. Sample alerts look and vibrate like real ones but are never saved to Event History.\n\nIt turns off when you tap Exit, close AGAP, or restart the phone. Do not use it during tests.</string>
+    <string name="demo_turn_on">Turn on Demonstration Mode</string>
+    <string name="demo_captions_title">Sample captions</string>
+    <string name="demo_captions_body">Opens Live Captions. Choose English or Filipino, then tap Start.</string>
+    <string name="demo_alerts_heading">Show a sample alert</string>
+    <string name="demo_alerts_note">Sample alerts use the same screen and vibration as real alerts. They are not saved.</string>
+    <string name="demo_exit">Exit Demonstration Mode</string>
+    <string name="demo_chip_description">Show a sample %1$s alert, %2$s</string>
+    <string name="captions_status_sample">Sample captions · %1$s</string>
+    <string name="captions_demo_note">Demonstration Mode is on: Start plays sample sentences in the chosen language. The microphone stays off.</string>
+
     <!-- Screens not built yet -->
-    <string name="placeholder_history">Every alert will be listed here with its date and time. This screen is not built yet.</string>
     <string name="placeholder_categories">The 13 sounds AGAP detects, in three groups: Emergency, Traffic, and Household/Entry. This screen is not built yet.</string>
     <string name="placeholder_vibration">The vibration pattern used for each group of sounds. This screen is not built yet.</string>
-    <string name="placeholder_demo">Sample captions and alerts for presentations, without using the microphone. Demonstration alerts are not saved. This screen is not built yet.</string>
 
     <!-- Settings -->
     <string name="settings_section_display">Display</string>

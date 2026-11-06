@@ -5,6 +5,9 @@
     <!-- Live Captions and Sound Alerts listen only while their screen is open (contract 1.10). -->
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
 
+    <!-- One vibration pattern per alert category (contract 1.5). -->
+    <uses-permission android:name="android.permission.VIBRATE" />
+
     <!-- MediaPipe always sets up Google's usage-statistics transport, whose library asks for network
          access. AGAP removes it, so nothing can leave the phone (contract 1.2, D-016). -->
     <uses-permission
@@ -59,6 +62,11 @@
         <activity
             android:name=".ui.info.DemoModeActivity"
             android:label="@string/demo_title"
+            android:parentActivityName=".ui.MainActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.history.AlertDetailActivity"
+            android:label="@string/detail_title"
             android:parentActivityName=".ui.MainActivity"
             android:screenOrientation="portrait" />
         <activity

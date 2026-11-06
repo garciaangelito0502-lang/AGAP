@@ -6,6 +6,10 @@ junit = "4.13.2"
 mediapipe = "1.2.2"
 vosk = "0.3.75"
 json = "20260814"
+room = "2.8.5"
+recyclerview = "1.4.0"
+androidxTestRunner = "1.7.0"
+androidxTestExtJunit = "1.3.0"
 
 [libraries]
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
@@ -15,6 +19,11 @@ mediapipe-tasks-audio = { group = "com.google.mediapipe", name = "tasks-audio", 
 vosk-android = { group = "com.alphacephei", name = "vosk-android", version.ref = "vosk" }
 # Real org.json for JVM unit tests (Android's copy is only a stub there).
 json = { group = "org.json", name = "json", version.ref = "json" }
+room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "room" }
+room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
+androidx-recyclerview = { group = "androidx.recyclerview", name = "recyclerview", version.ref = "recyclerview" }
+androidx-test-runner = { group = "androidx.test", name = "runner", version.ref = "androidxTestRunner" }
+androidx-test-ext-junit = { group = "androidx.test.ext", name = "junit", version.ref = "androidxTestExtJunit" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

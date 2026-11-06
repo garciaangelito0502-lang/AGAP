@@ -51,6 +51,20 @@
         <item name="materialCardViewStyle">@style/Widget.AGAP.Card</item>
     </style>
 
+    <!-- Full-screen alert over the app. The same strong category colours in both display modes
+         (design note), so it does not follow the high-contrast theme. No window animation: the
+         alert appears at once, and nothing slides or flashes. -->
+    <style name="Theme.AGAP.AlertOverlay" parent="Theme.Material3.Light.NoActionBar">
+        <item name="android:windowIsFloating">false</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:backgroundDimEnabled">false</item>
+        <item name="android:windowAnimationStyle">@null</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+        <item name="materialButtonStyle">@style/Widget.AGAP.Button</item>
+    </style>
+
     <!-- High-contrast theme: black background, white text. Purple appears only as a filled
          shape behind white text or icons (buttons, the selected tab, the Home icon circles). -->
     <style name="Theme.AGAP.HighContrast" parent="Theme.Material3.Dark.NoActionBar">

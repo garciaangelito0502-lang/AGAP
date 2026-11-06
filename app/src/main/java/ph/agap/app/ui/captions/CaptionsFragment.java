@@ -38,12 +38,14 @@ import ph.agap.app.R;
 import ph.agap.app.captions.CaptionEngine;
 import ph.agap.app.captions.CaptionListener;
 import ph.agap.app.captions.CaptionRelay;
+import ph.agap.app.captions.DemoCaptionEngine;
 import ph.agap.app.captions.GoogleOnDeviceEngine;
 import ph.agap.app.captions.GoogleOnDeviceSupport;
 import ph.agap.app.captions.Transcript;
 import ph.agap.app.captions.VoskCaptionEngine;
 import ph.agap.app.captions.VoskModelManager;
 import ph.agap.app.captions.VoskModelSpec;
+import ph.agap.app.demo.DemoMode;
 import ph.agap.app.mic.MicOwner;
 import ph.agap.app.ui.captions.CaptionsViewModel.Language;
 
@@ -263,6 +265,8 @@ public class CaptionsFragment extends Fragment implements CaptionListener, MicOw
     }
 
     private boolean canStart() {
+        // Demonstration Mode plays a sample script: no microphone, permission or model needed.
+        if (DemoMode.isOn()) return true;
         if (usesVosk()) {
             return hasMic() && voskManager().state() == VoskModelManager.State.INSTALLED;
         }
@@ -274,14 +278,23 @@ public class CaptionsFragment extends Fragment implements CaptionListener, MicOw
 
     private void startListening() {
         if (engine != null || !canStart()) return;
+        boolean demo = DemoMode.isOn();
         // Google's English engine is only possible on Android 13+, but lint cannot see canStart()'s check.
-        if (!usesVosk() && Build.VERSION.SDK_INT < 33) return;
+        if (!demo && !usesVosk() && Build.VERSION.SDK_INT < 33) return;
         // A new session starts with an empty page.
         model.transcript.clear();
         model.lastFailure = null;
         heardReady = false;
         // Two separate engines, never mixed in one session (contract 1.3).
-        if (usesVosk()) {
+        if (demo) {
+            // Sample captions only; the microphone is never opened (contract 1.9).
+            engine = new DemoCaptionEngine(isFilipino());
+            model.micNote = null;
+            engine.start(this);
+            renderTranscript();
+            refresh();
+            return;
+        } else if (usesVosk()) {
             VoskModelManager vosk = voskManager();
             engine = new VoskCaptionEngine(vosk.modelDir(), vosk.spec().languageTag);
         } else {
@@ -425,8 +438,9 @@ public class CaptionsFragment extends Fragment implements CaptionListener, MicOw
 
         statusDot.setVisibility(listening ? View.VISIBLE : View.GONE);
         if (listening) {
-            statusText.setText(getString(heardReady ? R.string.captions_status_listening
-                                                    : R.string.captions_status_starting, languageName()));
+            int status = DemoMode.isOn() ? R.string.captions_status_sample
+                    : heardReady ? R.string.captions_status_listening : R.string.captions_status_starting;
+            statusText.setText(getString(status, languageName()));
             statusText.setTextColor(themeColor(R.attr.agapAccent));
             if (!pulse.isStarted()) pulse.start();
         } else {
@@ -444,7 +458,9 @@ public class CaptionsFragment extends Fragment implements CaptionListener, MicOw
     }
 
     private void showMessage() {
-        if (model.micNote != null) {
+        if (DemoMode.isOn()) {
+            if (engine == null) message(getString(R.string.captions_demo_note)); else hideMessage();
+        } else if (model.micNote != null) {
             message(model.micNote);
         } else if (engine != null) {
             if (usesVosk() && !heardReady) {

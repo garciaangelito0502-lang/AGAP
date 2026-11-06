@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Emergency badge: an octagon, like a stop sign. The shape is a cue besides colour (design note). Tinted in code. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="96dp"
+    android:height="96dp"
+    android:viewportWidth="100"
+    android:viewportHeight="100">
+    <path
+        android:fillColor="@android:color/white"
+        android:pathData="M29.3,0L70.7,0L100,29.3L100,70.7L70.7,100L29.3,100L0,70.7L0,29.3Z" />
+</vector>

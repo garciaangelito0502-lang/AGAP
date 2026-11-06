@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Demonstration Mode (contract 1.9). Off: what it is, and a button to turn it on. On: sample
+     captions, the 13 sample alerts, and Exit. The striped banner comes with the top bar. -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <include layout="@layout/top_bar" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="@dimen/screen_padding">
+
+            <!-- Off -->
+            <LinearLayout
+                android:id="@+id/demo_off"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/demo_intro"
+                    android:textAppearance="@style/TextAppearance.AGAP.Body" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/demo_turn_on"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="24dp"
+                    android:minHeight="64dp"
+                    android:text="@string/demo_turn_on"
+                    app:icon="@drawable/ic_play" />
+            </LinearLayout>
+
+            <!-- On -->
+            <LinearLayout
+                android:id="@+id/demo_on"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <LinearLayout
+                        android:id="@+id/demo_captions"
+                        style="@style/Widget.AGAP.Row"
+                        android:paddingHorizontal="16dp">
+
+                        <FrameLayout
+                            android:layout_width="56dp"
+                            android:layout_height="56dp"
+                            android:layout_marginEnd="16dp"
+                            android:background="@drawable/bg_icon_circle">
+
+                            <ImageView
+                                android:layout_width="28dp"
+                                android:layout_height="28dp"
+                                android:layout_gravity="center"
+                                android:importantForAccessibility="no"
+                                android:src="@drawable/ic_captions"
+                                app:tint="?attr/agapOnIconCircle" />
+                        </FrameLayout>
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical"
+                            android:paddingVertical="14dp">
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="@string/demo_captions_title"
+                                android:textAppearance="@style/TextAppearance.AGAP.Title" />
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="@string/demo_captions_body"
+                                android:textAppearance="@style/TextAppearance.AGAP.BodySecondary" />
+                        </LinearLayout>
+
+                        <ImageView
+                            style="@style/Widget.AGAP.Chevron"
+                            android:importantForAccessibility="no" />
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="24dp"
+                    android:accessibilityHeading="true"
+                    android:text="@string/demo_alerts_heading"
+                    android:textAppearance="@style/TextAppearance.AGAP.SectionLabel" />
+
+                <com.google.android.material.chip.ChipGroup
+                    android:id="@+id/demo_chips"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    app:chipSpacingVertical="4dp" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:background="@drawable/bg_note"
+                    android:padding="16dp"
+                    android:text="@string/demo_alerts_note"
+                    android:textAppearance="@style/TextAppearance.AGAP.BodySecondary" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/demo_exit"
+                    style="@style/Widget.AGAP.Button.Outlined"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="24dp"
+                    android:minHeight="64dp"
+                    android:text="@string/demo_exit" />
+            </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

@@ -8,6 +8,8 @@
     android:background="?attr/agapTopBar"
     android:orientation="vertical">
 
+    <include layout="@layout/demo_banner" />
+
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/top_bar"
         android:layout_width="match_parent"
