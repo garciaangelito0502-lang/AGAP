@@ -52,7 +52,7 @@ and the screen stays on only while listening. The big alert screen, vibration an
   through the TV's speakers: 140 trials (6 alert clips and 4 no-alert clips, 3 levels, 5 repetitions), the same
   clips through the model on the PC without speakers, 120 more trials comparing four microphone sources, and one
   real knock by the owner. Full numbers and method: `docs/DETECTION-CHECK.md`. In short: car horn fired Vehicle Horn
-  (5 of 21 at 0.50-0.85); the smoke alarm fired Fire Alarm (0.89-0.97), not Smoke Alarm; knock and doorbell never
+  (5 of 21 at 0.50-0.85); the smoke alarm fired Fire Alarm (14 of 15, alerts at 0.50-0.89), not Smoke Alarm; knock and doorbell never
   reached 50%; speech, music and silence raised nothing (59 of 59); plain beeps raised Phone Ringing.
 - Microphone handover on my phone, read from Android's recording log (`dumpsys audio`): Sound Alerts recorded
   18:03:42-18:04:12 and stopped when Captions opened; Google's speech service (captions) recorded 18:04:22-18:04:26;

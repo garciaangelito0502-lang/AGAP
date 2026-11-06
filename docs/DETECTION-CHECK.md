@@ -72,6 +72,10 @@ the trial (range over the 5 trials). "Strongest Annex A alert" is the alert that
 | beeps | high / medium / low | 0 / 0 / 0 | 5 / 5 / 5 | Phone Ringing (16), Appliance Timer (9) |
 | silence | - | 5 | 0 | none |
 
+An alert shows the score of the window that crossed the threshold, so its confidence can be lower than the
+peak: the smoke alarm's 14 Fire Alarm alerts showed 0.50-0.89 while the peak was 0.89-0.97. The fire-alarm clip
+raised 1-4 alerts per trial (two or more in 12 of 15).
+
 Totals: 90 trials with an Annex A sound: 3 TP, 87 FN; 44 of the 90 also raised a wrong alert. 50 trials
 without one: 35 TN, 15 FP (all from the beeps clip). In 7 trials YAMNet's loudest class was Speech (0.67-0.99)
 during a clip that has no speech in it (fire-alarm, smoke-alarm, doorbell): people were talking in the room during

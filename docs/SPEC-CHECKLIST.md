@@ -31,7 +31,7 @@ development Xiaomi 13 on Android 16 (D-005, DEVICE-NOTES.md).
 
 | # | Category | Alert | YAMNet classes | Phase | Built | Verified on | Notes |
 |---|---|---|---|---|---|---|---|
-| A1 | Emergency | Fire Alarm | Fire alarm | 3 | Yes | my phone (fired for the smoke alarm clip); Infinix: pending: client checks it | Formal test sound. Fired at 0.89-0.97 for the smoke alarm clip (K-010). The three-beep NFPA fire alarm clip never scored as Fire alarm, even from the file (K-011) |
+| A1 | Emergency | Fire Alarm | Fire alarm | 3 | Yes | my phone (fired for the smoke alarm clip); Infinix: pending: client checks it | Formal test sound. Fired for the smoke alarm clip in 14 of 15 trials (alert at 0.50-0.89, peak score 0.89-0.97) (K-010). The three-beep NFPA fire alarm clip never scored as Fire alarm, even from the file (K-011) |
 | A2 | Emergency | Smoke Alarm | Smoke detector, smoke alarm | 3 | Yes | my phone (did not fire); Infinix: pending: client checks it | Formal test sound. Never fired: YAMNet names the test smoke alarm "Fire alarm"; Smoke detector at most 0.33 (K-010) |
 | A3 | Emergency | Emergency Vehicle Siren | Emergency vehicle; Police car (siren); Ambulance (siren); Fire engine, fire truck (siren) | 3 | Yes | not verified on purpose | Fired as a wrong alert during the smoke alarm clip (Police car (siren)). No siren tried |
 | A4 | Emergency | Warning Siren | Civil defense siren; Siren | 3 | Yes | not verified on purpose | Fired as a wrong alert during the smoke alarm clip (Siren). No siren tried |
