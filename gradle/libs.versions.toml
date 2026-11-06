@@ -4,12 +4,17 @@ appcompat = "1.8.0"
 material = "1.14.0"
 junit = "4.13.2"
 mediapipe = "1.2.2"
+vosk = "0.3.75"
+json = "20260814"
 
 [libraries]
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 mediapipe-tasks-audio = { group = "com.google.mediapipe", name = "tasks-audio", version.ref = "mediapipe" }
+vosk-android = { group = "com.alphacephei", name = "vosk-android", version.ref = "vosk" }
+# Real org.json for JVM unit tests (Android's copy is only a stub there).
+json = { group = "org.json", name = "json", version.ref = "json" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

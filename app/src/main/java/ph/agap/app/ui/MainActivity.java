@@ -12,6 +12,7 @@ import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import ph.agap.app.R;
+import ph.agap.app.captions.VoskModelManager;
 import ph.agap.app.ui.alerts.AlertsFragment;
 import ph.agap.app.ui.captions.CaptionsFragment;
 import ph.agap.app.ui.home.HomeFragment;
@@ -72,6 +73,15 @@ public class MainActivity extends BaseActivity {
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putInt(STATE_TAB, currentTab);
+    }
+
+    @Override
+    public void onTrimMemory(int level) {
+        super.onTrimMemory(level);
+        // Once AGAP is no longer on screen, give back the Filipino model's memory (about 1 GB).
+        if (level >= TRIM_MEMORY_UI_HIDDEN) {
+            VoskModelManager.releaseMemory();
+        }
     }
 
     /** Switches to a tab as if its button had been pressed (used by the Home cards). */

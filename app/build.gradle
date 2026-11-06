@@ -11,8 +11,8 @@ android {
         applicationId = "ph.agap.app"
         minSdk = 29
         targetSdk = 36
-        versionCode = 3
-        versionName = "0.3.0"
+        versionCode = 4
+        versionName = "0.4.0"
 
         // MediaPipe's native libraries are 22-38 MB per processor type, so only phone processors
         // (64- and 32-bit ARM) are packed; the x86_64 emulator is not needed now (D-017).
@@ -37,7 +37,16 @@ android {
 
     androidResources {
         // The YAMNet model is read straight from the APK, so it must not be compressed.
-        noCompress += "tflite"
+        // The Filipino Vosk model is already a zip: compressing it again gains nothing, and stored
+        // as it is the app can read its exact size for the progress bar.
+        noCompress += ["tflite", "zip"]
+    }
+
+    sourceSets {
+        main {
+            // The Vosk models (Filipino 329 MB, English 41 MB) are fetched by Gradle, not kept in git (fetchVoskModels).
+            assets.srcDir "src/main/assets-vosk"
+        }
     }
 
     compileOptions {
@@ -52,6 +61,55 @@ dependencies {
     implementation libs.androidx.appcompat
     implementation libs.material
     implementation libs.mediapipe.tasks.audio
+    implementation libs.vosk.android
 
     testImplementation libs.junit
+    testImplementation libs.json
+}
+
+// ---- Vosk speech models bundled in the APK (fetched, not committed) ----
+// Filipino: vosk-model-tl-ph-generic-0.6, 329 MB, CC BY-NC-SA 4.0. Far over GitHub's 100 MB file limit.
+// English fallback: vosk-model-small-en-us-0.15, 41 MB, Apache-2.0. Used only where Google's offline
+// English is not available (contract 1.3, D-014).
+// The first build downloads each from Alpha Cephei into src/main/assets-vosk/ and checks its SHA-256;
+// later builds find them there. Needs the internet once, on the build PC only. The app never goes online.
+def voskModels = [
+    "vosk-model-tl-ph-generic-0.6.zip": "0a2e067e716c9a084379f9d2c0d7b4764a035adc9f23a8cdc167bcfbfde51259",
+    "vosk-model-small-en-us-0.15.zip" : "30f26242c4eb449f948e42cb302dd7a686cb29a3423a8367f99ff41780942498",
+]
+
+def fetchVoskModels = tasks.register("fetchVoskModels") {
+    description = "Downloads the bundled Vosk models into the app's assets if they are not there yet."
+    def files = voskModels.keySet().collect { file("src/main/assets-vosk/" + it) }
+    outputs.files(files)
+    onlyIf { files.any { !it.exists() } }
+    doLast {
+        voskModels.each { name, sha256 ->
+            def target = file("src/main/assets-vosk/" + name)
+            if (target.exists()) return
+            target.parentFile.mkdirs()
+            def part = new File(target.path + ".part")
+            def url = "https://alphacephei.com/vosk/models/" + name
+            logger.lifecycle("Downloading ${url} ...")
+            new URL(url).withInputStream { input ->
+                part.withOutputStream { output -> output << input }
+            }
+            def digest = java.security.MessageDigest.getInstance("SHA-256")
+            part.withInputStream { stream ->
+                byte[] buffer = new byte[1 << 16]
+                int n
+                while ((n = stream.read(buffer)) > 0) digest.update(buffer, 0, n)
+            }
+            def actual = digest.digest().encodeHex().toString()
+            if (actual != sha256) {
+                part.delete()
+                throw new GradleException("${name}: checksum mismatch, expected ${sha256}, got ${actual}")
+            }
+            part.renameTo(target)
+        }
+    }
+}
+
+tasks.configureEach { task ->
+    if (task.name ==~ /merge.*Assets/) task.dependsOn(fetchVoskModels)
 }

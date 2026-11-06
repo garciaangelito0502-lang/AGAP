@@ -34,10 +34,21 @@
     <!-- Live Captions -->
     <string name="captions_lang_english">English</string>
     <string name="captions_lang_filipino">Filipino</string>
-    <string name="captions_filipino_later">Filipino comes in the next test build.</string>
-    <string name="captions_status_idle">Not listening · English</string>
-    <string name="captions_status_starting">Starting… · English</string>
-    <string name="captions_status_listening">Listening · English</string>
+    <string name="captions_language_note">One language at a time. Choose it before you tap Start.</string>
+    <string name="captions_status_idle">Not listening · %1$s</string>
+    <string name="captions_status_starting">Starting… · %1$s</string>
+    <string name="captions_status_listening">Listening · %1$s</string>
+    <string name="captions_vosk_setup">%1$s captions need a one-time setup. AGAP unpacks its built-in %1$s speech model on this phone, about %2$s of storage. It can take a few minutes. Keep AGAP open and the screen on until it finishes. After that, %1$s captions work with no internet.</string>
+    <string name="captions_setup_action">Set up now</string>
+    <string name="captions_vosk_unpacking">Setting up %1$s captions… %2$d%%. Keep AGAP open on this screen.</string>
+    <string name="captions_vosk_low_storage">Not enough free storage to set up %1$s captions. They need about %2$s free, and this phone has %3$s. Free some space (delete photos, videos or apps), then tap Check again.</string>
+    <string name="captions_vosk_failed">Setting up %1$s captions did not finish. Nothing was kept. Tap Set up now to try again.</string>
+    <string name="captions_vosk_loading">Loading the %1$s speech model. The first time takes a few seconds.</string>
+    <string name="captions_vosk_model_failed">The %1$s speech model would not load. Close other apps and tap Start again. If it keeps happening, set it up again.</string>
+    <string name="captions_setup_again_action">Set up again</string>
+    <string name="captions_en_fallback">Google\'s offline English recognition is not available on this phone, so AGAP uses its own built-in English model instead. It is a smaller model and may make more mistakes.</string>
+    <string name="captions_storage_gb">%1$.1f GB</string>
+    <string name="captions_storage_mb">%1$d MB</string>
     <string name="captions_empty">Tap Start and speak. The words appear here.</string>
     <string name="captions_alerts_paused">Sound Alerts are paused while captions are on.</string>
     <string name="captions_start">Start</string>
@@ -111,6 +122,6 @@
     <!-- About -->
     <string name="about_text">AGAP (Advancing Greater Access to Communication for Persons with Hearing Impairments) is a research prototype made for a student study at Pasig City Science High School.\n\nIt is a supplementary tool. It is not a medical device, and it is not the only way to notice emergencies. Keep using other ways to notice alarms and warnings.\n\nAGAP works without the internet. It does not record or save audio, has no user accounts, and keeps its alert history on this phone.</string>
     <string name="about_credits_title">Credits and licences</string>
-    <string name="about_credits">YAMNet sound model, Google: Apache License 2.0.\nMediaPipe Audio Classifier, Google: Apache License 2.0.\nVosk speech recognition and the Vosk Filipino model (vosk-model-tl-ph-generic): CC BY-NC-SA 4.0, non-commercial use only.\nAndroidX and Material Components for Android, Google: Apache License 2.0.\nMaterial icons, Google: Apache License 2.0.</string>
+    <string name="about_credits">YAMNet sound model, Google: Apache License 2.0.\nMediaPipe Audio Classifier, Google: Apache License 2.0.\nVosk speech recognition library, Alpha Cephei: Apache License 2.0.\nVosk Filipino speech model (vosk-model-tl-ph-generic-0.6, by Alpha Cephei and contributors): CC BY-NC-SA 4.0. It may be used for non-commercial purposes only.\nVosk small English speech model (vosk-model-small-en-us-0.15, Alpha Cephei), used only on phones without Google\'s offline English: Apache License 2.0.\nAndroidX and Material Components for Android, Google: Apache License 2.0.\nMaterial icons, Google: Apache License 2.0.</string>
     <string name="about_version">Version %1$s</string>
 </resources>

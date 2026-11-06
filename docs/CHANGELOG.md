@@ -2,6 +2,11 @@
 
 One line per notable change, newest first.
 
+- 2026-11-07 Phase 4: phone app 0.4.0 (debug, 431 MB): Filipino Live Captions with Vosk `vosk-model-tl-ph-generic-0.6` bundled in the APK; language picker enabled; one-time unpack to the phone's storage with a progress bar, a free-storage check and a clean restart after an interrupted unpack.
+- 2026-11-07 Phase 4: Vosk English fallback (`vosk-model-small-en-us-0.15`) for phones without Google offline English (closes K-008); the screen says when it is in use.
+- 2026-11-07 Phase 4: `VoskCaptionEngine` feeds the microphone to Vosk itself instead of Vosk's `SpeechService` (D-025); punctuation-only words dropped from Vosk results (D-026); only one Vosk model kept in memory, with a fix for a cross-language race (D-024).
+- 2026-11-07 Phase 4: `fetchVoskModels` Gradle task downloads and checks both models on the first build (they are not in git, D-022); About credits name the Vosk library and both models; 21 new JVM unit tests (66 in total).
+- 2026-11-07 Phase 4: debug-only switches `force_vosk_english` and `fake_free_mb` (D-027); test-only `org.json` 20260814.
 - 2026-11-06 M1: test build 0.1 (`agap-phone-0.1-test.apk`, app 0.3.0 debug) and `docs/CLIENT-TEST-CHECKLIST-0.1.md`.
 - 2026-11-06 Phase 3: detection check in airplane mode (`docs/DETECTION-CHECK.md`): 140 trials from the TV speakers, the same clips through the model without speakers, 4 microphone sources compared, one real knock. No threshold or class changed (D-021); findings K-010 to K-014.
 - 2026-11-06 Phase 3: debug builds can take a test microphone source from `agap_debug` preferences (D-020); the log names the source in use.

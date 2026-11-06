@@ -21,6 +21,9 @@ captures/
 *.ap_
 output-metadata.json
 
+# Vosk speech models (Filipino 329 MB, English 41 MB), fetched by `fetchVoskModels` in app/build.gradle (over GitHub's file limit)
+app/src/main/assets-vosk/
+
 # Signing: the release keystore and its passwords live outside this repo
 *.jks
 *.keystore

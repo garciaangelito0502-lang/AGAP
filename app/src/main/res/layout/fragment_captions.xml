@@ -29,7 +29,6 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:enabled="false"
             android:text="@string/captions_lang_filipino" />
     </com.google.android.material.button.MaterialButtonToggleGroup>
 
@@ -38,7 +37,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
-        android:text="@string/captions_filipino_later"
+        android:text="@string/captions_language_note"
         android:textAppearance="@style/TextAppearance.AGAP.BodySecondary" />
 
     <LinearLayout
@@ -85,6 +84,19 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textAppearance="@style/TextAppearance.AGAP.Body" />
+
+            <!-- Unpack progress for the Filipino model; the percentage is also in the text above. -->
+            <com.google.android.material.progressindicator.LinearProgressIndicator
+                android:id="@+id/message_progress"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:importantForAccessibility="no"
+                android:max="100"
+                android:visibility="gone"
+                app:indicatorColor="?attr/agapAccent"
+                app:trackColor="?attr/agapOutline"
+                app:trackThickness="10dp" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/message_action"

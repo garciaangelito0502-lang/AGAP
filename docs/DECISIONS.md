@@ -253,3 +253,80 @@ app and its Event History stay behind as a separate app.
   to these clips could make the group's results worse. Options are listed in DETECTION-CHECK.md and will be
   decided with the group's Infinix results (M1 feedback by 2026-11-11), under contract 1.12. Any change will be
   recorded here with the reason.
+
+## D-022 Vosk models bundled in the APK, fetched by Gradle, not committed (Phase 4, 2026-11-07)
+
+- `vosk-model-tl-ph-generic-0.6` (Alpha Cephei model list, medium wideband Filipino, CC BY-NC-SA 4.0) is a 329 MB
+  zip (329,169,068 bytes) and 776 MB unpacked (`HCLG.fst` alone is 702 MB). Bundled in the APK as the contract
+  says (1.1). The owner chose to bundle it (2026-11-07), over a side-loaded model file, after being given the
+  sizes and the options.
+- The English fallback model (D-014) is bundled the same way: `vosk-model-small-en-us-0.15`, 41 MB zip
+  (41,205,931 bytes), 68 MB unpacked, Apache-2.0. With both models the debug APK is 431 MB (430,977,753 bytes;
+  it was about 52 MB in Phase 3). It installed over USB in 16 s on the Xiaomi 13.
+- The Filipino zip is over GitHub's 100 MB file limit, so neither model is committed. `fetchVoskModels` in
+  `app/build.gradle` downloads them into `app/src/main/assets-vosk/` (git-ignored) before any asset-merge task and
+  checks each SHA-256 (Filipino `0a2e067e...1259`, English `30f26242...2498`, computed on first download; Alpha
+  Cephei publishes no checksums). The first build needs the internet once; the app never does.
+- The zip is stored uncompressed in the APK (`noCompress "zip"`): it is already compressed, and the app reads its
+  exact length to draw the progress bar.
+
+## D-023 Unpack once, to internal storage, with a marker file (Phase 4)
+
+- On first use of Filipino (or of the English fallback) the zip is streamed from the APK into `files/vosk/<version>.tmp`, then renamed to
+  `files/vosk/<version>` once every file is written and a marker file holds the model version. A half-done unpack
+  (phone full, app killed) is never taken for a model; the `.tmp` folder is deleted on the next try. Zip entries
+  that would leave the folder are refused. Runs on its own thread; progress shows as a bar and a percentage;
+  the screen stays on while it runs. Never on later launches. On the Xiaomi 13 the Filipino model unpacked in
+  5.8-5.9 s and the English one in 0.7 s; the Infinix's storage is slower, so expect longer there.
+- Filipino needs about 1 GB free (the model is 776 MB unpacked; English needs 300 MB): below that the screen says how much is needed and how
+  much the phone has, and offers Check again. A write that fails with "no space left" is shown the same way.
+- Setup is a button the user taps (not automatic on selecting Filipino), so a few minutes of heavy storage use
+  never starts by surprise.
+
+## D-024 Vosk engine: library 0.3.75, model kept in memory between sessions (Phase 4)
+
+- `com.alphacephei:vosk-android:0.3.75` (latest on Maven Central, 2025-12-08; Apache-2.0) with JNA 5.18.1.
+  Native libraries only for arm64-v8a and armeabi-v7a (the existing ABI filter, D-017).
+- `VoskCaptionEngine` sits behind the Phase 2 `CaptionEngine` interface and feeds the microphone to Vosk itself
+  (D-025). Vosk listens continuously: partial words as they form, a final result at each pause,
+  so there are no restarts. Filipino and English remain two separate engines; the language is chosen before Start
+  and the buttons are disabled during a session.
+- With the Filipino model loaded the app uses about 980 MB (PSS 977-993 MB, 875 MB of it native) on the Xiaomi
+  13; the English fallback about 270 MB. Loading took 0.70-0.86 s (Filipino) and 0.42-0.51 s (English) there. The
+  model is kept between sessions and freed when the user picks English or the app leaves the screen
+  (`onTrimMemory`). Only one model is kept; `VoskModelHolder` hands out an unkept model if the other is still in
+  use, so a session always gets the language it asked for (a race found in review: a slow Filipino load could
+  hand its model to an English start).
+- Vosk's native log level is set to warnings so no recognised text can reach logcat (contract 1.2).
+- The Vosk English fallback (D-014) is built: English uses it on Android below 13, with no Google speech service,
+  or when Google does not support English offline (not when the pack only needs downloading). The screen says so.
+
+## D-025 AGAP's own capture loop instead of Vosk's `SpeechService` (Phase 4)
+
+- `VoskCaptionEngine` runs one worker thread per session: it loads the model, opens `AudioRecord`
+  (`VOICE_RECOGNITION`, 16 kHz, 16-bit, 2 s buffer), feeds Vosk 0.1 s at a time, and frees the microphone,
+  recognizer and model when it ends. Each session checks its own number, so a quick Stop and Start cannot leave an
+  old worker running.
+- Why not `SpeechService`: it throws an uncaught exception on a microphone read error (an app crash; here the
+  session ends with the usual message), posts every partial result to the screen 5 times a second (here only
+  changes), and gives `AudioRecord` only 0.2 s of buffer (here 2 s, room for a slower phone while Vosk finishes a
+  sentence). Recognition is the same: the same 116 s file of 12 Filipino sentences gave 16.5% raw word error with
+  `SpeechService` and 14.8-18.7% with this loop.
+- How this came up, for the record: from 02:41 to 02:51 (phone clock) every Filipino run faded after one or two
+  sentences, down to no words at all, with the microphone open and the processor idle. Per-sentence resets of
+  Vosk's speaker adaptation seemed to fix it, but a check with the old behaviour, and then with `SpeechService`
+  itself, showed every variant working from 02:55 on. Between those runs the owner had moved or adjusted the
+  test setup (speaker and phone). The reset was dropped (it scored worse: 26.4% against 16.5%). Cause of the failures: the test
+  setup, not the app.
+
+## D-026 Words without a letter or digit are dropped from Vosk results (Phase 4)
+
+- The Filipino model's vocabulary holds 44 punctuation-only "words" ("." "--" "'" and others, from its training
+  text). Vosk returned "." once in testing. `VoskJson` drops any word with no letter or digit, so the group's word
+  error counts are not charged for them. Words like "pang-polo", "ika-3" and "'yan" are kept. 2 unit tests.
+
+## D-027 Two more debug-only switches (Phase 4)
+
+- In preferences `agap_debug` (set over adb; release builds ignore both): boolean `force_vosk_english` makes
+  English use the Vosk fallback on a phone that has Google offline English; long `fake_free_mb` stands in for the
+  free storage so the low-storage message can be checked on a phone with plenty of room.

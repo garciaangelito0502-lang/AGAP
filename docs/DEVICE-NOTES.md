@@ -57,3 +57,16 @@ A Wear OS watch is debugged over Wi-Fi (Settings > Developer options > Wireless 
 
 Windows 11 Pro (build 26200), 32 GB RAM with a very small page file, so Gradle and the emulator can run out of
 memory. Prefer a physical phone to the emulator.
+
+## Test audio setup
+
+Sounds and speech are played from the build PC toward the phone; the phone listens through its own microphone.
+
+| Date | Phase | Played through | Notes |
+|---|---|---|---|
+| 2026-11-06 | 3 | TV speakers over HDMI ("Beyond TV") | Detection check (DETECTION-CHECK.md). |
+| 2026-11-07 | 4 | KMS-268Pro Bluetooth speaker (Windows: "Headphones") | The TV was not connected. The laptop's own speakers made no sound although Windows sent them a full-level signal (output meter 0.96), so they were not used. Clips must be 16-bit PCM WAV: Windows' `SoundPlayer` plays 32-bit float files (the FLEURS originals) as noise. |
+
+Filipino speech for Phase 4: 12 sentences from Google's FLEURS dataset (`fil_ph`, dev split, CC BY 4.0), read
+speech with reference transcripts, converted to 16-bit PCM and peak-normalised to -1 dBFS. FLEURS marks every
+speaker in that split as male. Plus the owner reading 6 everyday Filipino and 3 English sentences.

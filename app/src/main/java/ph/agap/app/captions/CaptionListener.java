@@ -10,7 +10,9 @@ public interface CaptionListener {
         /** The offline language pack is missing or was removed. */
         LANGUAGE_PACK,
         /** The recognizer kept failing; restarting did not help. */
-        RECOGNIZER
+        RECOGNIZER,
+        /** The bundled speech model is missing, damaged, or would not load (Filipino). */
+        MODEL
     }
 
     /** The microphone is open and the engine is waiting for speech. */

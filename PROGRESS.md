@@ -1,14 +1,14 @@
 # AGAP progress
 
-Last updated: 2026-11-06 (Phase 3 done and M1 test build ready, ahead of the 2026-11-08 target)
+Last updated: 2026-11-07 (Phase 4 done, ahead of the 2026-11-09 to 11-11 target)
 
 | Phase | Name | Status | Date finished | Build/APK version |
 |---|---|---|---|---|
 | 0 | Environment and plan | Done (development phone Xiaomi 13 on adb since 2026-11-04; no watch) | 2026-11-04 | none (no app code) |
 | 1 | Project skeleton and shell UI | Done (checked on the emulator; Infinix check pending with the client) | 2026-10-27 | 0.1.0 debug (phone and watch) |
-| 2 | Live Captions, English | Done (checked on my phone, online and in airplane mode; Infinix check pending with the client; Vosk English fallback moved to Phase 4) | 2026-11-04 | 0.2.0 debug (phone) |
+| 2 | Live Captions, English | Done (checked on my phone, online and in airplane mode; Infinix check pending with the client; Vosk English fallback done in Phase 4) | 2026-11-04 | 0.2.0 debug (phone) |
 | 3 | Sound Alerts engine | Done (checked on my phone in airplane mode; knock and doorbell scored low, see docs/DETECTION-CHECK.md; Infinix check pending with the client) | 2026-11-06 | 0.3.0 debug (phone); M1 test build `agap-phone-0.1-test.apk` |
-| 4 | Live Captions, Filipino | Not started | | |
+| 4 | Live Captions, Filipino | Done (checked on my phone in airplane mode: 12 recorded Filipino sentences all captioned, the owner's voice 6 of 6; Vosk English fallback built; Infinix check pending with the client) | 2026-11-07 | 0.4.0 debug (phone, 431 MB) |
 | 5 | Alert screen, vibration, Event History, Demonstration Mode | Not started | | |
 | 6 | Remaining screens, settings wiring and accessibility polish | Not started | | |
 | 7 | Wear OS companion | Not started | | |
