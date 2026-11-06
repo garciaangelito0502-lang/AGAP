@@ -56,8 +56,26 @@
     <string name="captions_no_recognizer">This phone has no offline Google speech recognizer for English, so English captions cannot run here.</string>
     <string name="captions_failed">Captions stopped because speech recognition kept failing. Tap Start to try again.</string>
 
+    <!-- One microphone user at a time -->
+    <string name="mic_other_stopped">%1$s was turned off: only one feature can use the microphone at a time.</string>
+    <string name="mic_taken">Stopped because %1$s started: only one feature can use the microphone at a time.</string>
+
+    <!-- Sound Alerts -->
+    <string name="alerts_status_idle">Not listening</string>
+    <string name="alerts_status_starting">Starting…</string>
+    <string name="alerts_status_listening">Listening for 13 sounds</string>
+    <string name="alerts_last_title">Last alert</string>
+    <string name="alerts_none_yet">No alert yet. AGAP listens for 13 sounds in three groups: Emergency, Traffic, and Household/Entry.</string>
+    <string name="alerts_details">%1$s · %2$d%% sure · %3$s</string>
+    <string name="alerts_session_count">Alerts since Start: %1$d</string>
+    <string name="alerts_closest">Testing info: closest Annex A sound now %1$s %2$d%% (%3$s); loudest of all sounds %4$s %5$d%%. Alert at %6$d%% or more.</string>
+    <string name="alerts_closest_none">Testing info: no Annex A sound heard now.</string>
+    <string name="alerts_captions_paused">Live Captions is off while Sound Alerts listens.</string>
+    <string name="alerts_mic_explain">AGAP needs the microphone to hear alarms, sirens, horns, doorbells and the other alert sounds. Listening stays on this phone: nothing is recorded, saved or sent.</string>
+    <string name="alerts_mic_blocked">Microphone access is off for AGAP, so Sound Alerts cannot start. Turn it on in the phone\'s settings: Permissions, then Microphone.</string>
+    <string name="alerts_failed">Sound Alerts stopped: %1$s. Tap Start to try again.</string>
+
     <!-- Screens not built yet -->
-    <string name="placeholder_alerts">Sound Alerts will listen for the 13 sounds and show an alert here. This screen is not built yet.</string>
     <string name="placeholder_history">Every alert will be listed here with its date and time. This screen is not built yet.</string>
     <string name="placeholder_categories">The 13 sounds AGAP detects, in three groups: Emergency, Traffic, and Household/Entry. This screen is not built yet.</string>
     <string name="placeholder_vibration">The vibration pattern used for each group of sounds. This screen is not built yet.</string>

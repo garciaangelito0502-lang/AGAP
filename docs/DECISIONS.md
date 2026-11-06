@@ -183,3 +183,73 @@ app and its Event History stay behind as a separate app.
 - Logs (tag `AGAP/Captions`) hold event names, error codes, word counts and timings, never caption text.
 - No formatting extra is set; the recognizer still writes numbers as digits (K-006).
 - `CaptionRelay` passes the newest caption line to one listener; the watch link registers there in Phase 7.
+
+## D-016 MediaPipe Audio Classifier and its usage statistics (Phase 3, 2026-11-04)
+
+- Library: `com.google.mediapipe:tasks-audio` **1.2.2** (Google Maven, released 2026-11-03; it brings
+  `tasks-core` 1.2.2, Guava, protobuf-javalite, flogger, Kotlin stdlib 1.9 and coroutines; Kotlin only as a
+  library dependency, no Kotlin code in AGAP). Model: MediaPipe's `yamnet.tflite` (float32, 4,126,810 bytes,
+  SHA-256 `4d8b4a53282dc83ef04e3e7dbc4fbc98082e34e44ed798e16c3a0cdd4c584faf`, from
+  `storage.googleapis.com/mediapipe-models/audio_classifier/yamnet/float32/latest/`), bundled in assets and
+  stored uncompressed. Its label list (521 classes) is packed inside the model file.
+- `tasks-core` always creates a usage-statistics logger that sends through Google's `datatransport` library
+  (checked in the bytecode: `TaskRunner` -> `TasksStatsLoggerFactory` -> `TasksStatsProtoLogger` ->
+  `RemoteLoggingClient` -> `TransportRuntime`). Leaving `datatransport` out would crash the classifier.
+- So AGAP keeps the library but removes the `INTERNET` and `ACCESS_NETWORK_STATE` permissions that it
+  asks for (`tools:node="remove"` in the manifest). Checked with `aapt2 dump permissions`: the APK asks only
+  for `RECORD_AUDIO` (and Android's own receiver-protection permission). Without network permission the
+  statistics cannot leave the phone. They hold task names and timings, never audio.
+
+## D-017 APK size: phone processors only, compressed native libraries (Phase 3, 2026-11-04)
+
+- MediaPipe's native libraries are large (in the debug APK: 31 MB arm64-v8a, 22 MB armeabi-v7a, 38 MB
+  x86_64). The first debug APK was 115 MB.
+- `abiFilters` keeps arm64-v8a and armeabi-v7a (the Infinix's processor type is not known yet; one of the two
+  covers every Android 10+ phone). x86_64 (the emulator) is left out; the Xiaomi replaces the emulator.
+- `jniLibs.useLegacyPackaging = true` stores the native libraries compressed: the debug APK is about 52 MB.
+  Android unpacks them once at install, so they take more space on the phone, which is fine at 128 GB.
+
+## D-018 How Sound Alerts listens and decides (Phase 3, 2026-11-04)
+
+- Audio: `AudioRecord`, source `VOICE_RECOGNITION` (the source Android tunes for machine listening, as
+  MediaPipe's own helper uses), 16 kHz mono float, read in half-windows. YAMNet hears 0.975 s (15,600
+  samples); a new window starts every 0.4875 s. Audio stays in memory only. Classifier mode `AUDIO_CLIPS`,
+  `maxResults` 521, because the Annex A classes are rarely in the default top results (seen on the phone:
+  without it, no Annex A score ever came back).
+- Annex A is data: `assets/annex_a.tsv`, one line per YAMNet class, tab-separated because class names contain
+  commas. `AnnexATest` reads the label list out of the bundled model and fails on any name that is not there.
+- `AlertDetector`: per window, each alert scores the highest of its classes. At most one alert fires per
+  window: the strongest at or above the user's threshold (default 50%, not changed). A sound that goes on
+  fires once; the same alert can fire again after 3 s below the threshold, or after 30 s if it never stops.
+  An alert that was also above the threshold but weaker (a siren heard as two alerts) does not fire while that
+  sound goes on. `detectedAtMillis` is the phone's clock right after the window that crossed the threshold.
+- Logs (tag `AGAP/Alerts`): each alert with its score and class, and per window the loudest YAMNet class and
+  the three strongest Annex A alerts, for tuning (contract 1.12). No audio.
+
+## D-019 One microphone user (Phase 3, 2026-11-04)
+
+- `MicOwner` holds which feature listens. Live Captions and Sound Alerts take it before they start and give it
+  back when they stop; taking it stops the other feature, and the screen says which one was stopped.
+- In practice the tabs already make this so: only one tab's screen exists at a time, and each screen stops
+  listening when it leaves the display. `MicOwner` is the guard for any later screen (such as the watch link)
+  that might start listening on its own.
+
+## D-020 Microphone source stays VOICE_RECOGNITION; debug-only override for tests (Phase 3, 2026-11-06)
+
+- Knock and car-horn clips arrived as "Silence" in the detection check. To rule out the phone's own sound
+  processing, the same clips ran with four `AudioRecord` sources on the Xiaomi 13. `UNPROCESSED` (raw) did no
+  better than `VOICE_RECOGNITION` (1 against 2 correct alerts of 24; knock lost in both), so the processing is not
+  the cause; the TV speakers used for playback are. `MIC` and `CAMCORDER` got 0 of 24, but music played in the room
+  during those two runs. Numbers in DETECTION-CHECK.md.
+- `VOICE_RECOGNITION` stays. Debug builds read an optional int `audio_source` from shared preferences
+  `agap_debug` (written over adb with `run-as`), so a source can be tried on a phone without a new build; release
+  builds ignore it. The log line `audio source N, unprocessed supported: ...` shows which source is in use.
+
+## D-021 No threshold or class tuning in Phase 3 (2026-11-06)
+
+- The detection check found low scores for knock and doorbell and YAMNet naming the smoke alarm "Fire alarm"
+  (DETECTION-CHECK.md, K-010 to K-014). The default threshold (50%) and the Annex A classes are unchanged.
+- Reason: the check used the TV's speakers and internet clips, not the group's sounds, phone or set-up. Tuning
+  to these clips could make the group's results worse. Options are listed in DETECTION-CHECK.md and will be
+  decided with the group's Infinix results (M1 feedback by 2026-11-11), under contract 1.12. Any change will be
+  recorded here with the reason.

@@ -1,0 +1,32 @@
+# Annex A of the AGAP contract: the 13 alerts, their category, and the YAMNet classes for each.
+# One line per YAMNet class: category <TAB> alert <TAB> YAMNet class name, spelled exactly as in the
+# model's label list (yamnet.tflite). Class names may contain commas, so the columns are tab-separated.
+# AnnexATest fails if a class name here is not in the model. Classes per alert may be tuned in testing
+# support (contract 1.12); record any change in docs/DECISIONS.md.
+Emergency	Fire Alarm	Fire alarm
+Emergency	Smoke Alarm	Smoke detector, smoke alarm
+Emergency	Emergency Vehicle Siren	Emergency vehicle
+Emergency	Emergency Vehicle Siren	Police car (siren)
+Emergency	Emergency Vehicle Siren	Ambulance (siren)
+Emergency	Emergency Vehicle Siren	Fire engine, fire truck (siren)
+Emergency	Warning Siren	Civil defense siren
+Emergency	Warning Siren	Siren
+Traffic	Vehicle Horn	Vehicle horn, car horn, honking
+Traffic	Vehicle Horn	Air horn, truck horn
+Traffic	Reversing Alarm	Reversing beeps
+Traffic	Vehicle Nearby	Car passing by
+Traffic	Vehicle Nearby	Motorcycle
+Traffic	Vehicle Nearby	Motor vehicle (road)
+Household/Entry	Doorbell	Doorbell
+Household/Entry	Doorbell	Ding-dong
+Household/Entry	Knocking	Knock
+Household/Entry	Phone Ringing	Telephone bell ringing
+Household/Entry	Phone Ringing	Ringtone
+Household/Entry	Phone Ringing	Telephone
+Household/Entry	Alarm Clock	Alarm clock
+Household/Entry	Appliance Timer	Beep, bleep
+Household/Entry	Appliance Timer	Buzzer
+Household/Entry	Appliance Timer	Microwave oven
+Household/Entry	Glass Breaking	Shatter
+Household/Entry	Glass Breaking	Glass
+Household/Entry	Glass Breaking	Breaking

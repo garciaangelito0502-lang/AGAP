@@ -23,4 +23,7 @@ public class CaptionsViewModel extends ViewModel {
 
     /** Set once the microphone permission has been asked for, to tell "never asked" from "blocked". */
     boolean askedForMic;
+
+    /** Says that the other listening feature was stopped, or stopped this one (MicOwner). */
+    @Nullable String micNote;
 }

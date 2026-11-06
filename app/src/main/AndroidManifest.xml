@@ -1,8 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <!-- Live Captions and Sound Alerts listen only while their screen is open (contract 1.10). -->
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
+
+    <!-- MediaPipe always sets up Google's usage-statistics transport, whose library asks for network
+         access. AGAP removes it, so nothing can leave the phone (contract 1.2, D-016). -->
+    <uses-permission
+        android:name="android.permission.INTERNET"
+        tools:node="remove" />
+    <uses-permission
+        android:name="android.permission.ACCESS_NETWORK_STATE"
+        tools:node="remove" />
 
     <!-- Lets the app see the phone's speech recognition service (Android 11+ package visibility). -->
     <queries>

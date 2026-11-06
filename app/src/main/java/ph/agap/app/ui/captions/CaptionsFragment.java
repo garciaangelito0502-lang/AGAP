@@ -37,6 +37,7 @@ import ph.agap.app.captions.CaptionRelay;
 import ph.agap.app.captions.GoogleOnDeviceEngine;
 import ph.agap.app.captions.GoogleOnDeviceSupport;
 import ph.agap.app.captions.Transcript;
+import ph.agap.app.mic.MicOwner;
 
 /**
  * Live Captions. The user picks a language and taps Start; the words appear as they are heard.
@@ -44,7 +45,7 @@ import ph.agap.app.captions.Transcript;
  * (contract 1.10). The text stays after Stop until Clear or the next Start, so the research
  * team can compare it with their script.
  */
-public class CaptionsFragment extends Fragment implements CaptionListener {
+public class CaptionsFragment extends Fragment implements CaptionListener, MicOwner.User {
 
     private static final String ENGLISH = "en-US";
 
@@ -172,6 +173,8 @@ public class CaptionsFragment extends Fragment implements CaptionListener {
         heardReady = false;
         engine = new GoogleOnDeviceEngine(requireContext(), model.englishSupport.languageTag,
                 model.englishSupport.service);
+        String stopped = MicOwner.take(this);
+        model.micNote = stopped == null ? null : getString(R.string.mic_other_stopped, stopped);
         engine.start(this);
         renderTranscript();
         refresh();
@@ -185,12 +188,27 @@ public class CaptionsFragment extends Fragment implements CaptionListener {
     }
 
     private void endSession() {
+        MicOwner.release(this);
         model.transcript.endSegment();
         CaptionRelay.publishStopped();
         if (getView() != null) {
             renderTranscript();
             refresh();
         }
+    }
+
+    // ---- MicOwner.User ----
+
+    @Override
+    public String micUserName() {
+        return getString(R.string.captions_title);
+    }
+
+    @Override
+    public void onMicTaken(String byWhom) {
+        stopListening();
+        model.micNote = getString(R.string.mic_taken, byWhom);
+        if (getView() != null) refresh();
     }
 
     // ---- CaptionListener ----
@@ -303,7 +321,9 @@ public class CaptionsFragment extends Fragment implements CaptionListener {
     }
 
     private void showMessage() {
-        if (engine != null) {
+        if (model.micNote != null) {
+            message(model.micNote);
+        } else if (engine != null) {
             hideMessage();
         } else if (!hasMic()) {
             boolean blocked = model.askedForMic
@@ -355,6 +375,12 @@ public class CaptionsFragment extends Fragment implements CaptionListener {
         } else {
             messageAction.setVisibility(View.GONE);
         }
+    }
+
+    private void message(CharSequence text) {
+        messageCard.setVisibility(View.VISIBLE);
+        messageText.setText(text);
+        messageAction.setVisibility(View.GONE);
     }
 
     private void hideMessage() {

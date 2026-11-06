@@ -11,14 +11,33 @@ android {
         applicationId = "ph.agap.app"
         minSdk = 29
         targetSdk = 36
-        versionCode = 2
-        versionName = "0.2.0"
+        versionCode = 3
+        versionName = "0.3.0"
+
+        // MediaPipe's native libraries are 22-38 MB per processor type, so only phone processors
+        // (64- and 32-bit ARM) are packed; the x86_64 emulator is not needed now (D-017).
+        ndk {
+            abiFilters "arm64-v8a", "armeabi-v7a"
+        }
     }
 
     buildTypes {
         release {
             minifyEnabled = false
         }
+    }
+
+    packaging {
+        // Compress the native libraries in the APK: a much smaller download for the test phone,
+        // unpacked once at install (D-017).
+        jniLibs {
+            useLegacyPackaging = true
+        }
+    }
+
+    androidResources {
+        // The YAMNet model is read straight from the APK, so it must not be compressed.
+        noCompress += "tflite"
     }
 
     compileOptions {
@@ -32,6 +51,7 @@ apply from: rootProject.file("gradle/signing.gradle")
 dependencies {
     implementation libs.androidx.appcompat
     implementation libs.material
+    implementation libs.mediapipe.tasks.audio
 
     testImplementation libs.junit
 }

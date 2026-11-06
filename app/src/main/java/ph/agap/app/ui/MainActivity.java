@@ -12,6 +12,7 @@ import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import ph.agap.app.R;
+import ph.agap.app.ui.alerts.AlertsFragment;
 import ph.agap.app.ui.captions.CaptionsFragment;
 import ph.agap.app.ui.home.HomeFragment;
 import ph.agap.app.ui.settings.SettingsActivity;
@@ -98,8 +99,7 @@ public class MainActivity extends BaseActivity {
         if (tabId == R.id.nav_captions) {
             return new CaptionsFragment();
         } else if (tabId == R.id.nav_alerts) {
-            return PlaceholderFragment.newInstance(
-                    R.string.alerts_title, R.string.placeholder_alerts, R.drawable.ic_alerts);
+            return new AlertsFragment();
         } else if (tabId == R.id.nav_history) {
             return PlaceholderFragment.newInstance(
                     R.string.history_title, R.string.placeholder_history, R.drawable.ic_history);
