@@ -1,6 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
+    <!-- History tab only (MainActivity): save the history as a CSV file (D-035). -->
+    <item
+        android:id="@+id/action_export_history"
+        android:icon="@drawable/ic_download"
+        android:title="@string/history_export"
+        android:visible="false"
+        app:iconTint="?attr/agapOnTopBar"
+        app:showAsAction="ifRoom" />
     <!-- Shown on the History tab only (MainActivity); asks before deleting. -->
     <item
         android:id="@+id/action_clear_history"

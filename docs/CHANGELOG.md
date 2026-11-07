@@ -2,6 +2,7 @@
 
 One line per notable change, newest first.
 
+- 2026-11-07 Phase 5 addendum: phone app 0.5.1: Event History export to a CSV file in Download/AGAP, with Share (D-035; scope flag approved by the owner); 5 new JVM unit tests (85 in total).
 - 2026-11-07 Phase 5: phone app 0.5.0: full-screen alert over the app (icon, label, category, confidence, time, vibration rhythm, Dismiss); Sound Alerts keeps listening behind it (D-028).
 - 2026-11-07 Phase 5: one vibration pattern per category, played as an alarm, honouring the Vibration setting (D-031); `VIBRATE` permission.
 - 2026-11-07 Phase 5: Event History in Room 2.8.5 with both times to the millisecond (shown time from the frame-commit callback, D-029), day-grouped list, detail view with response time, clear with confirmation; schema exported to `app/schemas/` (D-030).

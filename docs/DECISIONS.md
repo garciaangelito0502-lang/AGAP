@@ -396,3 +396,14 @@ app and its Event History stay behind as a separate app.
   `adb shell am instrument -w ph.agap.app.test/androidx.test.runner.AndroidJUnitRunner`. The DAO test uses an
   in-memory database, so the phone's real history is not touched. On the Xiaomi the test APK's first install needs
   the "Install via USB" prompt accepted on the phone.
+
+## D-035 Event History export: a CSV file in Download/AGAP (Phase 5 addendum, 2026-11-07)
+
+- Owner-approved scope flag (SCOPE-FLAGS, 2026-11-07). The History tab's export icon writes the whole history to
+  `Download/AGAP/AGAP-history-<date>-<time>.csv` through Android's MediaStore Downloads collection: no internet, no
+  permission on Android 10 and newer. A dialog says where the file is and offers Share (Android's share sheet, the
+  user's choice of app); nothing is sent by AGAP itself.
+- Format (`HistoryCsv`, unit-tested): RFC 4180 with CRLF line ends, UTF-8 with a byte-order mark for Excel; oldest
+  first so rows follow the trials; columns No., Date, Alert, Category, Confidence (%) to one decimal, Heard as
+  (YAMNet), Threshold (%), Sound detected and Alert shown (HH:mm:ss.SSS, phone's time zone), Response time (ms),
+  and both times as epoch milliseconds for exact calculations.

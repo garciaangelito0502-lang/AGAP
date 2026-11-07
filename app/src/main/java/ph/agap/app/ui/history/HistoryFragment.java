@@ -1,6 +1,7 @@
 package ph.agap.app.ui.history;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 
@@ -14,6 +15,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.snackbar.Snackbar;
 
 import ph.agap.app.R;
+import ph.agap.app.history.HistoryExporter;
 import ph.agap.app.history.HistoryRepository;
 
 /**
@@ -75,6 +77,43 @@ public class HistoryFragment extends Fragment {
                 .setNegativeButton(R.string.history_clear_cancel, null)
                 .setPositiveButton(R.string.history_clear_confirm, (d, w) -> repository.clear(null))
                 .show();
+    }
+
+    /** Saves the whole history as a CSV file in Download/AGAP, then says where it is (D-035). */
+    public void export() {
+        repository.loadAll(records -> {
+            if (getView() == null) return;
+            if (records.isEmpty()) {
+                Snackbar.make(requireView(), R.string.history_export_empty, Snackbar.LENGTH_LONG).show();
+                return;
+            }
+            HistoryExporter.export(requireContext(), records, result -> {
+                if (getView() == null) return;
+                new MaterialAlertDialogBuilder(requireContext())
+                        .setTitle(R.string.history_exported_title)
+                        .setMessage(getResources().getQuantityString(R.plurals.history_exported_message,
+                                result.count, result.count, result.path))
+                        .setNegativeButton(R.string.history_export_share, (d, w) -> share(result.uri))
+                        .setPositiveButton(R.string.history_export_ok, null)
+                        .show();
+            }, error -> {
+                if (getView() == null) return;
+                new MaterialAlertDialogBuilder(requireContext())
+                        .setTitle(R.string.history_export_failed_title)
+                        .setMessage(getString(R.string.history_export_failed, String.valueOf(error.getMessage())))
+                        .setPositiveButton(R.string.history_export_ok, null)
+                        .show();
+            });
+        });
+    }
+
+    /** Hands the file to another app the user picks (Bluetooth, Files, a messaging app...). */
+    private void share(Uri uri) {
+        Intent send = new Intent(Intent.ACTION_SEND)
+                .setType("text/csv")
+                .putExtra(Intent.EXTRA_STREAM, uri)
+                .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        startActivity(Intent.createChooser(send, getString(R.string.history_export_share_title)));
     }
 
     private void reload() {

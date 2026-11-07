@@ -82,6 +82,21 @@ cap; the alert screen at the largest text size; process death while an alert is 
   the alert screen while its badge pulses (test tooling only).
 - Scope flag: Event History export.
 
+## Addendum: Event History export (0.5.1, 2026-11-07)
+
+The owner approved the export scope flag after this phase was done. The History tab now has an export icon that
+saves the whole history as a CSV file in `Download/AGAP/` (`HistoryCsv`, `HistoryExporter`, D-035), then says where
+the file is and offers Share. Rows are oldest first, numbered, with both times to the millisecond, the response
+time, the confidence to one decimal, what YAMNet heard, the threshold, and both times as epoch milliseconds.
+The clear-history question now says to export first.
+
+Verified: `testDebugUnitTest` 85 of 85 (`HistoryCsvTest`, 5 new: header and byte-order mark, a full row against
+known times, quoting of class names with commas, oldest-first numbering, file name); lint 0 errors, 5 warnings.
+On my phone: 4 alerts exported to `Download/AGAP/AGAP-history-2026-11-07-095647.csv` (646 bytes); the file pulled
+over adb holds the same times and response times as the log (92, 18, 71, 58 ms) and quotes
+"Vehicle horn, car horn, honking"; Share opened Android's share sheet. **Not verified:** opening the file in
+Excel or Google Sheets; exporting an empty history (shows a message instead); a very large history.
+
 ## Next phase
 
 Phase 6: remaining screens (Sound Categories, Vibration Patterns guide with the same pattern data), settings wiring

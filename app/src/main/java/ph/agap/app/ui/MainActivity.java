@@ -54,6 +54,11 @@ public class MainActivity extends BaseActivity {
                 startActivity(new Intent(this, SettingsActivity.class));
                 return true;
             }
+            if (item.getItemId() == R.id.action_export_history) {
+                Fragment screen = getSupportFragmentManager().findFragmentById(R.id.fragment_container);
+                if (screen instanceof HistoryFragment) ((HistoryFragment) screen).export();
+                return true;
+            }
             if (item.getItemId() == R.id.action_clear_history) {
                 Fragment screen = getSupportFragmentManager().findFragmentById(R.id.fragment_container);
                 if (screen instanceof HistoryFragment) ((HistoryFragment) screen).confirmClear();
@@ -125,6 +130,7 @@ public class MainActivity extends BaseActivity {
 
     private void updateChrome() {
         bar.setTitle(titleFor(currentTab));
+        bar.getMenu().findItem(R.id.action_export_history).setVisible(currentTab == R.id.nav_history);
         bar.getMenu().findItem(R.id.action_clear_history).setVisible(currentTab == R.id.nav_history);
         backToHome.setEnabled(currentTab != R.id.nav_home);
     }

@@ -125,12 +125,24 @@
     <string name="history_row_description">%1$s, %2$s, confidence %3$d%%, at %4$s. Opens details.</string>
     <string name="history_clear_title">Clear Event History?</string>
     <plurals name="history_clear_message">
-        <item quantity="one">This deletes %1$d alert from this phone. It cannot be undone. Copy down any results you need first.</item>
-        <item quantity="other">This deletes all %1$d alerts from this phone. It cannot be undone. Copy down any results you need first.</item>
+        <item quantity="one">This deletes %1$d alert from this phone. It cannot be undone. If you need the results, tap Cancel and export the history first.</item>
+        <item quantity="other">This deletes all %1$d alerts from this phone. It cannot be undone. If you need the results, tap Cancel and export the history first.</item>
     </plurals>
     <string name="history_clear_cancel">Cancel</string>
     <string name="history_clear_confirm">Delete all</string>
     <string name="history_already_empty">Event History is already empty.</string>
+    <string name="history_export">Export history</string>
+    <string name="history_export_empty">Event History is empty, so there is nothing to export.</string>
+    <string name="history_exported_title">History exported</string>
+    <plurals name="history_exported_message">
+        <item quantity="one">%1$d alert saved in the file %2$s on this phone. Open it with a spreadsheet app such as Excel or Google Sheets, or copy it to a computer with a USB cable.</item>
+        <item quantity="other">%1$d alerts saved in the file %2$s on this phone. Open it with a spreadsheet app such as Excel or Google Sheets, or copy it to a computer with a USB cable.</item>
+    </plurals>
+    <string name="history_export_share">Share</string>
+    <string name="history_export_ok">OK</string>
+    <string name="history_export_share_title">Send the history file</string>
+    <string name="history_export_failed_title">Export did not work</string>
+    <string name="history_export_failed">The history file could not be saved (%1$s). Check that the phone has free storage, then try again.</string>
 
     <!-- Alert details -->
     <string name="detail_title">Alert details</string>
