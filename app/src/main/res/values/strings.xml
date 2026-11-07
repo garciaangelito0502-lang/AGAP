@@ -86,6 +86,7 @@
     <!-- One microphone user at a time -->
     <string name="mic_other_stopped">%1$s was turned off: only one feature can use the microphone at a time.</string>
     <string name="mic_taken">Stopped because %1$s started: only one feature can use the microphone at a time.</string>
+    <string name="mic_silenced">AGAP hears nothing right now: a phone call or another app is using the microphone. Listening goes on by itself when the microphone is free.</string>
 
     <!-- Sound Alerts -->
     <string name="alerts_status_idle">Not listening</string>

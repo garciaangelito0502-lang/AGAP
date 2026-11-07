@@ -59,6 +59,12 @@ A Wear OS watch is debugged over Wi-Fi (Settings > Developer options > Wireless 
 Windows 11 Pro (build 26200), 32 GB RAM with a very small page file, so Gradle and the emulator can run out of
 memory. Prefer a physical phone to the emulator.
 
+2026-11-07 (Phase 8): Windows reports 15.8 GB of RAM (Win32_ComputerSystem), about 5 GB free during builds, and
+build 26100. `D:\Android\jdk-17` no longer exists; the JDK is Eclipse Adoptium 17.0.21
+(`C:\Program Files\Eclipse Adoptium\jdk-17.0.21.9-hotspot`), set as the user's `JAVA_HOME` (a Git Bash
+started from another program may not see it: set it in the shell). Two adb versions are installed (36 on the
+PATH, 37 in the SDK); use one of them only, or each restarts the other's server.
+
 ## Test audio setup
 
 Sounds and speech are played from the build PC toward the phone; the phone listens through its own microphone.
@@ -67,6 +73,7 @@ Sounds and speech are played from the build PC toward the phone; the phone liste
 |---|---|---|---|
 | 2026-11-06 | 3 | TV speakers over HDMI ("Beyond TV") | Detection check (DETECTION-CHECK.md). |
 | 2026-11-07 | 4 | KMS-268Pro Bluetooth speaker (Windows: "Headphones") | The TV was not connected. The laptop's own speakers made no sound although Windows sent them a full-level signal (output meter 0.96), so they were not used. Clips must be 16-bit PCM WAV: Windows' `SoundPlayer` plays 32-bit float files (the FLEURS originals) as noise. |
+| 2026-11-07 | 8 | KMS-268Pro Bluetooth speaker | Next to the phone, distance not measured. During the 32-minute run people talked near the phone and an animal was nearby (owner's report), which YAMNet heard as Speech and Animal. The phone's battery fell from 36% to 29% in 32 minutes on its charger ("AC powered"), so the charger did not keep up with the screen kept on. |
 
 Filipino speech for Phase 4: 12 sentences from Google's FLEURS dataset (`fil_ph`, dev split, CC BY 4.0), read
 speech with reference transcripts, converted to 16-bit PCM and peak-normalised to -1 dBFS. FLEURS marks every

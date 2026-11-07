@@ -2,6 +2,13 @@
 
 One line per notable change, newest first.
 
+- 2026-11-08 Phase 8: phone app 0.8.0 (code 10): offline proof, ANR audit, robustness checks and long run on my phone; watch app unchanged (0.7.0). 104 JVM unit tests and 12 instrumented tests pass.
+- 2026-11-08 Phase 8: only one Vosk model load at a time; a Start stopped while waiting does not load (D-052, fixes K-029: 11 loads at once reached 5.3 GB).
+- 2026-11-07 Phase 8: the listening dot and the alert badge pulse in 100 ms steps (`SlowPulse`, D-051): 19% instead of 54% of a processor core while listening (fixes K-028); 4 new unit tests.
+- 2026-11-07 Phase 8: a change of the phone's dark mode no longer rebuilds the main screen and stops listening (`configChanges="uiMode"`, D-048, fixes K-025).
+- 2026-11-07 Phase 8: starting Sound Alerts frees the Filipino model's memory (D-049, fixes K-026).
+- 2026-11-07 Phase 8: Sound Alerts and Vosk captions say when Android silences the microphone for a call or another app ("AGAP hears nothing right now"), and go on listening (D-047).
+- 2026-11-07 Phase 8: ANR audit fixes: Stop waits only while the microphone is open; the Vosk model is freed and deleted off the main thread (D-046, fixes K-027).
 - 2026-11-07 M2: test build 0.9 (`agap-phone-0.9-test.apk`, phone 0.7.0 debug; `agap-watch-0.9-test.apk`, watch 0.7.0 debug) and `docs/CLIENT-TEST-CHECKLIST-0.9.md`.
 - 2026-11-07 Phase 7: watch app 0.7.0: one screen with the phone's status ("Phone not connected", "Phone connected", "Sound Alerts on", Demonstration Mode), live caption text (large, scrollable, last 30 lines) and the full-screen alert in the category's colour and badge shape with its vibration; tap to close (D-044).
 - 2026-11-07 Phase 7: phone app 0.7.0: `WatchSender` sends alerts, caption text (at most 4 partial updates a second) and the phone's state to a connected AGAP watch over the Wearable Data Layer (play-services-wearable 20.0.1), never waiting and doing nothing without a watch (D-042); Home says whether a watch is connected.

@@ -34,8 +34,12 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AGAP">
 
+        <!-- uiMode: AGAP's look does not follow the phone's dark mode (it has its own high-contrast
+             setting), so a dark-mode switch, for example on a sunset schedule, must not rebuild the
+             screen and stop listening in the middle of a trial (Phase 8, K-025). -->
         <activity
             android:name=".ui.MainActivity"
+            android:configChanges="uiMode"
             android:exported="true"
             android:screenOrientation="portrait">
             <intent-filter>

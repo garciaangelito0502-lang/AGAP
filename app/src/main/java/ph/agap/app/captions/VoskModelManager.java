@@ -130,11 +130,22 @@ public final class VoskModelManager {
         io.execute(this::unpack);
     }
 
-    /** Deletes the unpacked model, so the next setup starts clean (used if it will not load). */
+    /**
+     * Deletes the unpacked model, so the next setup starts clean (used if it will not load).
+     * The folder is renamed at once, so the model no longer counts as installed; deleting its
+     * 800 MB of files runs on the background thread, before any new unpack (Phase 8, ANR audit).
+     */
     public void discard() {
         if (state == State.UNPACKING) return;
         VoskModelHolder.releaseIfIdle();
-        ModelUnpacker.deleteRecursively(modelDir());
+        File dir = modelDir();
+        File trash = new File(dir.getPath() + ".old-" + System.nanoTime());
+        if (dir.exists() && !dir.renameTo(trash)) {
+            Log.w(TAG, spec.name + ": could not rename the model folder; deleting it here");
+            ModelUnpacker.deleteRecursively(dir);
+        } else {
+            io.execute(() -> ModelUnpacker.deleteRecursively(trash));
+        }
         state = State.UNKNOWN;
         refresh();
     }
@@ -156,6 +167,11 @@ public final class VoskModelManager {
         if (parent != null) {
             //noinspection ResultOfMethodCallIgnored
             parent.mkdirs();
+            // Left over if the app was closed while discard() was deleting an old copy.
+            File[] leftovers = parent.listFiles((d, name) -> name.startsWith(spec.name + ".old-"));
+            if (leftovers != null) {
+                for (File old : leftovers) ModelUnpacker.deleteRecursively(old);
+            }
         }
         State result;
         try (AssetFileDescriptor afd = context.getAssets().openFd(spec.asset());

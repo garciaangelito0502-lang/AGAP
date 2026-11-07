@@ -2,10 +2,13 @@ package ph.agap.app.captions;
 
 import android.annotation.SuppressLint;
 import android.media.AudioFormat;
+import android.media.AudioManager;
 import android.media.AudioRecord;
+import android.media.AudioRecordingConfiguration;
 import android.media.MediaRecorder;
 import android.os.Handler;
 import android.os.Looper;
+import android.os.SystemClock;
 import android.util.Log;
 
 import androidx.annotation.Nullable;
@@ -16,6 +19,8 @@ import org.vosk.Model;
 import org.vosk.Recognizer;
 
 import java.io.File;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Captions with one of Vosk's bundled models: Filipino (vosk-model-tl-ph-generic), or the small
@@ -47,7 +52,13 @@ public final class VoskCaptionEngine implements CaptionEngine {
 
     @Nullable private CaptionListener listener;
     @Nullable private Thread worker;
-    @Nullable private volatile AudioRecord record;
+    /**
+     * Held while the worker opens the microphone and while stop() looks at it, so stop() knows for
+     * sure whether the microphone is open (Phase 8, ANR audit). If it is not, the worker never opens
+     * it, and stop() does not wait while the model loads.
+     */
+    private final Object micLock = new Object();
+    @Nullable private AudioRecord record; // guarded by micLock
     private volatile boolean running;
     /** Numbers the starts (written on the main thread only); a worker or post from an older one stops. */
     private volatile int session;
@@ -72,28 +83,33 @@ public final class VoskCaptionEngine implements CaptionEngine {
     @Override
     public void stop() {
         if (!running) return;
-        running = false;
-        session++;
-        AudioRecord r = record;
+        long begun = SystemClock.elapsedRealtime();
+        AudioRecord r;
+        synchronized (micLock) {
+            running = false;
+            session++;
+            r = record;
+        }
+        Thread w = worker;
+        worker = null;
         if (r != null) {
             try {
                 r.stop(); // ends the recording at once and wakes up a blocked read
             } catch (IllegalStateException ignored) {
                 // not recording yet
             }
-        }
-        Thread w = worker;
-        worker = null;
-        if (w != null) {
-            try {
-                // Short wait so the microphone is released before another feature opens it. A worker
-                // still loading the model sees `running` is false afterwards and ends by itself.
-                w.join(500);
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
+            if (w != null) {
+                try {
+                    // Short wait so the microphone is released before another feature opens it.
+                    w.join(500);
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                }
             }
         }
-        Log.i(TAG, "stop");
+        // Without an open microphone the worker is loading the model: it ends by itself, no wait.
+        Log.i(TAG, "stop in " + (SystemClock.elapsedRealtime() - begun) + " ms"
+                + (r == null ? " (microphone not open yet)" : ""));
     }
 
     @Override
@@ -112,11 +128,16 @@ public final class VoskCaptionEngine implements CaptionEngine {
         Model model = null;
         Recognizer recognizer = null;
         AudioRecord rec = null;
+        AudioManager.AudioRecordingCallback silencedWatch = null;
         try {
             try {
                 LibVosk.setLogLevel(LogLevel.WARNINGS);
                 long begun = System.nanoTime();
-                model = VoskModelHolder.acquire(modelDir.getPath());
+                model = VoskModelHolder.acquire(modelDir.getPath(), () -> live(id));
+                if (model == null) {
+                    Log.i(TAG, "s" + id + " stopped before the model was loaded");
+                    return;
+                }
                 Log.i(TAG, "model ready in " + (System.nanoTime() - begun) / 1_000_000 + " ms");
             } catch (Throwable e) {
                 // IOException for a missing or damaged model; also OutOfMemoryError and link errors.
@@ -129,22 +150,27 @@ public final class VoskCaptionEngine implements CaptionEngine {
             recognizer = new Recognizer(model, SAMPLE_RATE);
             int minBuffer = AudioRecord.getMinBufferSize(SAMPLE_RATE,
                     AudioFormat.CHANNEL_IN_MONO, AudioFormat.ENCODING_PCM_16BIT);
-            rec = new AudioRecord(MediaRecorder.AudioSource.VOICE_RECOGNITION, SAMPLE_RATE,
-                    AudioFormat.CHANNEL_IN_MONO, AudioFormat.ENCODING_PCM_16BIT,
-                    Math.max(minBuffer, BUFFER_BYTES));
-            if (rec.getState() != AudioRecord.STATE_INITIALIZED) {
-                Log.w(TAG, "s" + id + " microphone could not be opened");
-                fail(id, CaptionListener.Failure.RECOGNIZER);
-                return;
+            synchronized (micLock) {
+                // Stopped while the model loaded: do not open the microphone at all.
+                if (!live(id)) return;
+                rec = new AudioRecord(MediaRecorder.AudioSource.VOICE_RECOGNITION, SAMPLE_RATE,
+                        AudioFormat.CHANNEL_IN_MONO, AudioFormat.ENCODING_PCM_16BIT,
+                        Math.max(minBuffer, BUFFER_BYTES));
+                if (rec.getState() != AudioRecord.STATE_INITIALIZED) {
+                    Log.w(TAG, "s" + id + " microphone could not be opened");
+                    fail(id, CaptionListener.Failure.RECOGNIZER);
+                    return;
+                }
+                record = rec;
             }
-            record = rec;
-            if (!live(id)) return;
             rec.startRecording();
+            if (!live(id)) return;
             if (rec.getRecordingState() != AudioRecord.RECORDSTATE_RECORDING) {
                 Log.w(TAG, "s" + id + " microphone is busy");
                 fail(id, CaptionListener.Failure.RECOGNIZER);
                 return;
             }
+            silencedWatch = watchSilenced(id, rec);
             post(id, l -> l.onListening());
             Log.d(TAG, "s" + id + " listening");
 
@@ -177,8 +203,11 @@ public final class VoskCaptionEngine implements CaptionEngine {
             Log.w(TAG, "s" + id + " vosk error: " + e);
             fail(id, CaptionListener.Failure.RECOGNIZER);
         } finally {
-            if (record == rec) record = null;
+            synchronized (micLock) {
+                if (record == rec) record = null;
+            }
             if (rec != null) {
+                if (silencedWatch != null) rec.unregisterAudioRecordingCallback(silencedWatch);
                 try {
                     rec.stop();
                 } catch (IllegalStateException ignored) {
@@ -189,6 +218,39 @@ public final class VoskCaptionEngine implements CaptionEngine {
             if (recognizer != null) recognizer.close();
             if (model != null) VoskModelHolder.release(model);
         }
+    }
+
+    /**
+     * Android 10+ gives the microphone to a phone call or a privileged app and sends AGAP silence
+     * meanwhile, without an error. This tells the screen when that starts and ends.
+     */
+    private AudioManager.AudioRecordingCallback watchSilenced(int id, AudioRecord rec) {
+        int sessionId = rec.getAudioSessionId();
+        boolean[] last = {false};
+        AudioManager.AudioRecordingCallback callback = new AudioManager.AudioRecordingCallback() {
+            @Override
+            public void onRecordingConfigChanged(List<AudioRecordingConfiguration> configs) {
+                for (AudioRecordingConfiguration config : configs) {
+                    if (config.getClientAudioSessionId() != sessionId) continue;
+                    boolean silenced = config.isClientSilenced();
+                    if (silenced != last[0]) {
+                        last[0] = silenced;
+                        Log.i(TAG, "s" + id + " microphone silenced by Android: " + silenced);
+                        CaptionListener l = listener;
+                        if (live(id) && l != null) l.onMicSilenced(silenced);
+                    }
+                }
+            }
+        };
+        rec.registerAudioRecordingCallback(main::post, callback);
+        // Already silenced when listening began (a call in progress): the callback may not fire.
+        // Checked here on the worker; the screen hears about it on the main thread.
+        AudioRecordingConfiguration now = rec.getActiveRecordingConfiguration();
+        if (now != null) {
+            List<AudioRecordingConfiguration> current = Collections.singletonList(now);
+            main.post(() -> callback.onRecordingConfigChanged(current));
+        }
+        return callback;
     }
 
     /** True while session {@code id} is the one running (any thread). */

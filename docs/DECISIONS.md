@@ -525,3 +525,76 @@ app and its Event History stay behind as a separate app.
 - Debug builds of the watch app have `DebugMessageReceiver`: it builds messages with the same `WatchMessages` code
   the phone uses and hands them to the watch as if they had arrived. Only adb can call it (it requires the `DUMP`
   permission, which apps cannot hold), and it is not in release builds.
+
+## D-046 Main-thread fixes from the ANR audit (Phase 8)
+
+The `anr-audit-and-fix` checklist was run over every phone and watch source file (results in the Phase 8 note).
+Audio reading, YAMNet classification, the Vosk model load, the model unpack, Room and the CSV export were
+already on background threads, and no background thread touches a view. Four main-thread waits were changed:
+
+- `SoundAlertEngine.stop()` waited up to 1.5 s for the worker, and `VoskCaptionEngine.stop()` up to 0.5 s, even
+  when the worker was still building the classifier or loading the Filipino model and had not opened the
+  microphone. Now the worker opens the microphone under a lock, and `stop()` reads under the same lock whether
+  it is open. Open: `stop()` wakes the read and waits for the release, as before (36-79 ms for Sound Alerts and
+  45-128 ms for Filipino over the Phase 8 cycles). Not open
+  yet: `stop()` returns at once, and the worker sees it is stopped before it would open the microphone. The
+  "only one microphone user" rule (contract 1.10) still holds: a microphone is never opened after `stop()`.
+- `VoskModelHolder` closed the old model (about 1 GB for Filipino) on the main thread when the app left the
+  screen or the user picked English, and closed models while holding the lock the main thread asks for. Now a
+  model is taken out under the lock and closed outside it, on a background thread when the main thread asked.
+- `VoskModelManager.discard()` ("Set up again" after a model would not load) deleted about 800 MB of files on
+  the main thread. Now it renames the folder at once (so the model no longer counts as installed) and deletes
+  it on the unpack thread, before any new unpack; leftovers from a closed app are deleted at the next unpack.
+
+## D-047 Showing when Android silences the microphone (Phase 8)
+
+- Android 10 and newer give the microphone to a phone call or a privileged app and send other apps silence,
+  without an error. Sound Alerts would then hear nothing and say nothing. Both engines that open the
+  microphone themselves (Sound Alerts and the Vosk captions) now watch their own recording with
+  `AudioRecord.registerAudioRecordingCallback` (API 29) and tell the screen when `isClientSilenced()` changes.
+  The screen then says: "AGAP hears nothing right now: a phone call or another app is using the microphone.
+  Listening goes on by itself when the microphone is free." Listening is not stopped, so it picks up again by
+  itself.
+- Google's English recognizer records inside Google's own app, so AGAP cannot see its recording; that engine
+  reports what Google's service reports (errors restart the session, D-015).
+
+## D-048 A dark-mode switch must not stop listening (Phase 8)
+
+- MainActivity declares `android:configChanges="uiMode"`. Before, a change of the phone's dark mode (by hand or
+  on a sunset schedule) rebuilt the screen, which stopped listening without a word (K-025). AGAP's look does not
+  depend on the phone's dark mode: it has its own high-contrast setting and no `-night` resources, so nothing
+  needs reloading. The other screens do not listen and keep the default behaviour.
+
+## D-049 The Filipino model is freed when Sound Alerts starts (Phase 8)
+
+- After a Filipino captions session the model stays loaded for a quick next Start (D-024). Sound Alerts sessions
+  can last a long time and never use it, so starting Sound Alerts now frees it (in the background, D-046). AGAP
+  then uses about 170 MB instead of about 1,020 MB while listening for sounds (K-026). The cost is one model
+  load (about 1.2 s on my phone) at the next Filipino Start, behind the existing "Loading the Filipino model"
+  message.
+
+## D-050 How Phase 8 was tested (Phase 8)
+
+- Device checks ran on my phone with small scripts kept outside the repository (`test-audio/phase8/`, next to the
+  Phase 3 detection script): taps by screen position or view id, times from the phone's own log, which holds
+  alert names, scores and event names only.
+- The 30-minute run stayed on the USB cable, by the owner's choice: memory, processor use, temperature, screen
+  state and crashes were measured; battery drop could not be (the phone was charging).
+- Watch disconnect and reconnect could not be tried: there is no watch (D-005, K-021).
+
+## D-051 Pulses drawn in steps (Phase 8)
+
+- The listening dot on Live Captions and Sound Alerts and the badge on the alert screen keep their slow pulse
+  (dot: fades over 2 s; badge: grows and shrinks once a second, design note), but `SlowPulse` now moves them in
+  steps every 100 ms instead of an `ObjectAnimator` that never ends. The animator made Android redraw the
+  screen up to 120 times a second for the whole session (K-028): 54% of one processor core while Sound Alerts
+  listened on my phone, 19% now, 10% with no pulse at all. Ten steps a second look the same on a dot or a badge.
+- `SlowPulse` follows the phone's animation setting: with animations off (an accessibility choice, also used by
+  the UI tests) the view stays still. The pulse rhythm has 4 unit tests.
+
+## D-052 One Vosk model load at a time (Phase 8)
+
+- `VoskModelHolder.acquire` now runs one at a time (a lock held only by worker threads). A Start that comes while
+  the model loads waits and then shares it; a session stopped while it waits does not load at all (it passes a
+  "still wanted" check). Before, each quick Start/Stop tap started its own load of the 1 GB Filipino model
+  (K-029). The main thread never takes this lock, so the ANR rules of D-046 still hold.

@@ -1,8 +1,5 @@
 package ph.agap.app.ui.alerts;
 
-import android.animation.ObjectAnimator;
-import android.animation.PropertyValuesHolder;
-import android.animation.ValueAnimator;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.res.ColorStateList;
@@ -48,6 +45,7 @@ import ph.agap.app.alerts.AlertEvent;
 import ph.agap.app.history.AlertRecorder;
 import ph.agap.app.history.HistoryRepository;
 import ph.agap.app.ui.DemoBanner;
+import ph.agap.app.ui.SlowPulse;
 import ph.agap.app.vibration.AlertVibrator;
 import ph.agap.app.watch.WatchSender;
 
@@ -88,7 +86,7 @@ public class AlertOverlayFragment extends DialogFragment {
     private int countThisScreen;
     private AlertRecorder recorder;
     private AlertVibrator vibrator;
-    @Nullable private ValueAnimator pulse;
+    @Nullable private SlowPulse pulse;
 
     /**
      * Shows an alert, or replaces the one on screen. Call on the main thread from a started screen.
@@ -174,7 +172,7 @@ public class AlertOverlayFragment extends DialogFragment {
     @Override
     public void onDestroyView() {
         main.removeCallbacksAndMessages(null);
-        if (pulse != null) pulse.cancel();
+        if (pulse != null) pulse.stop();
         super.onDestroyView();
     }
 
@@ -318,15 +316,10 @@ public class AlertOverlayFragment extends DialogFragment {
         badge.setLayoutParams(params);
     }
 
-    /** A slow pulse of the badge only: one per second, never a flash (design note). */
+    /** A slow pulse of the badge only: one per second, never a flash (design note), drawn in steps (K-028). */
     private void startPulse(View badge) {
         if (pulse != null) return;
-        pulse = ObjectAnimator.ofPropertyValuesHolder(badge,
-                PropertyValuesHolder.ofFloat(View.SCALE_X, 1f, 1.07f),
-                PropertyValuesHolder.ofFloat(View.SCALE_Y, 1f, 1.07f));
-        pulse.setDuration(500);
-        pulse.setRepeatCount(ValueAnimator.INFINITE);
-        pulse.setRepeatMode(ValueAnimator.REVERSE);
+        pulse = SlowPulse.scale(badge, 1.07f, 500);
         pulse.start();
     }
 

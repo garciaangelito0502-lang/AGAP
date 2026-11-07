@@ -29,4 +29,10 @@ public interface CaptionListener {
 
     /** Listening stopped by itself and will not restart. */
     void onFailed(Failure failure);
+
+    /**
+     * Android silences the microphone AGAP opened (a phone call, or another app with priority), or
+     * gives it back. Only engines that open the microphone themselves (Vosk) can tell.
+     */
+    default void onMicSilenced(boolean silenced) { }
 }

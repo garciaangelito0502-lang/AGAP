@@ -23,6 +23,8 @@ public class AlertsViewModel extends AndroidViewModel {
     @Nullable String micNote;
     /** Why the last session stopped by itself, shown until the next start. */
     @Nullable String failure;
+    /** Android is giving the microphone to a call or another app: AGAP hears silence (Phase 8). */
+    boolean micSilenced;
 
     public AlertsViewModel(@NonNull Application application) {
         super(application);

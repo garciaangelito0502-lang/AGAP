@@ -1,8 +1,6 @@
 package ph.agap.app.ui.alerts;
 
 import android.Manifest;
-import android.animation.ObjectAnimator;
-import android.animation.ValueAnimator;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
@@ -31,9 +29,11 @@ import java.util.Date;
 import java.util.Locale;
 
 import ph.agap.app.R;
+import ph.agap.app.ui.SlowPulse;
 import ph.agap.app.alerts.AlertDetector;
 import ph.agap.app.alerts.AlertEvent;
 import ph.agap.app.alerts.SoundAlertEngine;
+import ph.agap.app.captions.VoskModelManager;
 import ph.agap.app.demo.DemoMode;
 import ph.agap.app.mic.MicOwner;
 import ph.agap.app.watch.WatchMessages;
@@ -68,7 +68,7 @@ public class AlertsFragment extends Fragment implements SoundAlertEngine.Listene
     private TextView closestNow;
     private View captionsPausedNote;
     private MaterialButton startStop;
-    private ValueAnimator pulse;
+    private SlowPulse pulse;
 
     private final ActivityResultLauncher<String> askMic = registerForActivityResult(
             new ActivityResultContracts.RequestPermission(), granted -> {
@@ -96,10 +96,7 @@ public class AlertsFragment extends Fragment implements SoundAlertEngine.Listene
         captionsPausedNote = view.findViewById(R.id.captions_paused_note);
         startStop = view.findViewById(R.id.start_stop);
 
-        pulse = ObjectAnimator.ofFloat(statusDot, View.ALPHA, 1f, 0.3f);
-        pulse.setDuration(1000);
-        pulse.setRepeatCount(ValueAnimator.INFINITE);
-        pulse.setRepeatMode(ValueAnimator.REVERSE);
+        pulse = SlowPulse.alpha(statusDot, 0.3f, 1000);
 
         startStop.setOnClickListener(v -> {
             if (engine == null) startListening(); else stopListening();
@@ -125,7 +122,7 @@ public class AlertsFragment extends Fragment implements SoundAlertEngine.Listene
 
     @Override
     public void onDestroyView() {
-        pulse.cancel();
+        pulse.stop();
         super.onDestroyView();
     }
 
@@ -139,8 +136,12 @@ public class AlertsFragment extends Fragment implements SoundAlertEngine.Listene
     private void startListening() {
         if (engine != null || !hasMic() || DemoMode.isOn()) return;
         String stopped = MicOwner.take(this);
+        // The Filipino captions model (about 1 GB) is not needed while Sound Alerts listens, often
+        // for a long session: free it now (Phase 8). Filipino captions load it again on their next Start.
+        VoskModelManager.releaseMemory();
         model.micNote = stopped == null ? null : getString(R.string.mic_other_stopped, stopped);
         model.failure = null;
+        model.micSilenced = false;
         model.sessionCount = 0;
         heardReady = false;
         SettingsStore settings = SettingsStore.from(requireContext());
@@ -157,6 +158,7 @@ public class AlertsFragment extends Fragment implements SoundAlertEngine.Listene
         if (engine == null) return;
         engine.stop();
         engine = null;
+        model.micSilenced = false;
         MicOwner.release(this);
         WatchSender.get(requireContext()).sendState(WatchMessages.Mode.IDLE, "");
         if (getView() != null) {
@@ -206,8 +208,15 @@ public class AlertsFragment extends Fragment implements SoundAlertEngine.Listene
     }
 
     @Override
+    public void onMicSilenced(boolean silenced) {
+        model.micSilenced = silenced;
+        refresh();
+    }
+
+    @Override
     public void onFailed(String reason) {
         engine = null;
+        model.micSilenced = false;
         MicOwner.release(this);
         WatchSender.get(requireContext()).sendState(WatchMessages.Mode.IDLE, "");
         model.failure = reason;
@@ -257,8 +266,7 @@ public class AlertsFragment extends Fragment implements SoundAlertEngine.Listene
         } else {
             statusText.setText(R.string.alerts_status_idle);
             statusText.setTextColor(themeColor(R.attr.agapTextSecondary));
-            pulse.cancel();
-            statusDot.setAlpha(1f);
+            pulse.stop();
         }
         startStop.setText(listening ? R.string.captions_stop : R.string.captions_start);
         startStop.setIconResource(listening ? R.drawable.ic_stop : R.drawable.ic_mic);
@@ -270,6 +278,8 @@ public class AlertsFragment extends Fragment implements SoundAlertEngine.Listene
         if (DemoMode.isOn() && engine == null) {
             message(getString(R.string.alerts_demo_note), R.string.alerts_demo_open,
                     v -> startActivity(new Intent(requireContext(), DemoModeActivity.class)));
+        } else if (engine != null && model.micSilenced) {
+            message(getString(R.string.mic_silenced), 0, null);
         } else if (model.micNote != null) {
             message(model.micNote, 0, null);
         } else if (model.failure != null && engine == null) {

@@ -39,6 +39,9 @@ public class CaptionsViewModel extends ViewModel {
     /** Says that the other listening feature was stopped, or stopped this one (MicOwner). */
     @Nullable String micNote;
 
+    /** Android is giving the microphone to a call or another app: AGAP hears silence (Phase 8). */
+    boolean micSilenced;
+
     @Override
     protected void onCleared() {
         if (filipino != null) filipino.shutdown();

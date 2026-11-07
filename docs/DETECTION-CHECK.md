@@ -157,3 +157,68 @@ and some doorbell2 trials, and would also let more false alerts through), extra 
 - Emergency Vehicle Siren, Warning Siren, Reversing Alarm, Vehicle Nearby, Alarm Clock, Glass Breaking on purpose
   (some fired as wrong alerts, see above).
 - Response time (alert shown minus detected): the full alert screen and Event History come in Phase 5.
+
+## Phase 8 (build 0.8.0, 2026-11-07)
+
+### Set-up
+
+- **Phone:** my Xiaomi 13, app 0.8.0 debug (the build before the stepped pulse, D-051; nothing in the listening
+  path changed after it), Sound Alerts listening, threshold 50% (not changed), airplane mode on, Wi-Fi off,
+  Bluetooth on.
+- **Speaker:** the KMS-268Pro Bluetooth speaker (Windows "Headphones"), next to the phone, the same place for every
+  trial (distance not measured). Phase 3 used the TV speakers, so the two runs do not compare one to one.
+- **Clips and procedure:** the same files, levels and script as Phase 3 (140 trials, 5 per clip and level). The run
+  was played in the middle of the 30-minute long run, on one listening session.
+- **Room:** not quiet. People were talking near the phone and an animal was nearby (the owner's report). YAMNet's
+  loudest class during the horn, knock and doorbell trials was mostly **Speech** (0.33-0.97), and during the
+  smoke-alarm trials "Animal" or "Cat" (0.67-0.94).
+
+### Results (140 trials)
+
+| Clip | Expected alert | TP (high / medium / low) | Wrong alerts (count, all 15 trials) | Highest score of the expected alert |
+|---|---|---|---|---|
+| fire-alarm | Fire Alarm | 0 / 0 / 0 | Appliance Timer (16), Alarm Clock (15), Phone Ringing (2), Vehicle Horn (1) | 0.00 |
+| smoke-alarm | Smoke Alarm | 0 / 0 / 0 | Emergency Vehicle Siren (8), Fire Alarm (4), Warning Siren (2), Appliance Timer (1) | 0.00-0.33 |
+| car-horn | Vehicle Horn | 0 / 0 / 0 | none | 0.00-0.11 |
+| doorbell | Doorbell | 0 / 0 / 0 | none | 0.00-0.15 |
+| doorbell2 | Doorbell | 0 / 0 / 0 | none | 0.00-0.08 |
+| knock | Knocking | 0 / 0 / 0 | none | 0.00-0.01 |
+
+| Clip (no alert expected) | TN (high / medium / low) | Wrong alerts |
+|---|---|---|
+| speech | 5 / 5 / 5 | none |
+| music | 5 / 5 / 5 | none |
+| beeps | 0 / 0 / 1 | Phone Ringing (14), Appliance Timer (1) |
+| silence | 5 | none |
+
+Totals: 90 trials with an Annex A sound: 0 TP, 90 FN, 25 of them also raised a wrong alert. 50 trials without one:
+36 TN, 14 FP (all from the beeps clip). Phase 3 (TV speakers, quieter room): 3 TP and 14 Fire Alarm alerts for the
+smoke alarm.
+
+Every alert of the run reached the Event History: 64 alerts raised, 64 saved, shown 13-99 ms after detection
+(median 20 ms), all timed by the frame-commit callback.
+
+### Quiet re-test
+
+With the room quiet (owner's report), Sound Alerts listening confirmed, high level only, 3 repetitions:
+
+| Clip | Result | Expected alert's highest score | YAMNet's loudest class |
+|---|---|---|---|
+| smoke-alarm | Fire Alarm once (0.74), Emergency Vehicle Siren + Warning Siren once, nothing once | 0.00-0.20 | Animal 0.67-0.85, Alarm 0.80 |
+| car-horn | no alert | 0.08-0.33 | Wind 0.33, Music 0.50 |
+| knock | no alert | 0.00-0.02 | Speech 0.20-0.59, Inside small room 0.33 |
+
+Earlier the same evening, through the same speaker, car-horn high raised Vehicle Horn at 0.59 and smoke-alarm high
+raised Fire Alarm at 0.98 (offline proof, 20:29). The listening code is the same in all these runs.
+
+### What Phase 8 shows (observations, not accuracy)
+
+1. **The engine, the alert screen and the history behave the same over many trials:** one session ran 32 minutes
+   with no crash, and every alert raised was saved with both times.
+2. **Through this speaker and room the client's priority sounds mostly do not reach 50%.** The horn and smoke alarm
+   that fired at 20:29 scored far lower an hour later from the same speaker spot, with talking in the room. How the
+   sound is played (speaker, volume, room noise) changes the scores more than anything in the app. The group's
+   controlled set-up (their speaker, volumes and distances) is what counts.
+3. **The same model behaviour as Phase 3:** the three-beep fire alarm is heard as alarm clock and beeps (K-011), the
+   smoke alarm as Fire Alarm or a siren (K-010), plain beeps as a telephone (K-013), knock and doorbell stay low
+   (K-014). No threshold or class was changed in Phase 8 (D-021).

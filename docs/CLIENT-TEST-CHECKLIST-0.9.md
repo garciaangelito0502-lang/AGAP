@@ -57,6 +57,9 @@ If you have a phone that can record video, filming both screens in step 4 lets m
 - **Filipino captions:** Captions > Filipino > Start (the first time it sets up for about a minute). Read 3 sentences.
 - **Alert screen:** with Sound Alerts on, play a fire alarm. The alert should fill the screen in red and vibrate.
   Tap Dismiss. Open **History** and tap the alert: both times and the response time are shown.
+- **Between trials:** tap Dismiss after every alert. The alert screen stays until you do, so an alert from the last
+  trial can still be on screen while the next sound plays (its "Detected" time shows which trial it belongs to).
+  Run trials in airplane mode: a phone call rings as a Phone Ringing alert, and answering it stops listening.
 - **Demonstration Mode:** Home > Demonstration Mode > turn on > tap one sample alert of each group. Then Exit.
 - **Settings:** try the largest text size and high contrast once. Is anything cut off or hard to read?
 

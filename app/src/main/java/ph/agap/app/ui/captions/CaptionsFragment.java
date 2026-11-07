@@ -1,8 +1,6 @@
 package ph.agap.app.ui.captions;
 
 import android.Manifest;
-import android.animation.ObjectAnimator;
-import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
@@ -35,6 +33,7 @@ import com.google.android.material.button.MaterialButtonToggleGroup;
 import com.google.android.material.progressindicator.LinearProgressIndicator;
 
 import ph.agap.app.R;
+import ph.agap.app.ui.SlowPulse;
 import ph.agap.app.captions.CaptionEngine;
 import ph.agap.app.captions.CaptionListener;
 import ph.agap.app.captions.CaptionRelay;
@@ -80,7 +79,7 @@ public class CaptionsFragment extends Fragment implements CaptionListener, MicOw
     private View pausedNote;
     private MaterialButton clearButton;
     private MaterialButton startStop;
-    private ValueAnimator pulse;
+    private SlowPulse pulse;
 
     private final ActivityResultLauncher<String> askMic = registerForActivityResult(
             new ActivityResultContracts.RequestPermission(), granted -> {
@@ -131,10 +130,7 @@ public class CaptionsFragment extends Fragment implements CaptionListener, MicOw
             checkLanguage();
         });
 
-        pulse = ObjectAnimator.ofFloat(statusDot, View.ALPHA, 1f, 0.3f);
-        pulse.setDuration(1000);
-        pulse.setRepeatCount(ValueAnimator.INFINITE);
-        pulse.setRepeatMode(ValueAnimator.REVERSE);
+        pulse = SlowPulse.alpha(statusDot, 0.3f, 1000);
 
         startStop.setOnClickListener(v -> {
             if (engine == null) startListening(); else stopListening();
@@ -171,7 +167,7 @@ public class CaptionsFragment extends Fragment implements CaptionListener, MicOw
 
     @Override
     public void onDestroyView() {
-        pulse.cancel();
+        pulse.stop();
         super.onDestroyView();
     }
 
@@ -286,6 +282,7 @@ public class CaptionsFragment extends Fragment implements CaptionListener, MicOw
         // A new session starts with an empty page.
         model.transcript.clear();
         model.lastFailure = null;
+        model.micSilenced = false;
         heardReady = false;
         // Two separate engines, never mixed in one session (contract 1.3).
         if (demo) {
@@ -320,6 +317,7 @@ public class CaptionsFragment extends Fragment implements CaptionListener, MicOw
     }
 
     private void endSession() {
+        model.micSilenced = false;
         MicOwner.release(this);
         WatchSender.get(requireContext()).sendState(WatchMessages.Mode.IDLE, "");
         model.transcript.endSegment();
@@ -376,6 +374,12 @@ public class CaptionsFragment extends Fragment implements CaptionListener, MicOw
             CaptionRelay.publish(model.transcript.latest(), true);
             renderTranscript();
         }
+    }
+
+    @Override
+    public void onMicSilenced(boolean silenced) {
+        model.micSilenced = silenced;
+        if (getView() != null) refresh();
     }
 
     @Override
@@ -451,8 +455,7 @@ public class CaptionsFragment extends Fragment implements CaptionListener, MicOw
         } else {
             statusText.setText(getString(R.string.captions_status_idle, languageName()));
             statusText.setTextColor(themeColor(R.attr.agapTextSecondary));
-            pulse.cancel();
-            statusDot.setAlpha(1f);
+            pulse.stop();
         }
 
         startStop.setText(listening ? R.string.captions_stop : R.string.captions_start);
@@ -468,7 +471,9 @@ public class CaptionsFragment extends Fragment implements CaptionListener, MicOw
         } else if (model.micNote != null) {
             message(model.micNote);
         } else if (engine != null) {
-            if (usesVosk() && !heardReady) {
+            if (model.micSilenced) {
+                message(getString(R.string.mic_silenced), 0, null);
+            } else if (usesVosk() && !heardReady) {
                 message(getString(R.string.captions_vosk_loading, languageName()), 0, null);
             } else {
                 hideMessage();

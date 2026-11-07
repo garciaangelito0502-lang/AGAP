@@ -1,6 +1,6 @@
 # AGAP progress
 
-Last updated: 2026-11-07 (Phase 7 done on the watch emulator, ahead of the 2026-11-16 to 11-18 target; M2 test build 0.9 ready)
+Last updated: 2026-11-08 (Phase 8 done on my phone, ahead of the 2026-11-19 to 11-20 target; phone 0.8.0)
 
 | Phase | Name | Status | Date finished | Build/APK version |
 |---|---|---|---|---|
@@ -12,7 +12,7 @@ Last updated: 2026-11-07 (Phase 7 done on the watch emulator, ahead of the 2026-
 | 5 | Alert screen, vibration, Event History, Demonstration Mode | Done (checked on my phone in airplane mode: real alerts from played clips shown, vibrated and saved with ms times, 55-130 ms response; demo saves nothing and never opens the mic; Infinix check pending with the client) | 2026-11-07 | 0.5.1 debug (phone; 0.5.0 plus history export) |
 | 6 | Remaining screens, settings wiring and accessibility polish | Done (checked on my phone: new screens, Home status, settings changing behaviour, largest text size; 12 of 12 instrumented tests with accessibility checks; Infinix check pending with the client) | 2026-11-07 | 0.6.1 debug (phone; 0.6.0 plus the logo inside the app) |
 | 7 | Wear OS companion | Done (watch app checked on a Wear OS 5 emulator; phone side on my phone with no watch; phone-to-watch link over Bluetooth NOT run end to end: no paired watch, K-021; real-watch check with the group) | 2026-11-07 | 0.7.0 debug (phone and watch); M2 test build 0.9 |
-| 8 | Offline proof, hardening and tests | Not started | | |
+| 8 | Offline proof, hardening and tests | Done (on my phone in airplane mode: every feature offline, 32-minute run with no crash, 90-194 Start/Stop cycles per feature, robustness checks, restart; 5 bugs fixed, K-025 to K-029; 104 unit and 12 instrumented tests pass; watch disconnect/reconnect not possible, no watch; Infinix check pending with the client) | 2026-11-08 | 0.8.0 debug (phone; watch unchanged at 0.7.0) |
 | 9 | Release build, install guide and turnover | Not started | | |
 | 10 | Support and tuning until 2026-12-07 | Not started | | |
 

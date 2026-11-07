@@ -6,6 +6,7 @@ import android.content.pm.ApplicationInfo;
 import android.media.AudioFormat;
 import android.media.AudioManager;
 import android.media.AudioRecord;
+import android.media.AudioRecordingConfiguration;
 import android.media.MediaRecorder;
 import android.os.Handler;
 import android.os.Looper;
@@ -43,6 +44,12 @@ public final class SoundAlertEngine {
 
         /** Listening failed and has stopped. */
         void onFailed(String reason);
+
+        /**
+         * Android silences AGAP's microphone (a phone call, or another app that has priority) or
+         * gives it back. While silenced the engine keeps running but hears nothing.
+         */
+        void onMicSilenced(boolean silenced);
     }
 
     public static final String MODEL_ASSET = "yamnet.tflite";
@@ -56,7 +63,13 @@ public final class SoundAlertEngine {
     private final Handler main = new Handler(Looper.getMainLooper());
 
     @Nullable private Thread worker;
-    @Nullable private volatile AudioRecord record;
+    /**
+     * Held while the worker opens the microphone and while stop() looks at it, so stop() knows for
+     * sure whether the microphone is open (Phase 8, ANR audit). If it is not, the worker will never
+     * open it, and stop() does not wait.
+     */
+    private final Object micLock = new Object();
+    @Nullable private AudioRecord record; // guarded by micLock
     private volatile boolean running;
 
     public SoundAlertEngine(Context context, AnnexA annex) {
@@ -74,36 +87,48 @@ public final class SoundAlertEngine {
         Log.i(TAG, "start, threshold " + threshold);
     }
 
-    /** Stops listening and releases the microphone. */
+    /**
+     * Stops listening. If the microphone is open, waits until the worker has released it (a read
+     * and one classification, tens of milliseconds), so the other feature can open it next. If the
+     * worker is still setting up the classifier, it returns at once: the worker ends by itself
+     * without opening the microphone.
+     */
     public void stop() {
         if (!running) return;
-        running = false;
-        AudioRecord r = record;
+        long begun = SystemClock.elapsedRealtime();
+        AudioRecord r;
+        synchronized (micLock) {
+            running = false;
+            r = record;
+        }
+        Thread w = worker;
+        worker = null;
         if (r != null) {
             try {
                 r.stop(); // wakes up a blocked read
             } catch (IllegalStateException ignored) {
                 // already stopped
             }
-        }
-        Thread w = worker;
-        worker = null;
-        if (w != null) {
-            try {
-                w.join(1500);
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
+            if (w != null) {
+                try {
+                    w.join(1500);
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                }
             }
         }
         main.removeCallbacksAndMessages(null);
-        Log.i(TAG, "stop");
+        Log.i(TAG, "stop in " + (SystemClock.elapsedRealtime() - begun) + " ms"
+                + (r == null ? " (microphone not open yet)" : ""));
     }
 
     @SuppressLint("MissingPermission") // the screen checks RECORD_AUDIO before it starts the engine
     private void listen(AlertDetector detector, float threshold, Listener listener) {
         AudioClassifier classifier = null;
         AudioRecord rec = null;
+        AudioManager.AudioRecordingCallback silencedWatch = null;
         try {
+            long begun = SystemClock.elapsedRealtime();
             classifier = AudioClassifier.createFromOptions(context,
                     AudioClassifier.AudioClassifierOptions.builder()
                             .setBaseOptions(BaseOptions.builder().setModelAssetPath(MODEL_ASSET).build())
@@ -111,24 +136,30 @@ public final class SoundAlertEngine {
                             // All 521 classes: the Annex A ones are rarely in the top few.
                             .setMaxResults(521)
                             .build());
+            Log.i(TAG, "classifier ready in " + (SystemClock.elapsedRealtime() - begun) + " ms");
 
             int minBuffer = AudioRecord.getMinBufferSize(SAMPLE_RATE,
                     AudioFormat.CHANNEL_IN_MONO, AudioFormat.ENCODING_PCM_FLOAT);
             int source = audioSource();
-            rec = new AudioRecord(source, SAMPLE_RATE,
-                    AudioFormat.CHANNEL_IN_MONO, AudioFormat.ENCODING_PCM_FLOAT,
-                    Math.max(minBuffer, HOP * 4 * 2));
-            if (rec.getState() != AudioRecord.STATE_INITIALIZED) {
-                fail(listener, "microphone could not be opened");
-                return;
+            synchronized (micLock) {
+                // Stopped while the classifier was set up: do not open the microphone at all.
+                if (!running) return;
+                rec = new AudioRecord(source, SAMPLE_RATE,
+                        AudioFormat.CHANNEL_IN_MONO, AudioFormat.ENCODING_PCM_FLOAT,
+                        Math.max(minBuffer, HOP * 4 * 2));
+                if (rec.getState() != AudioRecord.STATE_INITIALIZED) {
+                    fail(listener, "microphone could not be opened");
+                    return;
+                }
+                record = rec;
             }
-            record = rec;
-            if (!running) return;
             rec.startRecording();
+            if (!running) return;
             if (rec.getRecordingState() != AudioRecord.RECORDSTATE_RECORDING) {
                 fail(listener, "microphone is busy");
                 return;
             }
+            silencedWatch = watchSilenced(rec, listener);
             main.post(() -> { if (running) listener.onListening(); });
 
             AudioData.AudioDataFormat format = AudioData.AudioDataFormat.builder()
@@ -159,8 +190,11 @@ public final class SoundAlertEngine {
             Log.e(TAG, "sound alerts failed", e);
             fail(listener, e.getClass().getSimpleName());
         } finally {
-            record = null;
+            synchronized (micLock) {
+                record = null;
+            }
             if (rec != null) {
+                if (silencedWatch != null) rec.unregisterAudioRecordingCallback(silencedWatch);
                 try {
                     rec.stop();
                 } catch (IllegalStateException ignored) {
@@ -170,6 +204,38 @@ public final class SoundAlertEngine {
             }
             if (classifier != null) classifier.close();
         }
+    }
+
+    /**
+     * Android 10+ gives the microphone to a phone call or a privileged app and sends AGAP silence
+     * meanwhile, without an error. This tells the screen when that starts and ends.
+     */
+    private AudioManager.AudioRecordingCallback watchSilenced(AudioRecord rec, Listener listener) {
+        int sessionId = rec.getAudioSessionId();
+        boolean[] last = {false};
+        AudioManager.AudioRecordingCallback callback = new AudioManager.AudioRecordingCallback() {
+            @Override
+            public void onRecordingConfigChanged(List<AudioRecordingConfiguration> configs) {
+                for (AudioRecordingConfiguration config : configs) {
+                    if (config.getClientAudioSessionId() != sessionId) continue;
+                    boolean silenced = config.isClientSilenced();
+                    if (silenced != last[0]) {
+                        last[0] = silenced;
+                        Log.i(TAG, "microphone silenced by Android: " + silenced);
+                        if (running) listener.onMicSilenced(silenced);
+                    }
+                }
+            }
+        };
+        rec.registerAudioRecordingCallback(main::post, callback);
+        // Already silenced when listening began (a call in progress): the callback may not fire.
+        // Checked here on the worker; the screen hears about it on the main thread like every callback.
+        AudioRecordingConfiguration now = rec.getActiveRecordingConfiguration();
+        if (now != null) {
+            List<AudioRecordingConfiguration> current = java.util.Collections.singletonList(now);
+            main.post(() -> callback.onRecordingConfigChanged(current));
+        }
+        return callback;
     }
 
     /**
