@@ -5,7 +5,7 @@ Numbered, newest last. Each entry: what was decided, why, and the phase.
 ## D-001 Build PC toolchain (Phase 0, 2026-10-27)
 
 - **JDK:** Eclipse Temurin 17.0.20.1+1 (zip, SHA-256 checked against the Adoptium release), unpacked to
-  `D:\Android\jdk-17`, set as `JAVA_HOME`. Java 17 because contract 1.1 fixes JDK 17.
+  a folder outside the repo, set as `JAVA_HOME`. Java 17 because contract 1.1 fixes JDK 17.
 - **Android SDK:** installed with Google's `android` CLI 1.1.16717390 into the default
   `%LOCALAPPDATA%\Android\Sdk`: platform-tools 37.0.1 (adb 1.0.41), platforms/android-36 (r02),
   build-tools 36.0.0. No Android Studio on the build PC; the command-line SDK and the Gradle wrapper are enough.
@@ -22,10 +22,10 @@ Android 15 (API 35). Final versions are recorded here in Phase 1 after a test bu
 
 ## D-003 One release keystore for phone and watch (Phase 0, 2026-10-27)
 
-- File: `D:\Project\AGAP\keys\agap-release.jks` on the build PC, **outside this repo**. PKCS12, alias `agap`,
+- File: `keys/agap-release.jks` in a folder next to the project folder (`../keys/`), **outside this repo**. PKCS12, alias `agap`,
   RSA 4096, SHA384withRSA, valid until 2054-03-14. Certificate SHA-256:
   `AB:39:7C:85:59:D5:1D:52:32:1E:39:61:9C:1C:A5:77:58:17:F8:5F:CE:94:B2:C2:33:20:77:55:B9:2D:80:64`.
-- Passwords are in `D:\Project\AGAP\keys\keystore.properties` next to it. Neither file is ever committed
+- Passwords are in `keys/keystore.properties` next to it. Neither file is ever committed
   (`.gitignore` blocks `*.jks`, `*.keystore`, `*.p12`, `keystore.properties`).
 - Backed up off the build PC by the developer on 2026-10-27.
 - Why one key: the phone and watch apps must share the applicationId **and** the signing key, or the Wear Data
@@ -598,3 +598,20 @@ already on background threads, and no background thread touches a view. Four mai
   the model loads waits and then shares it; a session stopped while it waits does not load at all (it passes a
   "still wanted" check). Before, each quick Start/Stop tap started its own load of the 1 GB Filipino model
   (K-029). The main thread never takes this lock, so the ANR rules of D-046 still hold.
+
+## D-053 Release 1.0 without R8 shrinking (Phase 9)
+
+- `minifyEnabled` stays `false` for both apps. The phone APK is 426 MB, of which the two Vosk models are 370 MB and
+  YAMNet and the native libraries most of the rest; shrinking the Java code would save a few MB. Against that, Vosk
+  reaches its native library through JNA (reflection) and MediaPipe through JNI and protobuf, which need keep rules
+  that are easy to get wrong and would show up only on a phone. The brief allows R8 only where it does not break
+  MediaPipe, Vosk or Room; not using it is the safe side of that rule.
+
+## D-054 Version 1.0 and release signing (Phase 9)
+
+- Phone `versionName` 1.0, `versionCode` 11; watch 1.0, code 3 (codes only go up; phone and watch count separately).
+- Both release APKs are signed with AGAP's release key (`gradle/signing.gradle`, key outside the repo, D-003):
+  certificate SHA-256 `ab397c8559d51d52321e39619c1ca5775817f85fce94b2c233207755b92d8064`, APK Signature Scheme v2,
+  the same for phone and watch (checked with `apksigner`), so the Data Layer link works.
+- Test builds were signed with the debug key, so 1.0 cannot be installed over them: the install guide starts with
+  uninstalling a test build (K-015). Later 1.0.x builds install over 1.0.

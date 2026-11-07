@@ -2,6 +2,9 @@
 
 One line per notable change, newest first.
 
+- 2026-11-08 Phase 9: release 1.0: `agap-phone-1.0.apk` (phone 1.0, code 11) and `agap-watch-1.0.apk` (watch 1.0, code 3), signed with AGAP's release key, R8 off (D-053, D-054); RELEASE.md, VERSIONS.md.
+- 2026-11-08 Phase 9: INSTALL-GUIDE.md, USER-GUIDE.md, WHAT-1.0-CAN-AND-CANNOT-DO.md; README rewritten for the handover (features, requirements, building, tests, structure, licences, non-commercial note).
+- 2026-11-08 Phase 9: local machine paths removed from the docs.
 - 2026-11-08 M2 update: test build 0.9.1 (`agap-phone-0.9.1-test.apk`, phone 0.8.0 debug, SHA-256 ccf41b4e...) replaces the phone file of 0.9 for the alpha test; the watch file of 0.9 stays.
 - 2026-11-08 Phase 8: phone app 0.8.0 (code 10): offline proof, ANR audit, robustness checks and long run on my phone; watch app unchanged (0.7.0). 104 JVM unit tests and 12 instrumented tests pass.
 - 2026-11-08 Phase 8: only one Vosk model load at a time; a Start stopped while waiting does not load (D-052, fixes K-029: 11 loads at once reached 5.3 GB).

@@ -60,8 +60,8 @@ Windows 11 Pro (build 26200), 32 GB RAM with a very small page file, so Gradle a
 memory. Prefer a physical phone to the emulator.
 
 2026-11-07 (Phase 8): Windows reports 15.8 GB of RAM (Win32_ComputerSystem), about 5 GB free during builds, and
-build 26100. `D:\Android\jdk-17` no longer exists; the JDK is Eclipse Adoptium 17.0.21
-(`C:\Program Files\Eclipse Adoptium\jdk-17.0.21.9-hotspot`), set as the user's `JAVA_HOME` (a Git Bash
+build 26100. The JDK unpacked in Phase 0 is gone; the JDK is now Eclipse Adoptium (Temurin) 17.0.21 in its default install
+folder, set as the user's `JAVA_HOME` (a Git Bash
 started from another program may not see it: set it in the shell). Two adb versions are installed (36 on the
 PATH, 37 in the SDK); use one of them only, or each restarts the other's server.
 

@@ -18,7 +18,8 @@ outside the repo. No phone was available, so the device connection step is still
 - `docs/CHANGELOG.md`, `docs/DECISIONS.md`, `docs/SCOPE-FLAGS.md`, `docs/KNOWN-ISSUES.md`,
   `docs/SPEC-CHECKLIST.md`, `docs/DEVICE-NOTES.md`, this file
 - No Gradle modules yet (`:app` and `:wear` come in Phase 1 and Phase 7).
-- Outside the repo: `D:\Android\jdk-17`, `%LOCALAPPDATA%\Android\Sdk`, `D:\Project\AGAP\keys\`.
+- Outside the repo: the JDK 17 folder, the Android SDK (`%LOCALAPPDATA%\Android\Sdk`), and the release key in
+  `../keys/`.
 
 ## Decisions made and why
 
