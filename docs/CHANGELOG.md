@@ -2,6 +2,12 @@
 
 One line per notable change, newest first.
 
+- 2026-11-07 M2: test build 0.9 (`agap-phone-0.9-test.apk`, phone 0.7.0 debug; `agap-watch-0.9-test.apk`, watch 0.7.0 debug) and `docs/CLIENT-TEST-CHECKLIST-0.9.md`.
+- 2026-11-07 Phase 7: watch app 0.7.0: one screen with the phone's status ("Phone not connected", "Phone connected", "Sound Alerts on", Demonstration Mode), live caption text (large, scrollable, last 30 lines) and the full-screen alert in the category's colour and badge shape with its vibration; tap to close (D-044).
+- 2026-11-07 Phase 7: phone app 0.7.0: `WatchSender` sends alerts, caption text (at most 4 partial updates a second) and the phone's state to a connected AGAP watch over the Wearable Data Layer (play-services-wearable 20.0.1), never waiting and doing nothing without a watch (D-042); Home says whether a watch is connected.
+- 2026-11-07 Phase 7: new `:shared` library with the alert categories, vibration patterns, icons, badge shapes and the watch message format, used by phone and watch (D-043); 11 new JVM unit tests (100 in total: phone 89, shared 7, watch 4).
+- 2026-11-07 Phase 7: watch alerts with the AGAP watch screen closed arrive as a notification that vibrates in the category's pattern (K-022); debug-only `DebugMessageReceiver` to test the watch on an emulator (D-045).
+
 - 2026-11-07 Phase 6 addendum: phone app 0.6.1: the group's logo in Home's top bar (instead of the word "AGAP") and at the top of About (D-036).
 - 2026-11-07 Phase 6: phone app 0.6.0: Sound Categories and Vibration Patterns guide (Try) built from the alert data (D-037); Home status card "Ready to work offline" (D-038); the Alerts screen shows the threshold in use (D-039).
 - 2026-11-07 Phase 6: accessibility pass (D-040): duplicate and redundant screen-reader labels fixed in Settings, Vibration guide cards stacked, alert screen fits at the largest text size; unused placeholder screen, chip drawable and strings removed.

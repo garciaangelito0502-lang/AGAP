@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
@@ -21,6 +22,7 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
 import java.util.Calendar;
+import java.util.List;
 
 import ph.agap.app.R;
 import ph.agap.app.captions.GoogleOnDeviceSupport;
@@ -33,6 +35,7 @@ import ph.agap.app.ui.info.DemoModeActivity;
 import ph.agap.app.ui.info.SoundCategoriesActivity;
 import ph.agap.app.ui.info.VibrationPatternsActivity;
 import ph.agap.app.ui.settings.SettingsActivity;
+import ph.agap.app.watch.WatchSender;
 
 /**
  * Home: the two modes, a status card (what works offline right now, and the microphone), and the
@@ -62,10 +65,23 @@ public class HomeFragment extends Fragment {
         statusRows = view.findViewById(R.id.home_status_rows);
     }
 
+    private final Runnable watchChanged = () -> {
+        if (getView() != null) showStatus();
+    };
+
     @Override
     public void onStart() {
         super.onStart();
+        WatchSender watch = WatchSender.get(requireContext());
+        watch.addListener(watchChanged);
+        watch.refresh();
         showStatus();
+    }
+
+    @Override
+    public void onStop() {
+        WatchSender.get(requireContext()).removeListener(watchChanged);
+        super.onStop();
     }
 
     /** One line per item, each with a check (ready) or info (action needed) icon and words. */
@@ -81,6 +97,22 @@ public class HomeFragment extends Fragment {
         addEnglishStatus(context, mic);
         boolean filipino = VoskModelManager.isInstalled(context, VoskModelSpec.FILIPINO);
         addStatus(filipino, filipino ? R.string.home_status_filipino_ready : R.string.home_status_filipino_setup);
+        addWatchStatus(context);
+    }
+
+    /** The watch link (contract 1.11): which AGAP watch is connected, if any. */
+    private void addWatchStatus(Context context) {
+        WatchSender watch = WatchSender.get(context);
+        if (!watch.isAvailable()) {
+            addStatus(false, getString(R.string.home_status_watch_unavailable));
+            return;
+        }
+        List<String> names = watch.connectedWatchNames();
+        if (names.isEmpty()) {
+            addStatus(false, getString(R.string.home_status_watch_none));
+        } else {
+            addStatus(true, getString(R.string.home_status_watch, TextUtils.join(", ", names)));
+        }
     }
 
     private void addEnglishStatus(Context context, boolean mic) {
@@ -115,6 +147,10 @@ public class HomeFragment extends Fragment {
     }
 
     private void addStatus(boolean ready, @StringRes int text) {
+        addStatus(ready, getString(text));
+    }
+
+    private void addStatus(boolean ready, String text) {
         TextView row = new TextView(requireContext());
         row.setText(text);
         row.setTextAppearance(R.style.TextAppearance_AGAP_Body);

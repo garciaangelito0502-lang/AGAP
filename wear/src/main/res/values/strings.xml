@@ -1,5 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">AGAP</string>
+
+    <!-- Status (no alert, no captions) -->
+    <string name="watch_checking">Looking for the phone…</string>
+    <string name="watch_no_phone_title">Phone not connected</string>
+    <string name="watch_no_phone_detail">Keep the phone near you with Bluetooth on, then open AGAP on the phone.</string>
+    <string name="watch_phone_title">Phone connected</string>
     <string name="watch_waiting">Open AGAP on your phone. Alerts and captions will show here.</string>
+    <string name="watch_idle_detail">Start Sound Alerts or Live Captions in AGAP on the phone. They will show here.</string>
+    <string name="watch_alerts_title">Sound Alerts on</string>
+    <string name="watch_alerts_detail">The phone is listening. Alerts will show here and vibrate.</string>
+    <string name="watch_demo">Demonstration Mode: samples only.</string>
+
+    <!-- Live Captions -->
+    <string name="watch_captions_header">Live Captions · %1$s</string>
+    <string name="watch_captions_header_sample">Sample captions · %1$s</string>
+    <string name="watch_lang_english">English</string>
+    <string name="watch_lang_filipino">Filipino</string>
+    <string name="watch_captions_waiting">Waiting for speech…</string>
+
+    <!-- Alert -->
+    <string name="watch_sample">Sample alert</string>
+    <string name="watch_sample_title">Sample: %1$s</string>
+    <string name="watch_alert_meta">%1$d%% · %2$s</string>
+    <string name="watch_alert_close">Tap to close</string>
+    <string name="watch_alert_description">%1$s, %2$s alert, detected at %3$s. Tap to close.</string>
+    <string name="watch_channel_quiet">Alerts with vibration off</string>
 </resources>

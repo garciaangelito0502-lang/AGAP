@@ -1,10 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- The watch uses the high-contrast palette (see app/src/main/res/values/colors.xml).
-     Category colours are added with the alert screen in Phase 7. -->
+<!-- The watch uses the phone's high-contrast palette (app/src/main/res/values/colors.xml) and the
+     same category colours as the phone's alert screen. -->
 <resources>
-    <color name="brand">#4A148C</color>
-    <color name="on_brand">#FFFFFF</color>
     <color name="hc_background">#000000</color>
     <color name="hc_text">#FFFFFF</color>
     <color name="hc_text_secondary">#C8C8CC</color>
+    <color name="hc_demo">#FFD54F</color>
+
+    <color name="emergency_strong">#B71C1C</color>
+    <color name="emergency_on_strong">#FFFFFF</color>
+    <color name="traffic_strong">#F57C00</color>
+    <color name="traffic_on_strong">#1B1B1F</color>
+    <color name="household_strong">#29B6F6</color>
+    <color name="household_on_strong">#1B1B1F</color>
 </resources>

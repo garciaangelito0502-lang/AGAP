@@ -469,3 +469,59 @@ app and its Event History stay behind as a separate app.
   (badge and status-dot pulses otherwise keep the UI busy, K-019). Home's status card can change height while a
   test scrolls (the English check answers from Google's speech service, which Espresso cannot see), so a scroll to a
   Home row is retried once.
+
+## D-042 Phone to watch link: Wearable Data Layer messages (Phase 7)
+
+- The phone sends small messages with `MessageClient` (Google Play services, play-services-wearable 20.0.1) over
+  Bluetooth; no internet, no `DataClient` (nothing needs to be stored or synced). The library adds no network
+  permission to either app (merged manifests checked).
+- The watch app advertises the capability `agap_watch_app` (`wear/src/main/res/values/wear.xml`). `WatchSender`
+  on the phone keeps the set of reachable nodes with that capability and sends only when it is not empty. It
+  never waits for an answer, logs a failed send without the words, and does nothing on a phone without Google Play
+  services, so the phone app cannot be slowed down or crash because of the watch.
+- Message format (`WatchMessages`, shared): compact JSON in UTF-8 on three paths. `/agap/alert`: label, category,
+  confidence %, detection time, sample flag, and the phone's Vibration setting (the watch follows it).
+  `/agap/caption`: text (newest 400 characters), final flag, language. `/agap/state`: what the phone is doing
+  (idle, Live Captions with its language, Sound Alerts) and whether Demonstration Mode is on. An alert is about
+  100 bytes. Reading returns nothing for a message it does not understand, so a newer phone cannot crash an older
+  watch.
+- Partial captions are sent at most 4 times a second (`CaptionThrottle`, the newest text wins); final lines go at
+  once.
+- One message goes the other way: `/agap/hello` (empty) when the watch screen opens; the phone answers with its
+  state. The phone also sends its state to a watch that has just connected.
+
+## D-043 `:shared` Android library (Phase 7)
+
+- What phone and watch must show the same moved into `:shared`, in their old packages so the phone code did not
+  change: `AlertCategory`, `VibrationPatterns`, the 13 alert icons, the 3 category icons and the 3 badge shapes,
+  the new `AlertIcons` (icon and badge for an alert) and `WatchMessages`. The phone's `AlertLooks` now asks
+  `AlertIcons` for icons and shapes.
+
+## D-044 Watch screen and how an alert reaches the user (Phase 7)
+
+- One screen (`WatchActivity`, XML Views, Java), black like the phone's high-contrast mode, inside
+  `BoxInsetLayout` for round screens. Underneath: the status ("Phone not connected", "Phone connected", "Sound Alerts
+  on", Demonstration Mode in yellow) or the live caption text, 20sp, the last 30 lines, following the newest words
+  unless the user has scrolled back; the screen stays on while captions run. On top: the alert, full screen in the
+  phone's category colour with the category's badge shape, icon, label, category, confidence and time, and "Tap to
+  close". Above 1.1 times the normal text size the badge shrinks; with very large text the alert scrolls rather
+  than being cut off.
+- "Phone not connected" when no phone node is connected and nothing has come from the phone for 15 s (checked every
+  10 s while the screen is open). What the phone was doing is then forgotten.
+- Alert, AGAP watch screen in front: the app vibrates the category's pattern as an alarm (Emergency repeats until
+  the alert is closed, at most a minute, as on the phone) and, if the watch has dimmed, starts its own screen again
+  so Android turns the display on.
+- Alert, AGAP watch screen not in front: a notification on the category's channel, which vibrates in the category's
+  pattern (Wear OS only pops up notifications that vibrate or make a sound). It asks to open the AGAP screen full
+  screen, but Wear OS did not do this on the emulator (K-022); "Open on watch" opens it.
+- The watch stores nothing on disk, has no microphone permission and no internet permission.
+
+## D-045 Watch tested on a Wear OS emulator, not paired (Phase 7)
+
+- No watch is available (D-005). The watch app was tested on a Wear OS 5 emulator (`AGAP_Wear_Round`, Android 14,
+  454x454 round). Pairing the emulator with my phone needs Google's Wear OS app on the phone and a Google sign-in;
+  the owner chose on 2026-11-07 to skip it. The phone-to-watch Bluetooth link is therefore not tested end to end
+  (K-021); the group checks it on a real watch with test build 0.9.
+- Debug builds of the watch app have `DebugMessageReceiver`: it builds messages with the same `WatchMessages` code
+  the phone uses and hands them to the watch as if they had arrived. Only adb can call it (it requires the `DUMP`
+  permission, which apps cannot hold), and it is not in release builds.

@@ -47,6 +47,8 @@ import ph.agap.app.captions.VoskModelManager;
 import ph.agap.app.captions.VoskModelSpec;
 import ph.agap.app.demo.DemoMode;
 import ph.agap.app.mic.MicOwner;
+import ph.agap.app.watch.WatchMessages;
+import ph.agap.app.watch.WatchSender;
 import ph.agap.app.ui.captions.CaptionsViewModel.Language;
 
 /**
@@ -291,6 +293,7 @@ public class CaptionsFragment extends Fragment implements CaptionListener, MicOw
             engine = new DemoCaptionEngine(isFilipino());
             model.micNote = null;
             engine.start(this);
+            WatchSender.get(requireContext()).sendState(WatchMessages.Mode.CAPTIONS, engine.languageTag());
             renderTranscript();
             refresh();
             return;
@@ -304,6 +307,7 @@ public class CaptionsFragment extends Fragment implements CaptionListener, MicOw
         String stopped = MicOwner.take(this);
         model.micNote = stopped == null ? null : getString(R.string.mic_other_stopped, stopped);
         engine.start(this);
+        WatchSender.get(requireContext()).sendState(WatchMessages.Mode.CAPTIONS, engine.languageTag());
         renderTranscript();
         refresh();
     }
@@ -317,6 +321,7 @@ public class CaptionsFragment extends Fragment implements CaptionListener, MicOw
 
     private void endSession() {
         MicOwner.release(this);
+        WatchSender.get(requireContext()).sendState(WatchMessages.Mode.IDLE, "");
         model.transcript.endSegment();
         CaptionRelay.publishStopped();
         if (getView() != null) {

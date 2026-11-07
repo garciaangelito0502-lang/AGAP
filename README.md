@@ -15,7 +15,8 @@ known issues and the contract checklist.
 ## Project layout
 
 - `app/`: the phone app (Java 17, XML layouts, Android 10 or newer).
-- `wear/`: the Wear OS companion app (Wear OS 3 or newer). Shell only until Phase 7.
+- `wear/`: the Wear OS companion app (Wear OS 3 or newer): shows alerts and caption text sent by the phone.
+- `shared/`: code and icons both apps use (alert categories, vibration patterns, alert icons, the watch message format).
 - `gradle/libs.versions.toml`: library versions. `gradle/signing.gradle`: release signing for both apps.
 - `docs/`: progress notes, decisions, checklists.
 

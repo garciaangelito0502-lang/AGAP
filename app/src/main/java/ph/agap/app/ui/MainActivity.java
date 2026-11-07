@@ -19,6 +19,7 @@ import ph.agap.app.ui.captions.CaptionsFragment;
 import ph.agap.app.ui.history.HistoryFragment;
 import ph.agap.app.ui.home.HomeFragment;
 import ph.agap.app.ui.settings.SettingsActivity;
+import ph.agap.app.watch.WatchSender;
 
 /**
  * Home and the three main tabs (Captions, Alerts, History). Only one tab's screen exists at a
@@ -67,6 +68,9 @@ public class MainActivity extends BaseActivity {
             }
             return false;
         });
+
+        // The watch link: sends alerts and captions to an AGAP watch if one is connected (contract 1.11).
+        WatchSender.get(this).start();
 
         nav = findViewById(R.id.bottom_nav);
         nav.setOnItemSelectedListener(item -> {

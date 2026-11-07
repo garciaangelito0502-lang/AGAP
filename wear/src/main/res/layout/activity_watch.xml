@@ -1,27 +1,182 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Padding keeps the text inside the round screen's visible area. -->
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/hc_background"
-    android:gravity="center"
-    android:orientation="vertical"
-    android:padding="24dp">
+<!-- Three panels: status or live captions underneath, and the full-screen alert on top.
+     BoxInsetLayout keeps text inside the visible area of a round screen. -->
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/app_name"
-        android:textColor="@color/hc_text"
-        android:textSize="28sp"
-        android:textStyle="bold" />
+    <androidx.wear.widget.BoxInsetLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:gravity="center"
-        android:text="@string/watch_waiting"
-        android:textColor="@color/hc_text_secondary"
-        android:textSize="16sp" />
-</LinearLayout>
+        <LinearLayout
+            android:id="@+id/status_panel"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:padding="4dp"
+            app:layout_boxedEdges="all">
+
+            <TextView
+                android:id="@+id/status_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="@string/app_name"
+                android:textColor="@color/hc_text"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/status_detail"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:gravity="center"
+                android:text="@string/watch_checking"
+                android:textColor="@color/hc_text_secondary"
+                android:textSize="14sp" />
+
+            <TextView
+                android:id="@+id/status_demo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:gravity="center"
+                android:text="@string/watch_demo"
+                android:textColor="@color/hc_demo"
+                android:textSize="13sp"
+                android:visibility="gone" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/captions_panel"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:visibility="gone"
+            app:layout_boxedEdges="all">
+
+            <TextView
+                android:id="@+id/captions_header"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:textColor="@color/hc_text_secondary"
+                android:textSize="12sp" />
+
+            <ScrollView
+                android:id="@+id/captions_scroll"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_marginTop="2dp"
+                android:layout_weight="1"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                android:scrollbars="vertical">
+
+                <TextView
+                    android:id="@+id/captions_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:accessibilityLiveRegion="polite"
+                    android:lineSpacingMultiplier="1.1"
+                    android:textColor="@color/hc_text"
+                    android:textSize="20sp" />
+            </ScrollView>
+        </LinearLayout>
+    </androidx.wear.widget.BoxInsetLayout>
+
+    <!-- The alert is boxed at the sides only, so it can use the full height of a round screen;
+         with very large text it scrolls (crown or swipe) instead of being cut off. -->
+    <androidx.wear.widget.BoxInsetLayout
+        android:id="@+id/alert_panel"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone">
+
+        <ScrollView
+            android:id="@+id/alert_scroll"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:fillViewport="true"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:scrollbars="none"
+            app:layout_boxedEdges="left|right">
+
+            <LinearLayout
+                android:id="@+id/alert_content"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:paddingTop="22dp"
+                android:paddingBottom="22dp">
+
+                <TextView
+                    android:id="@+id/alert_sample"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="2dp"
+                    android:text="@string/watch_sample"
+                    android:textSize="12sp"
+                    android:textStyle="bold"
+                    android:visibility="gone" />
+
+                <FrameLayout
+                    android:id="@+id/alert_badge_frame"
+                    android:layout_width="@dimen/badge"
+                    android:layout_height="@dimen/badge">
+
+                    <ImageView
+                        android:id="@+id/alert_badge"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:importantForAccessibility="no" />
+
+                    <ImageView
+                        android:id="@+id/alert_icon"
+                        android:layout_width="@dimen/badge_icon"
+                        android:layout_height="@dimen/badge_icon"
+                        android:layout_gravity="center"
+                        android:importantForAccessibility="no" />
+                </FrameLayout>
+
+                <TextView
+                    android:id="@+id/alert_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:gravity="center"
+                    android:maxLines="2"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/alert_category"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:textSize="14sp" />
+
+                <TextView
+                    android:id="@+id/alert_meta"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:textSize="12sp" />
+
+                <TextView
+                    android:id="@+id/alert_close"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text="@string/watch_alert_close"
+                    android:textSize="12sp" />
+            </LinearLayout>
+        </ScrollView>
+    </androidx.wear.widget.BoxInsetLayout>
+</merge>

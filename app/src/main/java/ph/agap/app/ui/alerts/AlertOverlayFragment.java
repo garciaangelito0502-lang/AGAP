@@ -49,6 +49,7 @@ import ph.agap.app.history.AlertRecorder;
 import ph.agap.app.history.HistoryRepository;
 import ph.agap.app.ui.DemoBanner;
 import ph.agap.app.vibration.AlertVibrator;
+import ph.agap.app.watch.WatchSender;
 
 /**
  * The full-screen alert (contract 1.5): icon, label, category, confidence and time, in the
@@ -184,6 +185,8 @@ public class AlertOverlayFragment extends DialogFragment {
         recordNow(System.currentTimeMillis(), "replaced before drawn");
         current = shown;
         countThisScreen++;
+        // The watch gets it at the same time, with its own screen and vibration (contract 1.11).
+        WatchSender.get(requireContext()).sendAlert(shown.event, shown.demo);
         bind(shown);
         vibrator.play(shown.event.category());
         measureShown(shown);

@@ -50,6 +50,7 @@ times), then USB debugging, plug in with a data cable, and allow the computer's 
 |---|---|---|---|
 | 2026-10-27 | none available | | No watch and no watch emulator. On-device watch checks are "not possible". |
 | 2026-11-04 | none available | | Asked again: still no watch and no watch emulator. On-device watch checks stay "not possible". |
+| 2026-11-07 | Wear OS emulator `AGAP_Wear_Round` (`system-images;android-34;android-wear;x86_64`, device `wearos_large_round`, 454x454 round, 320 dpi, 2 GB) | Wear OS 5 (Android 14) | Watch app tested on it (D-045). Not paired with a phone; test messages fed with the debug-only receiver. Start: `emulator -avd AGAP_Wear_Round -no-snapshot-save -no-audio -no-boot-anim` (stop Gradle first: `gradlew --stop`). |
 
 A Wear OS watch is debugged over Wi-Fi (Settings > Developer options > Wireless debugging, Wear OS 3+).
 

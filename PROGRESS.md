@@ -1,6 +1,6 @@
 # AGAP progress
 
-Last updated: 2026-11-07 (Phase 6 done, ahead of the 2026-11-15 target)
+Last updated: 2026-11-07 (Phase 7 done on the watch emulator, ahead of the 2026-11-16 to 11-18 target; M2 test build 0.9 ready)
 
 | Phase | Name | Status | Date finished | Build/APK version |
 |---|---|---|---|---|
@@ -11,14 +11,14 @@ Last updated: 2026-11-07 (Phase 6 done, ahead of the 2026-11-15 target)
 | 4 | Live Captions, Filipino | Done (checked on my phone in airplane mode: 12 recorded Filipino sentences all captioned, the owner's voice 6 of 6; Vosk English fallback built; Infinix check pending with the client) | 2026-11-07 | 0.4.0 debug (phone, 431 MB) |
 | 5 | Alert screen, vibration, Event History, Demonstration Mode | Done (checked on my phone in airplane mode: real alerts from played clips shown, vibrated and saved with ms times, 55-130 ms response; demo saves nothing and never opens the mic; Infinix check pending with the client) | 2026-11-07 | 0.5.1 debug (phone; 0.5.0 plus history export) |
 | 6 | Remaining screens, settings wiring and accessibility polish | Done (checked on my phone: new screens, Home status, settings changing behaviour, largest text size; 12 of 12 instrumented tests with accessibility checks; Infinix check pending with the client) | 2026-11-07 | 0.6.1 debug (phone; 0.6.0 plus the logo inside the app) |
-| 7 | Wear OS companion | Not started | | |
+| 7 | Wear OS companion | Done (watch app checked on a Wear OS 5 emulator; phone side on my phone with no watch; phone-to-watch link over Bluetooth NOT run end to end: no paired watch, K-021; real-watch check with the group) | 2026-11-07 | 0.7.0 debug (phone and watch); M2 test build 0.9 |
 | 8 | Offline proof, hardening and tests | Not started | | |
 | 9 | Release build, install guide and turnover | Not started | | |
 | 10 | Support and tuning until 2026-12-07 | Not started | | |
 
 Milestones (schedule of 2026-11-04; the contract section 5 dates of 10-28, 11-03, 11-07 and 11-23 have passed):
 **M1** 2026-11-08 first phone test build (after Phase 3; the group installs it on the Infinix 11-09),
-**M2** 2026-11-18 complete test build of phone and watch (after Phase 7),
+**M2** 2026-11-18 complete test build of phone and watch (after Phase 7; test build 0.9 ready 2026-11-07),
 **M3** 2026-11-21 final build and turnover (Phase 9), support until 2026-12-07 (Phase 10).
 The group's testing: alpha (2 days) 11-19 to 11-20 on M2, beta (1 week) 11-23 to 11-29 on 1.0, their data collection from 11-30.
 Phase targets: 2 on 11-07, 3 on 11-08, 4 on 11-09 to 11-11, 5 on 11-12 to 11-14, 6 on 11-15, 7 on 11-16 to 11-18,

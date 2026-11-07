@@ -36,6 +36,8 @@ import ph.agap.app.alerts.AlertEvent;
 import ph.agap.app.alerts.SoundAlertEngine;
 import ph.agap.app.demo.DemoMode;
 import ph.agap.app.mic.MicOwner;
+import ph.agap.app.watch.WatchMessages;
+import ph.agap.app.watch.WatchSender;
 import ph.agap.app.settings.SettingsStore;
 import ph.agap.app.ui.info.DemoModeActivity;
 
@@ -146,6 +148,7 @@ public class AlertsFragment extends Fragment implements SoundAlertEngine.Listene
         thresholdPercent = settings.getAlertThresholdPercent();
         engine = new SoundAlertEngine(requireContext(), model.annex());
         engine.start(threshold, this);
+        WatchSender.get(requireContext()).sendState(WatchMessages.Mode.ALERTS, "");
         showLastEvent();
         refresh();
     }
@@ -155,6 +158,7 @@ public class AlertsFragment extends Fragment implements SoundAlertEngine.Listene
         engine.stop();
         engine = null;
         MicOwner.release(this);
+        WatchSender.get(requireContext()).sendState(WatchMessages.Mode.IDLE, "");
         if (getView() != null) {
             closestNow.setText("");
             refresh();
@@ -205,6 +209,7 @@ public class AlertsFragment extends Fragment implements SoundAlertEngine.Listene
     public void onFailed(String reason) {
         engine = null;
         MicOwner.release(this);
+        WatchSender.get(requireContext()).sendState(WatchMessages.Mode.IDLE, "");
         model.failure = reason;
         refresh();
     }

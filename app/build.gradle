@@ -11,8 +11,8 @@ android {
         applicationId = "ph.agap.app"
         minSdk = 29
         targetSdk = 36
-        versionCode = 8
-        versionName = "0.6.1"
+        versionCode = 9
+        versionName = "0.7.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
@@ -68,6 +68,7 @@ android {
 apply from: rootProject.file("gradle/signing.gradle")
 
 dependencies {
+    implementation project(':shared')
     implementation libs.androidx.appcompat
     implementation libs.material
     implementation libs.mediapipe.tasks.audio
@@ -75,6 +76,8 @@ dependencies {
     implementation libs.room.runtime
     annotationProcessor libs.room.compiler
     implementation libs.androidx.recyclerview
+    // Phone -> watch messages over the Wearable Data Layer (Bluetooth, no internet; D-042).
+    implementation libs.play.services.wearable
 
     testImplementation libs.junit
     testImplementation libs.json

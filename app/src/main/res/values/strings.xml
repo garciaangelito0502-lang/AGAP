@@ -33,6 +33,9 @@
     <string name="home_status_filipino_ready">Filipino captions ready (AGAP\'s Filipino model).</string>
     <string name="home_status_filipino_setup">Filipino captions need a one-time setup, about 776 MB. Open Live Captions and choose Filipino.</string>
     <string name="home_status_demo">Demonstration Mode is on: microphone off, sample captions and alerts only.</string>
+    <string name="home_status_watch">Watch connected: %1$s. Alerts and captions also show on the watch.</string>
+    <string name="home_status_watch_none">No watch connected. With a paired Wear OS watch that has the AGAP watch app, alerts and captions also show on the watch.</string>
+    <string name="home_status_watch_unavailable">Watch link not available: this phone has no Google Play services.</string>
 
     <!-- Screen titles -->
     <string name="captions_title">Live Captions</string>

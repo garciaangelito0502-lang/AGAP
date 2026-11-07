@@ -1,0 +1,27 @@
+plugins {
+    alias(libs.plugins.android.library)
+}
+
+// Code and pictures the phone app and the watch app both use, so the two can never disagree:
+// the alert categories, the vibration patterns, the alert icons and badge shapes, and the
+// small message format the phone sends to the watch (D-042).
+android {
+    namespace = "ph.agap.shared"
+    compileSdk = 36
+
+    defaultConfig {
+        minSdk = 29
+    }
+
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+    }
+}
+
+dependencies {
+    implementation libs.androidx.annotation
+
+    testImplementation libs.junit
+    testImplementation libs.json
+}

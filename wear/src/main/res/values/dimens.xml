@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- The alert's badge; smaller at the largest text sizes so the alert still fits on one screen. -->
+    <dimen name="badge">52dp</dimen>
+    <dimen name="badge_large_text">42dp</dimen>
+    <dimen name="badge_icon">30dp</dimen>
+    <dimen name="badge_icon_large_text">24dp</dimen>
+</resources>

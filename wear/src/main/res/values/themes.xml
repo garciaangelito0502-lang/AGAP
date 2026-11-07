@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Black like the phone's high-contrast theme; the window paints it, so the layout does not. -->
+    <style name="Theme.AGAPWatch" parent="@android:style/Theme.DeviceDefault">
+        <item name="android:windowBackground">@color/hc_background</item>
+    </style>
+</resources>
