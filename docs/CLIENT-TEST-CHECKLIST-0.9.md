@@ -1,7 +1,9 @@
 # AGAP test build 0.9: phone and watch
 
-Test build 0.9 is the complete test build: the phone app and, for the first time, the watch app (both show version
-0.7.0 inside the app). Please try the steps below during your alpha test and send the answers back by
+Test build 0.9 is the complete test build: the phone app and, for the first time, the watch app. **Use the phone
+file `agap-phone-0.9.1-test.apk`** (it shows version 0.8.0 inside the app): it has the Phase 8 fixes (dark mode no
+longer stops listening, less memory and processor use, quick taps on Filipino captions no longer use gigabytes of
+memory). The watch file stays `agap-watch-0.9-test.apk` (version 0.7.0). Please try the steps below during your alpha test and send the answers back by
 **20 November**.
 
 The watch part matters most: I tested the watch app only on a computer simulation of a watch, not on a real one, and
@@ -16,7 +18,7 @@ the link between phone and watch over Bluetooth has **not been tried yet**. Your
 
 ## 1. Install the phone app
 
-1. Copy `agap-phone-0.9-test.apk` (about 430 MB) to the Infinix. It needs about 1.5 GB free (K-017).
+1. Copy `agap-phone-0.9.1-test.apk` (about 430 MB) to the Infinix. It needs about 1.5 GB free (K-017).
 2. Tap the file and tap **Install**. It replaces test build 0.1; you do not need to uninstall it.
 3. Open **AGAP**. Allow the microphone when asked.
 
