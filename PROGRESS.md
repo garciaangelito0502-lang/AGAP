@@ -10,7 +10,7 @@ Last updated: 2026-11-07 (Phase 6 done, ahead of the 2026-11-15 target)
 | 3 | Sound Alerts engine | Done (checked on my phone in airplane mode; knock and doorbell scored low, see docs/DETECTION-CHECK.md; Infinix check pending with the client) | 2026-11-06 | 0.3.0 debug (phone); M1 test build `agap-phone-0.1-test.apk` |
 | 4 | Live Captions, Filipino | Done (checked on my phone in airplane mode: 12 recorded Filipino sentences all captioned, the owner's voice 6 of 6; Vosk English fallback built; Infinix check pending with the client) | 2026-11-07 | 0.4.0 debug (phone, 431 MB) |
 | 5 | Alert screen, vibration, Event History, Demonstration Mode | Done (checked on my phone in airplane mode: real alerts from played clips shown, vibrated and saved with ms times, 55-130 ms response; demo saves nothing and never opens the mic; Infinix check pending with the client) | 2026-11-07 | 0.5.1 debug (phone; 0.5.0 plus history export) |
-| 6 | Remaining screens, settings wiring and accessibility polish | Done (checked on my phone: new screens, Home status, settings changing behaviour, largest text size; 12 of 12 instrumented tests with accessibility checks; Infinix check pending with the client) | 2026-11-07 | 0.6.0 debug (phone) |
+| 6 | Remaining screens, settings wiring and accessibility polish | Done (checked on my phone: new screens, Home status, settings changing behaviour, largest text size; 12 of 12 instrumented tests with accessibility checks; Infinix check pending with the client) | 2026-11-07 | 0.6.1 debug (phone; 0.6.0 plus the logo inside the app) |
 | 7 | Wear OS companion | Not started | | |
 | 8 | Offline proof, hardening and tests | Not started | | |
 | 9 | Release build, install guide and turnover | Not started | | |

@@ -2,6 +2,7 @@
 
 One line per notable change, newest first.
 
+- 2026-11-07 Phase 6 addendum: phone app 0.6.1: the group's logo in Home's top bar (instead of the word "AGAP") and at the top of About (D-036).
 - 2026-11-07 Phase 6: phone app 0.6.0: Sound Categories and Vibration Patterns guide (Try) built from the alert data (D-037); Home status card "Ready to work offline" (D-038); the Alerts screen shows the threshold in use (D-039).
 - 2026-11-07 Phase 6: accessibility pass (D-040): duplicate and redundant screen-reader labels fixed in Settings, Vibration guide cards stacked, alert screen fits at the largest text size; unused placeholder screen, chip drawable and strings removed.
 - 2026-11-07 Phase 6: the group's logo as the launcher icon of phone and watch, transparent background, with a themed-icon layer (D-036).

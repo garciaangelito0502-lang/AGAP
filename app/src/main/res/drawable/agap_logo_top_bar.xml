@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The group's logo at top-bar size (36dp high), shown on Home instead of the word "AGAP" (D-036). -->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:width="84dp"
+        android:height="36dp"
+        android:drawable="@drawable/agap_logo" />
+</layer-list>

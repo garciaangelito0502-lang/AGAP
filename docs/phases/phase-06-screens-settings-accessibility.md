@@ -77,6 +77,12 @@ path on a phone; the icon on other launchers.
 - K-020 HyperOS dark plate behind the transparent icon. K-003 and K-019 updated.
 - Scope flags: none new.
 
+## Addendum: the logo inside the app (0.6.1, 2026-11-07)
+
+At the owner's request, the logo also replaces the word "AGAP" in Home's top bar and sits on its own black at the top
+of About (D-036). Checked on my phone in the standard and high-contrast modes (screenshots), and the 12 instrumented
+tests pass again with the accessibility checks (the logo is read as "AGAP").
+
 ## Next phase
 
 Phase 7: Wear OS companion (target 2026-11-16 to 11-18, M2). It needs a Wear OS 3+ watch, or at least a

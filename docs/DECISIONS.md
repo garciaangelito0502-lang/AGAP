@@ -418,6 +418,10 @@ app and its Event History stay behind as a separate app.
   screen densities. A monochrome layer (the purple letters only) serves Android 13+ themed icons.
 - Xiaomi's HyperOS draws its own dark plate behind icons with a transparent background (seen in App info); stock
   Android launchers show the wallpaper (K-020).
+- Inside the app (owner's request, 0.6.1): the logo replaces the word "AGAP" in Home's top bar (36dp high; its white
+  outline keeps it visible on the purple bar and on black in high contrast; read as "AGAP" by screen readers), and
+  sits on its own black at the top of About. One cutout PNG (`drawable-xxxhdpi/agap_logo.png`, 64dp high) serves
+  both.
 
 ## D-037 Sound Categories and Vibration Patterns are built from data (Phase 6)
 

@@ -46,4 +46,6 @@
     <color name="hc_emergency">#FF6B66</color>
     <color name="hc_traffic">#FFB74D</color>
     <color name="hc_household">#4FC3F7</color>
+    <!-- Behind the group's logo on the About screen: the logo's own black background -->
+    <color name="logo_background">#000000</color>
 </resources>

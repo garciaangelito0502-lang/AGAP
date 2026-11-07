@@ -1,6 +1,7 @@
 package ph.agap.app.ui;
 
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 
 import androidx.activity.OnBackPressedCallback;
@@ -129,7 +130,11 @@ public class MainActivity extends BaseActivity {
     }
 
     private void updateChrome() {
-        bar.setTitle(titleFor(currentTab));
+        // Home shows the group's logo instead of the word "AGAP"; other tabs show their title.
+        boolean home = currentTab == R.id.nav_home;
+        bar.setTitle(home ? null : getString(titleFor(currentTab)));
+        if (home) bar.setLogo(R.drawable.agap_logo_top_bar); else bar.setLogo((Drawable) null);
+        bar.setLogoDescription(home ? getString(R.string.app_name) : null);
         bar.getMenu().findItem(R.id.action_export_history).setVisible(currentTab == R.id.nav_history);
         bar.getMenu().findItem(R.id.action_clear_history).setVisible(currentTab == R.id.nav_history);
         backToHome.setEnabled(currentTab != R.id.nav_home);
