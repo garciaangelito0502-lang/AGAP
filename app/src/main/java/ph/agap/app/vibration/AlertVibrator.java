@@ -40,12 +40,35 @@ public final class AlertVibrator {
         return vibrator != null && SettingsStore.from(context).isVibrationOn();
     }
 
+    /** True when the phone has a vibrator at all. */
+    public boolean canVibrate() {
+        return vibrator != null;
+    }
+
     /** Starts the category's pattern, replacing any pattern still playing. */
     public void play(AlertCategory category) {
         stop();
         if (!willVibrate()) return;
-        VibrationEffect effect = VibrationEffect.createWaveform(
-                VibrationPatterns.timings(category), VibrationPatterns.repeatIndex(category));
+        vibrate(category, VibrationPatterns.repeatIndex(category));
+        if (VibrationPatterns.repeats(category)) {
+            main.postDelayed(stopRepeating, VibrationPatterns.MAX_REPEAT_MILLIS);
+        }
+        Log.d(TAG, "vibrate " + category.displayName);
+    }
+
+    /**
+     * One play of the pattern, for the Vibration Patterns guide's Try button. Plays even when
+     * Vibration is off in Settings, because the user asked to feel it; Emergency does not repeat.
+     */
+    public void preview(AlertCategory category) {
+        stop();
+        if (vibrator == null) return;
+        vibrate(category, -1);
+        Log.d(TAG, "preview " + category.displayName);
+    }
+
+    private void vibrate(AlertCategory category, int repeatIndex) {
+        VibrationEffect effect = VibrationEffect.createWaveform(VibrationPatterns.timings(category), repeatIndex);
         if (Build.VERSION.SDK_INT >= 33) {
             vibrator.vibrate(effect, VibrationAttributes.createForUsage(VibrationAttributes.USAGE_ALARM));
         } else {
@@ -54,10 +77,6 @@ public final class AlertVibrator {
                     .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
                     .build());
         }
-        if (VibrationPatterns.repeats(category)) {
-            main.postDelayed(stopRepeating, VibrationPatterns.MAX_REPEAT_MILLIS);
-        }
-        Log.d(TAG, "vibrate " + category.displayName);
     }
 
     public void stop() {

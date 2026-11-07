@@ -3,6 +3,7 @@ package ph.agap.app.ui.alerts;
 import androidx.annotation.AttrRes;
 import androidx.annotation.ColorRes;
 import androidx.annotation.DrawableRes;
+import androidx.annotation.StringRes;
 
 import ph.agap.app.R;
 import ph.agap.app.alerts.AlertCategory;
@@ -33,6 +34,37 @@ public final class AlertLooks {
             case "Appliance Timer": return R.drawable.ic_sound_appliance_timer;
             case "Glass Breaking": return R.drawable.ic_sound_glass_breaking;
             default: return categoryIcon(category);
+        }
+    }
+
+    /** One plain sentence saying what the alert means (Sound Categories screen). */
+    @StringRes
+    public static int description(String label) {
+        switch (label) {
+            case "Fire Alarm": return R.string.sound_fire_alarm;
+            case "Smoke Alarm": return R.string.sound_smoke_alarm;
+            case "Emergency Vehicle Siren": return R.string.sound_vehicle_siren;
+            case "Warning Siren": return R.string.sound_warning_siren;
+            case "Vehicle Horn": return R.string.sound_vehicle_horn;
+            case "Reversing Alarm": return R.string.sound_reversing_alarm;
+            case "Vehicle Nearby": return R.string.sound_vehicle_nearby;
+            case "Doorbell": return R.string.sound_doorbell;
+            case "Knocking": return R.string.sound_knocking;
+            case "Phone Ringing": return R.string.sound_phone_ringing;
+            case "Alarm Clock": return R.string.sound_alarm_clock;
+            case "Appliance Timer": return R.string.sound_appliance_timer;
+            case "Glass Breaking": return R.string.sound_glass_breaking;
+            default: return R.string.sound_unknown;
+        }
+    }
+
+    /** The category's short meaning, from the design note: "Danger. Act now." and so on. */
+    @StringRes
+    public static int tagline(AlertCategory category) {
+        switch (category) {
+            case EMERGENCY: return R.string.category_emergency_tagline;
+            case TRAFFIC: return R.string.category_traffic_tagline;
+            default: return R.string.category_household_tagline;
         }
     }
 

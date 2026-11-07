@@ -28,7 +28,8 @@ folder and run the `app` configuration. From a command line:
 gradlew assembleDebug          (Windows)
 ./gradlew assembleDebug        (macOS, Linux)
 gradlew testDebugUnitTest      unit tests (on the computer)
-gradlew assembleDebugAndroidTest   instrumented tests, then install both APKs and run
+gradlew assembleDebugAndroidTest   instrumented tests (database, Espresso with accessibility checks):
+    install both APKs, set the phone's three animation scales to 0, then run
     adb shell am instrument -w ph.agap.app.test/androidx.test.runner.AndroidJUnitRunner
 ```
 

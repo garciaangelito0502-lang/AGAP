@@ -139,21 +139,36 @@
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
-        <!-- Status: AGAP has no internet permission at all -->
-        <TextView
-            android:layout_width="wrap_content"
+        <!-- Status: what works offline right now, and the microphone (Phase 6). Rows built in HomeFragment. -->
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/home_status"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/card_gap"
-            android:background="@drawable/bg_status_chip"
-            android:drawablePadding="8dp"
-            android:gravity="center_vertical"
-            android:minHeight="48dp"
-            android:paddingStart="16dp"
-            android:paddingEnd="20dp"
-            android:text="@string/home_offline"
-            android:textAppearance="@style/TextAppearance.AGAP.Body"
-            app:drawableStartCompat="@drawable/ic_check"
-            app:drawableTint="?attr/agapAccent" />
+            android:layout_marginBottom="@dimen/card_gap">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingHorizontal="16dp"
+                android:paddingTop="14dp"
+                android:paddingBottom="8dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:accessibilityHeading="true"
+                    android:text="@string/home_status_title"
+                    android:textAppearance="@style/TextAppearance.AGAP.SectionLabel" />
+
+                <LinearLayout
+                    android:id="@+id/home_status_rows"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:orientation="vertical" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
 
         <!-- Other screens -->
         <com.google.android.material.card.MaterialCardView

@@ -1,5 +1,11 @@
 package ph.agap.app.ui.settings;
 
+import android.view.View;
+import android.view.accessibility.AccessibilityEvent;
+import android.widget.Switch;
+import androidx.core.view.AccessibilityDelegateCompat;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.accessibility.AccessibilityNodeInfoCompat;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -120,15 +126,29 @@ public class SettingsActivity extends BaseActivity {
                 TypedValue.COMPLEX_UNIT_DIP, selected ? 3 : 1, getResources().getDisplayMetrics())));
         card.setStrokeColor(themeColor(selected ? R.attr.agapAccent : R.attr.agapOutline));
         card.setSelected(selected);
-        card.setContentDescription(getString(
-                selected ? R.string.settings_mode_selected : R.string.settings_mode_not_selected, name));
+        // Just the name: TalkBack adds "selected" from the card's selected state.
+        card.setContentDescription(name);
     }
 
     private void setUpVibration() {
         MaterialSwitch vibration = findViewById(R.id.switch_vibration);
         vibration.setChecked(settings.isVibrationOn());
-        vibration.setOnCheckedChangeListener((button, checked) -> settings.setVibrationOn(checked));
-        findViewById(R.id.row_vibration).setOnClickListener(v -> vibration.toggle());
+        View row = findViewById(R.id.row_vibration);
+        vibration.setOnCheckedChangeListener((button, checked) -> {
+            settings.setVibrationOn(checked);
+            row.sendAccessibilityEvent(AccessibilityEvent.TYPE_VIEW_CLICKED);
+        });
+        row.setOnClickListener(v -> vibration.toggle());
+        // Screen readers meet the whole row once, as a switch with its on/off state.
+        ViewCompat.setAccessibilityDelegate(row, new AccessibilityDelegateCompat() {
+            @Override
+            public void onInitializeAccessibilityNodeInfo(@NonNull View host, @NonNull AccessibilityNodeInfoCompat info) {
+                super.onInitializeAccessibilityNodeInfo(host, info);
+                info.setClassName(Switch.class.getName());
+                info.setCheckable(true);
+                info.setChecked(vibration.isChecked());
+            }
+        });
     }
 
     private void setUpThreshold() {

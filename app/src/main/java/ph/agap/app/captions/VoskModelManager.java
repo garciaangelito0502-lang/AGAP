@@ -61,6 +61,12 @@ public final class VoskModelManager {
         this.spec = spec;
     }
 
+    /** True when the model is unpacked and complete on this phone (quick file check; any thread). */
+    public static boolean isInstalled(Context context, VoskModelSpec spec) {
+        File dir = new File(new File(context.getFilesDir(), "vosk"), spec.name);
+        return ModelUnpacker.isInstalled(dir, spec.name);
+    }
+
     /** What to do given what is on the phone. Kept apart so it can be tested. */
     static State stateFor(boolean installed, long freeBytes, long requiredFreeBytes) {
         if (installed) return State.INSTALLED;

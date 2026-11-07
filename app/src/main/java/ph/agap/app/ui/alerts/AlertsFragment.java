@@ -109,6 +109,8 @@ public class AlertsFragment extends Fragment implements SoundAlertEngine.Listene
     @Override
     public void onStart() {
         super.onStart();
+        // The threshold may have been changed in Settings meanwhile: show the value that will be used.
+        showLastEvent();
         refresh();
     }
 
@@ -230,7 +232,9 @@ public class AlertsFragment extends Fragment implements SoundAlertEngine.Listene
             lastCard.setCardBackgroundColor(themeColor(row));
             lastCard.setStrokeColor(ColorStateList.valueOf(ink));
         }
-        sessionCount.setText(getString(R.string.alerts_session_count, model.sessionCount));
+        int percent = engine != null ? thresholdPercent
+                : SettingsStore.from(requireContext()).getAlertThresholdPercent();
+        sessionCount.setText(getString(R.string.alerts_session_count, model.sessionCount, percent));
     }
 
     private void refresh() {

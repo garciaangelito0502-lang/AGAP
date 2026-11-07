@@ -11,8 +11,8 @@ android {
         applicationId = "ph.agap.app"
         minSdk = 29
         targetSdk = 36
-        versionCode = 6
-        versionName = "0.5.1"
+        versionCode = 7
+        versionName = "0.6.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
@@ -82,6 +82,8 @@ dependencies {
     androidTestImplementation libs.junit
     androidTestImplementation libs.androidx.test.runner
     androidTestImplementation libs.androidx.test.ext.junit
+    androidTestImplementation libs.espresso.core
+    androidTestImplementation libs.espresso.accessibility
 }
 
 // ---- Vosk speech models bundled in the APK (fetched, not committed) ----

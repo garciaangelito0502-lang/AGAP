@@ -58,6 +58,7 @@
 
                             <TextView
                                 android:id="@+id/text_size_title"
+                                android:importantForAccessibility="no"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="@string/settings_text_size"
@@ -165,6 +166,7 @@
 
                                 <TextView
                                     android:id="@+id/mode_standard_label"
+                                    android:importantForAccessibility="no"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_marginTop="8dp"
@@ -204,6 +206,7 @@
 
                                 <TextView
                                     android:id="@+id/mode_high_contrast_label"
+                                    android:importantForAccessibility="no"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_marginTop="8dp"
@@ -268,7 +271,7 @@
                             android:id="@+id/switch_vibration"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:contentDescription="@string/settings_vibration"
+                            android:importantForAccessibility="no"
                             android:minHeight="48dp" />
                     </LinearLayout>
 
@@ -313,7 +316,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="8dp"
                         android:layout_marginEnd="8dp"
-                        android:contentDescription="@string/settings_threshold_text"
+                        android:contentDescription="@string/settings_threshold_label"
                         android:stepSize="5"
                         android:valueFrom="10"
                         android:valueTo="90" />

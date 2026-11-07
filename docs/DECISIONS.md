@@ -42,7 +42,7 @@ Event History, alert detail, Sound Categories, Vibration Patterns, Demonstration
 and the watch), which were drawn from the contract text, the readable Figma preview and the approved colour
 palette (design note "AGAP colour palette - choice and rationale", 2026-10-27). The palette replaces the Figma
 draft's colours. Methods Figure 1 could not be rendered on the build PC. The launcher icon is a plain "AGAP"
-text icon. If the client sends Figma exports or a logo later, this entry is updated.
+text icon. If the client sends Figma exports or a logo later, this entry is updated. 2026-11-07: the group's logo arrived and is the launcher icon (D-036).
 
 ## D-005 Development phone and watch (Phase 0, 2026-10-27)
 
@@ -407,3 +407,61 @@ app and its Event History stay behind as a separate app.
   first so rows follow the trials; columns No., Date, Alert, Category, Confidence (%) to one decimal, Heard as
   (YAMNet), Threshold (%), Sound detected and Alert shown (HH:mm:ss.SSS, phone's time zone), Response time (ms),
   and both times as epoch milliseconds for exact calculations.
+
+## D-036 Launcher icon from the group's logo (Phase 6, 2026-11-07)
+
+- The group's logo (`design/agap-logo.jpg`, outside this repo: "AGAP" in purple bubble letters with a white
+  outline, the G drawn as an ear, on black) is now the launcher icon of the phone and the watch app (D-004).
+- Adaptive icon with a transparent background (owner's choice): the wordmark is cut out of its black background
+  (black connected to the edge of the image becomes transparent; the outline's soft edge gets partial alpha in the
+  outline colour, so there is no dark fringe), centred at 58% of the 108dp layer, and saved as PNGs for the five
+  screen densities. A monochrome layer (the purple letters only) serves Android 13+ themed icons.
+- Xiaomi's HyperOS draws its own dark plate behind icons with a transparent background (seen in App info); stock
+  Android launchers show the wallpaper (K-020).
+
+## D-037 Sound Categories and Vibration Patterns are built from data (Phase 6)
+
+- Sound Categories reads the app's Annex A file, so it always lists exactly what Sound Alerts listens for: each
+  category (badge, name, meaning from the design note) and each alert (icon, one plain sentence, and the YAMNet
+  classes it listens for).
+- The Vibration Patterns guide reads `VibrationPatterns`, the same data the alerts use. Try plays one round of the
+  pattern even when Vibration is off for alerts (the user asked to feel it); Emergency does not repeat there.
+  Cards are stacked (name, words, bars, Try) so words keep the full width at the largest text size.
+
+## D-038 Home status card (Phase 6)
+
+- "Ready to work offline": no internet access; microphone (always off on Home: AGAP listens only on the Captions
+  and Alerts tabs, contract 1.10; or not allowed yet); Sound Alerts ready; English (Google offline ready, pack
+  needed, or AGAP's own English model ready / needs setup); Filipino (ready or needs setup); Demonstration Mode
+  when on. Each line has a check or info icon and says its state in words.
+- The English check is shared with Live Captions (cached for the session) and runs only with microphone
+  permission, as on the Captions tab.
+
+## D-039 The alert threshold applies at each Start (Phase 6)
+
+- Opening Settings takes Sound Alerts off the screen, which stops listening (contract 1.10), so a changed
+  threshold always applies from the next Start, with no app restart. The Alerts screen now shows the threshold that
+  will be used ("Alert threshold: 50% (Settings)"), and each saved alert keeps the threshold it was raised at.
+
+## D-040 Accessibility pass (Phase 6)
+
+- Google's Accessibility Test Framework runs on the whole screen at every Espresso action (touch targets of 48dp,
+  labels, contrast, duplicate or redundant descriptions). Fixed from its findings: the Settings sliders and the
+  vibration switch no longer repeat their visible titles (the vibration row is read once, as a switch with its
+  state); display-mode cards no longer say "selected" twice. Accepted, as they are not confusing: the Settings icon
+  and the Settings row (same destination), "Demonstration Mode" as a Home row and a screen title, two history rows
+  with the same alert name.
+- Largest text size checked by screenshots on every main screen. Fixed: the Vibration Patterns guide broke words
+  ("Emergen-cy"), so its cards are now stacked; on the alert screen, above 1.3 times the normal text size the
+  label stays at 1.15 times (51dp) and the badge shrinks to 100dp, so name, confidence, detection time and Dismiss
+  fit on screen, even with the Demonstration Mode banner. TalkBack itself was not used (brief: tests with TalkBack off).
+
+## D-041 Espresso smoke tests (Phase 6)
+
+- Espresso 3.7.0 with espresso-accessibility 3.7.0. `NavigationTest` (tabs, Home rows, Demonstration Mode banner
+  and microphone lock) and `SettingsTest` (threshold saved and shown on Alerts, vibration row, high contrast
+  rebuild, largest text size). Settings tests save and restore the phone's own settings.
+- Run with `am instrument` (D-034) with the phone's animation scales set to 0 for the run and restored afterwards
+  (badge and status-dot pulses otherwise keep the UI busy, K-019). Home's status card can change height while a
+  test scrolls (the English check answers from Google's speech service, which Espresso cannot see), so a scroll to a
+  Home row is retried once.

@@ -12,6 +12,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.text.format.DateFormat;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -218,6 +219,7 @@ public class AlertOverlayFragment extends DialogFragment {
         TextView label = root.findViewById(R.id.alert_label);
         label.setText(shown.event.label());
         label.setTextColor(on);
+        fitLargeText(root, label);
 
         int percent = Math.round(shown.event.confidence * 100f);
         TextView confidence = root.findViewById(R.id.alert_confidence);
@@ -297,6 +299,21 @@ public class AlertOverlayFragment extends DialogFragment {
     }
 
     // ---- Look ----
+
+    /**
+     * At the largest text sizes the 44sp label and the 150dp badge would push the detection time
+     * below the screen. Above 1.3 times the normal size, the label stays at 1.15 times (51dp, still
+     * very large) and the badge shrinks to 100dp, so name, confidence and time fit without scrolling.
+     */
+    private void fitLargeText(View root, TextView label) {
+        float scale = getResources().getConfiguration().fontScale;
+        if (scale <= 1.3f) return;
+        label.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 44f * 1.15f);
+        View badge = root.findViewById(R.id.alert_badge);
+        ViewGroup.LayoutParams params = badge.getLayoutParams();
+        params.width = params.height = Math.round(100 * getResources().getDisplayMetrics().density);
+        badge.setLayoutParams(params);
+    }
 
     /** A slow pulse of the badge only: one per second, never a flash (design note). */
     private void startPulse(View badge) {

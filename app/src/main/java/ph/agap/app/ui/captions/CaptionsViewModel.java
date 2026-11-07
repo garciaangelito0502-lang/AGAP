@@ -23,7 +23,8 @@ public class CaptionsViewModel extends ViewModel {
     Language language = Language.ENGLISH;
 
     /** The last answer about English on-device support; null until checked. */
-    @Nullable GoogleOnDeviceSupport.Result englishSupport;
+    /** Shared with Home, which shows whether English captions are ready. */
+    @Nullable public GoogleOnDeviceSupport.Result englishSupport;
 
     /** The Filipino model on this phone, and the English fallback model; created when first needed. */
     @Nullable VoskModelManager filipino;

@@ -2,6 +2,10 @@
 
 One line per notable change, newest first.
 
+- 2026-11-07 Phase 6: phone app 0.6.0: Sound Categories and Vibration Patterns guide (Try) built from the alert data (D-037); Home status card "Ready to work offline" (D-038); the Alerts screen shows the threshold in use (D-039).
+- 2026-11-07 Phase 6: accessibility pass (D-040): duplicate and redundant screen-reader labels fixed in Settings, Vibration guide cards stacked, alert screen fits at the largest text size; unused placeholder screen, chip drawable and strings removed.
+- 2026-11-07 Phase 6: the group's logo as the launcher icon of phone and watch, transparent background, with a themed-icon layer (D-036).
+- 2026-11-07 Phase 6: Espresso 3.7.0 smoke tests with Google's accessibility checks: navigation (4) and settings (4), 12 instrumented tests in total (D-041).
 - 2026-11-07 Phase 5 addendum: phone app 0.5.1: Event History export to a CSV file in Download/AGAP, with Share (D-035; scope flag approved by the owner); 5 new JVM unit tests (85 in total).
 - 2026-11-07 Phase 5: phone app 0.5.0: full-screen alert over the app (icon, label, category, confidence, time, vibration rhythm, Dismiss); Sound Alerts keeps listening behind it (D-028).
 - 2026-11-07 Phase 5: one vibration pattern per category, played as an alarm, honouring the Vibration setting (D-031); `VIBRATE` permission.
