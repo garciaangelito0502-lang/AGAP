@@ -42,7 +42,7 @@ and the phone-to-watch link (no watch, K-021).
 
 ## Contract items covered
 
-1.13 turnover: APKs, install guide, source ready for GitHub (push pending), remote help offered in the guide. 1.1
+1.13 turnover: APKs, install guide, source on GitHub (private repository), remote help offered in the guide. 1.1
 release build checked on my phone. Everything not verified is listed in WHAT-1.0-CAN-AND-CANNOT-DO.md and in the
 SPEC-CHECKLIST.
 
