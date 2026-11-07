@@ -2,6 +2,7 @@
 
 One line per notable change, newest first.
 
+- 2026-11-08 Turnover: source pushed to the owner's private GitHub repository `AGAP` (`main`, tags `phase-00` to `phase-09`, `v1.0`).
 - 2026-11-08 Phase 9: release 1.0: `agap-phone-1.0.apk` (phone 1.0, code 11) and `agap-watch-1.0.apk` (watch 1.0, code 3), signed with AGAP's release key, R8 off (D-053, D-054); RELEASE.md, VERSIONS.md.
 - 2026-11-08 Phase 9: INSTALL-GUIDE.md, USER-GUIDE.md, WHAT-1.0-CAN-AND-CANNOT-DO.md; README rewritten for the handover (features, requirements, building, tests, structure, licences, non-commercial note).
 - 2026-11-08 Phase 9: local machine paths removed from the docs.

@@ -1,6 +1,7 @@
 # Phase 09: Release build, install guide and turnover
 
-Status: **Done except the push to GitHub**, which waits for the owner to name the repository. Finished 2026-11-08
+Status: **Done.** Source pushed on 2026-11-08 to the owner's private GitHub repository `AGAP` (`main` and all tags,
+`v1.0` on commit `b26cfbd`). Finished 2026-11-08
 (target 2026-11-21, M3). Release 1.0: phone 1.0 (code 11), watch 1.0 (code 3).
 
 ## Goal and what was built
@@ -37,7 +38,7 @@ D-053 no R8 shrinking (little to gain, JNA/JNI keep-rule risk); D-054 version co
 
 **Not verified:** the Infinix (all of it); the "Allow from this source" step (my phone's file manager was already
 allowed); step 5's download of the English pack (already on my phone); watch steps 8-9 on a real watch over Wi-Fi,
-and the phone-to-watch link (no watch, K-021); the push to GitHub.
+and the phone-to-watch link (no watch, K-021).
 
 ## Contract items covered
 
@@ -52,4 +53,4 @@ New K-032 (HyperOS notice after a file install). K-015 updated. No new scope fla
 ## Next phase
 
 Phase 10: support and tuning until 2026-12-07, with the group's alpha test (11-19 to 11-20, test build 0.9.1) and
-beta test (11-23 to 11-29, 1.0). Before that: the owner names the GitHub repository, then I push.
+beta test (11-23 to 11-29, 1.0). The source is on GitHub (private).
