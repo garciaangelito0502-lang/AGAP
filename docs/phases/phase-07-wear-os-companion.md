@@ -58,7 +58,7 @@ airplane mode.
 | Same signing key | `apksigner`: debug APKs share the debug key, release APKs share AGAP's key (SHA-256 ab397c85...) |
 | Phone with no watch | Log "0 AGAP watch(es) connected"; Home shows "No watch connected..."; a sample Doorbell alert and Filipino sample captions ran and stopped; same process throughout, no crash |
 | Watch first start | Asks to allow notifications; then "Phone not connected" |
-| Status screens | "Sound Alerts on", "Phone connected", Demonstration Mode line in yellow; back to "Phone not connected" about 30 s after the phone went quiet |
+| Status screens | "Sound Alerts on", "Phone connected", Demonstration Mode line in yellow; back to "Phone not connected" within 30 s after the phone went quiet |
 | Alerts, 3 categories | Fire Alarm (red, octagon), Vehicle Horn (orange, diamond), Doorbell (blue, circle), with icon, label, category, % and time |
 | Vibration | Android's vibrator log: Emergency 600-250-600-250-600 ms repeating, Traffic short-short x3, Household long-short x2, usage ALARM; tap to close stops it; an unanswered Emergency stopped at 60,007 ms; with the phone's vibration off, no vibration |
 | Sample alerts | "Sample alert" on top; the longest name ("Emergency Vehicle Siren") fits |
