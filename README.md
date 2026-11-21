@@ -20,13 +20,17 @@ emergencies.
 - **Settings** (text size, high contrast, vibration, alert threshold), Sound Categories, Vibration Patterns guide,
   and a **Demonstration Mode** with sample captions and alerts that never uses the microphone.
 - **Watch app** (Wear OS 3+): shows each alert with its vibration and the phone's live captions over Bluetooth.
+- **Background listening** (1.1, off by default): with it on in Settings, Sound Alerts or Live Captions go on after
+  the user leaves AGAP or the screen turns off; alerts appear over the lock screen, as a popup card over other apps
+  or as a notification; captions float over other apps; a home-screen widget shows the state and the newest alert.
 - **Offline and private:** no internet permission, no accounts, no cloud; sound is never recorded or saved; AGAP
-  listens only while its screen is open.
+  listens only after the user taps Start, and (unless background listening is on) only while its screen is open.
 
 ## Status
 
-Version **1.0** (2026-11-08). Release files, sizes and checksums: [docs/RELEASE.md](docs/RELEASE.md). What it can
-and cannot do: [docs/WHAT-1.0-CAN-AND-CANNOT-DO.md](docs/WHAT-1.0-CAN-AND-CANNOT-DO.md). Progress by phase:
+Version **1.1** (2026-11-21): 1.0 plus background listening. Release files, sizes and checksums:
+[docs/RELEASE.md](docs/RELEASE.md). What it can and cannot do:
+[docs/WHAT-1.1-CAN-AND-CANNOT-DO.md](docs/WHAT-1.1-CAN-AND-CANNOT-DO.md). Progress by phase:
 [PROGRESS.md](PROGRESS.md).
 
 ## Requirements
@@ -74,8 +78,9 @@ with a different key cannot update AGAP 1.0.
 ## Project structure
 
 - `app/`: the phone app (Java 17, XML layouts, Android 10 or newer). Main packages: `alerts` (YAMNet and the
-  Annex A mapping), `captions` (Google and Vosk engines), `history` (Room database, CSV export), `mic` (one
-  microphone user at a time), `settings`, `vibration`, `watch` (sending to the watch), `ui` (screens).
+  Annex A mapping), `captions` (Google and Vosk engines), `history` (Room database, CSV export), `listen` (the
+  listening sessions, background listening service, alert popup, lock-screen alert, floating captions, widget),
+  `mic` (one microphone user at a time), `settings`, `vibration`, `watch` (sending to the watch), `ui` (screens).
 - `wear/`: the Wear OS watch app: shows alerts and caption text sent by the phone.
 - `shared/`: code and icons both apps use (alert groups, vibration patterns, icons, the watch message format).
 - `app/src/main/assets/`: `yamnet.tflite` and `annex_a.tsv` (the 13 alerts and their YAMNet classes).

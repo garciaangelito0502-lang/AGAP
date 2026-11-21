@@ -1,6 +1,7 @@
 package ph.agap.app.history;
 
 import androidx.annotation.NonNull;
+import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.Index;
 import androidx.room.PrimaryKey;
@@ -36,12 +37,23 @@ public class AlertRecord {
     /** When the score crossed the threshold. */
     public long detectedAtMillis;
 
-    /** When the alert screen's first frame with this alert was handed to the display. */
+    /**
+     * When the alert screen's first frame with this alert was handed to the display; for an alert
+     * shown only as a notification, when the notification was handed to Android (see ShownVia).
+     */
     public long shownAtMillis;
+
+    /** How the alert was shown: a ShownVia name. Alerts saved by 1.0 read as APP_SCREEN. */
+    @ColumnInfo(defaultValue = "APP_SCREEN")
+    @NonNull public String shownVia = ShownVia.APP_SCREEN.name();
 
     public AlertRecord() { }
 
     public static AlertRecord of(AlertEvent event, long shownAtMillis, int thresholdPercent) {
+        return of(event, shownAtMillis, thresholdPercent, ShownVia.APP_SCREEN);
+    }
+
+    public static AlertRecord of(AlertEvent event, long shownAtMillis, int thresholdPercent, ShownVia via) {
         AlertRecord record = new AlertRecord();
         record.label = event.label();
         record.category = event.category().displayName;
@@ -50,7 +62,12 @@ public class AlertRecord {
         record.thresholdPercent = thresholdPercent;
         record.detectedAtMillis = event.detectedAtMillis;
         record.shownAtMillis = shownAtMillis;
+        record.shownVia = via.name();
         return record;
+    }
+
+    public ShownVia via() {
+        return ShownVia.fromStored(shownVia);
     }
 
     /** Alert shown minus sound detected, in milliseconds. */

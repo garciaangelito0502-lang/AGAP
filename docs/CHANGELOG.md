@@ -2,6 +2,18 @@
 
 One line per notable change, newest first.
 
+- 2026-11-21 Phase 11: release 1.1: phone 1.1 (code 12), watch 1.1 (code 4), same release key as 1.0, installs over 1.0 and keeps the history (D-060).
+- 2026-11-21 Phase 11: background listening (change request of 2026-11-21, approved by the owner, free of charge, D-055): setting "Keep listening when I leave AGAP", off by default; `ListeningService` (foreground service, type microphone, partial wake lock), app-wide `AlertsSession` and `CaptionsSession` (D-056).
+- 2026-11-21 Phase 11: alerts outside AGAP: full alert over the lock screen (`AlertActivity`), popup card over other apps (`PopupAlert`), heads-up notification per category channel; each saved once with how it was shown (D-057).
+- 2026-11-21 Phase 11: Event History column `shownVia` (Room 1 to 2 migration keeps 1.0's alerts as "App screen"); "Shown as" in the detail view and as the last CSV column.
+- 2026-11-21 Phase 11: floating caption window over other apps; newest caption line in the listening notification, never on the lock screen (D-058).
+- 2026-11-21 Phase 11: home-screen widget (`AgapWidget`) and an Add button in Settings (D-059); Settings section "Background listening" with what it needs from the phone, each with an Allow button.
+- 2026-11-21 Phase 11: the alert threshold now also changes a running Sound Alerts session.
+- 2026-11-21 Phase 11: fixed before release: the first popup alert closed AGAP (K-033); the popup's list copy popped up over the card on HyperOS (K-034).
+- 2026-11-21 Phase 11: watch 1.1: the waiting texts say "Start listening in AGAP on your phone".
+- 2026-11-21 Phase 11: new launcher icon for phone and watch from the group's 1.1 logo (ear mascot and wordmark on purple, D-061).
+- 2026-11-21 Phase 11: new docs WHAT-1.1-CAN-AND-CANNOT-DO.md and CLIENT-TEST-CHECKLIST-1.1.md; install guide step 10 and user guide section on background listening.
+
 - 2026-11-08 Turnover: source pushed to the owner's private GitHub repository `AGAP` (`main`, tags `phase-00` to `phase-09`, `v1.0`).
 - 2026-11-08 Phase 9: release 1.0: `agap-phone-1.0.apk` (phone 1.0, code 11) and `agap-watch-1.0.apk` (watch 1.0, code 3), signed with AGAP's release key, R8 off (D-053, D-054); RELEASE.md, VERSIONS.md.
 - 2026-11-08 Phase 9: INSTALL-GUIDE.md, USER-GUIDE.md, WHAT-1.0-CAN-AND-CANNOT-DO.md; README rewritten for the handover (features, requirements, building, tests, structure, licences, non-commercial note).

@@ -1,6 +1,6 @@
 # AGAP progress
 
-Last updated: 2026-11-08 (Phase 9 done, ahead of the 2026-11-21 target; release 1.0 on GitHub)
+Last updated: 2026-11-21 (Phase 11 done, release 1.1; Phase 9 done 2026-11-08, release 1.0 on GitHub)
 
 | Phase | Name | Status | Date finished | Build/APK version |
 |---|---|---|---|---|
@@ -15,6 +15,7 @@ Last updated: 2026-11-08 (Phase 9 done, ahead of the 2026-11-21 target; release 
 | 8 | Offline proof, hardening and tests | Done (on my phone in airplane mode: every feature offline, 32-minute run with no crash, 90-194 Start/Stop cycles per feature, robustness checks, restart; 5 bugs fixed, K-025 to K-029; 104 unit and 12 instrumented tests pass; watch disconnect/reconnect not possible, no watch; Infinix check pending with the client) | 2026-11-08 | 0.8.0 debug (phone; watch unchanged at 0.7.0) |
 | 9 | Release build, install guide and turnover | Done (source pushed to the owner's private GitHub repository `AGAP` on 2026-11-08, `main` and tags up to `v1.0`): release APKs signed with AGAP's key, clean install and 9.4-minute smoke test of 1.0 on my phone, watch 1.0 on the emulator, guides and handover docs; Infinix and real watch pending with the client | 2026-11-08 | 1.0 release (phone code 11, watch code 3) |
 | 10 | Support and tuning until 2026-12-07 | Not started | | |
+| 11 | Background listening: popup alerts and captions while minimized (change request of 2026-11-21) | Done (approved by the owner on 2026-11-21, free of charge for the group; on my phone: background alerts by notification, lock screen and popup, background captions in English and Filipino with the floating window, Stop from the notification 20 of 20, screen-off runs, update from 1.0 keeping the history; 108 unit and 16 instrumented tests pass; Infinix and real watch pending with the client; widget on a home screen not seen, K-036) | 2026-11-21 | 1.1 release (phone code 12, watch code 4) |
 
 Milestones (schedule of 2026-11-04; the contract section 5 dates of 10-28, 11-03, 11-07 and 11-23 have passed):
 **M1** 2026-11-08 first phone test build (after Phase 3; the group installs it on the Infinix 11-09),
@@ -23,5 +24,8 @@ Milestones (schedule of 2026-11-04; the contract section 5 dates of 10-28, 11-03
 The group's testing: alpha (2 days) 11-19 to 11-20 on M2, beta (1 week) 11-23 to 11-29 on 1.0, their data collection from 11-30.
 Phase targets: 2 on 11-07, 3 on 11-08, 4 on 11-09 to 11-11, 5 on 11-12 to 11-14, 6 on 11-15, 7 on 11-16 to 11-18,
 8 on 11-19 to 11-20, 9 on 11-21. Student copy: `reports/AGAP-Timeline-from-2026-11-07.pdf` (outside this repo).
+Phase 11 (outside the contract): five evenings once approved and paid; if both are in by 2026-11-23, work runs
+11-23 to 11-27 and test build 1.1 goes to the group on 11-27. Background listening is off by default in 1.1, so the
+beta test and data collection can stay on 1.0 or 1.1 without changing the test procedure.
 
 Phase notes: [docs/phases/](docs/phases/). Contract checklist: [docs/SPEC-CHECKLIST.md](docs/SPEC-CHECKLIST.md).

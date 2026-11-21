@@ -83,6 +83,12 @@ public final class HistoryRepository implements HistoryStore {
         });
     }
 
+    /** The newest alert, or null; blocks, so call off the main thread (the widget's receiver). */
+    @Nullable
+    public AlertRecord newestNow() {
+        return dao.newest();
+    }
+
     /** Deletes every alert, then reports how many were deleted. */
     public void clear(@Nullable Consumer<Integer> done) {
         io.execute(() -> {

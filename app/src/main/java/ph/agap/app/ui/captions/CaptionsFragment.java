@@ -35,8 +35,7 @@ import com.google.android.material.progressindicator.LinearProgressIndicator;
 import ph.agap.app.R;
 import ph.agap.app.ui.SlowPulse;
 import ph.agap.app.captions.CaptionEngine;
-import ph.agap.app.captions.CaptionListener;
-import ph.agap.app.captions.CaptionRelay;
+import ph.agap.app.captions.CaptionListener.Failure;
 import ph.agap.app.captions.DemoCaptionEngine;
 import ph.agap.app.captions.GoogleOnDeviceEngine;
 import ph.agap.app.captions.GoogleOnDeviceSupport;
@@ -45,24 +44,26 @@ import ph.agap.app.captions.VoskCaptionEngine;
 import ph.agap.app.captions.VoskModelManager;
 import ph.agap.app.captions.VoskModelSpec;
 import ph.agap.app.demo.DemoMode;
-import ph.agap.app.mic.MicOwner;
-import ph.agap.app.watch.WatchMessages;
-import ph.agap.app.watch.WatchSender;
+import ph.agap.app.listen.CaptionsSession;
+import ph.agap.app.settings.SettingsStore;
 import ph.agap.app.ui.captions.CaptionsViewModel.Language;
 
 /**
  * Live Captions. The user picks a language and taps Start; the words appear as they are heard.
- * Listening stops when this screen leaves the display, and the screen stays on while listening
- * (contract 1.10). The text stays after Stop until Clear or the next Start, so the research
- * team can compare it with their script.
+ * The session itself (engine and transcript) is CaptionsSession's (Phase 11). With background
+ * listening off (the default) it stops when this screen leaves the display, as in 1.0 (contract
+ * 1.10); with it on, it goes on until Stop and the words also float over other apps. The screen
+ * stays on while listening here. The text stays after Stop until Clear or the next Start, so the
+ * research team can compare it with their script.
  */
-public class CaptionsFragment extends Fragment implements CaptionListener, MicOwner.User {
+public class CaptionsFragment extends Fragment {
 
     private static final String ENGLISH = "en-US";
 
     private CaptionsViewModel model;
-    @Nullable private CaptionEngine engine;
-    private boolean heardReady;
+    private CaptionsSession session;
+    /** The last session failure this screen has acted on. */
+    @Nullable private Failure seenFailure;
 
     private MaterialButtonToggleGroup languageGroup;
     private MaterialButton englishButton;
@@ -77,6 +78,7 @@ public class CaptionsFragment extends Fragment implements CaptionListener, MicOw
     private ScrollView captionScroll;
     private TextView captionText;
     private View pausedNote;
+    private View backgroundNote;
     private MaterialButton clearButton;
     private MaterialButton startStop;
     private SlowPulse pulse;
@@ -88,6 +90,14 @@ public class CaptionsFragment extends Fragment implements CaptionListener, MicOw
                 checkLanguage();
             });
 
+    private final Runnable sessionChanged = () -> {
+        noticeFailure();
+        if (getView() != null) {
+            renderTranscript();
+            refresh();
+        }
+    };
+
     public CaptionsFragment() {
         super(R.layout.fragment_captions);
     }
@@ -95,6 +105,9 @@ public class CaptionsFragment extends Fragment implements CaptionListener, MicOw
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         model = new ViewModelProvider(requireActivity()).get(CaptionsViewModel.class);
+        session = CaptionsSession.get(requireContext());
+        // A session that went on in the background keeps its language (AGAP may have been rebuilt).
+        if (session.isRunning()) model.language = session.isFilipino() ? Language.FILIPINO : Language.ENGLISH;
 
         languageGroup = view.findViewById(R.id.language_group);
         englishButton = view.findViewById(R.id.lang_english);
@@ -109,6 +122,7 @@ public class CaptionsFragment extends Fragment implements CaptionListener, MicOw
         captionScroll = view.findViewById(R.id.caption_scroll);
         captionText = view.findViewById(R.id.caption_text);
         pausedNote = view.findViewById(R.id.alerts_paused_note);
+        backgroundNote = view.findViewById(R.id.background_note);
         clearButton = view.findViewById(R.id.clear_button);
         startStop = view.findViewById(R.id.start_stop);
 
@@ -121,8 +135,8 @@ public class CaptionsFragment extends Fragment implements CaptionListener, MicOw
             if (chosen == model.language) return;
             // The buttons are disabled while listening, so this is only reached between sessions.
             model.language = chosen;
-            model.lastFailure = null;
-            model.micNote = null;
+            session.clearFailure();
+            session.clearMicNote();
             // The Filipino model needs about 1 GB of memory: free it when it is no longer wanted.
             if (chosen == Language.ENGLISH) VoskModelManager.releaseMemory();
             showChosenLanguage();
@@ -133,10 +147,10 @@ public class CaptionsFragment extends Fragment implements CaptionListener, MicOw
         pulse = SlowPulse.alpha(statusDot, 0.3f, 1000);
 
         startStop.setOnClickListener(v -> {
-            if (engine == null) startListening(); else stopListening();
+            if (session.isRunning()) session.stop(); else startListening();
         });
         clearButton.setOnClickListener(v -> {
-            model.transcript.clear();
+            session.clear();
             renderTranscript();
             refresh();
         });
@@ -152,14 +166,20 @@ public class CaptionsFragment extends Fragment implements CaptionListener, MicOw
         };
         manager(VoskModelSpec.FILIPINO).setListener(redraw);
         manager(VoskModelSpec.ENGLISH).setListener(redraw);
+        session.addListener(sessionChanged);
+        noticeFailure();
         checkLanguage();
+        renderTranscript();
         refresh();
     }
 
     @Override
     public void onStop() {
-        // Listening only while this screen is on display (contract 1.10).
-        stopListening();
+        session.removeListener(sessionChanged);
+        // Listening only while this screen is on display (contract 1.10), unless background
+        // listening is on (Phase 11): then ListeningService keeps it going. Demonstration Mode's
+        // sample captions never go on in the background.
+        if (!keepsListeningWhenHidden()) session.stop();
         manager(VoskModelSpec.FILIPINO).setListener(null);
         manager(VoskModelSpec.ENGLISH).setListener(null);
         super.onStop();
@@ -171,7 +191,23 @@ public class CaptionsFragment extends Fragment implements CaptionListener, MicOw
         super.onDestroyView();
     }
 
-    // ---- Starting and stopping ----
+    private boolean keepsListeningWhenHidden() {
+        return SettingsStore.from(requireContext()).isBackgroundListeningOn()
+                && !DemoMode.isOn() && !session.isDemo();
+    }
+
+    /** The English pack went missing during a session: look at English again (once per failure). */
+    private void noticeFailure() {
+        Failure failure = session.lastFailure();
+        if (failure == seenFailure) return;
+        seenFailure = failure;
+        if (failure == Failure.LANGUAGE_PACK) {
+            model.englishSupport = null;
+            if (getView() != null) checkEnglish();
+        }
+    }
+
+    // ---- Starting ----
 
     private boolean hasMic() {
         return ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.RECORD_AUDIO)
@@ -248,7 +284,7 @@ public class CaptionsFragment extends Fragment implements CaptionListener, MicOw
 
     /** Asks the recognizer about English, unless the answer is already known to be final. */
     private void checkEnglish() {
-        if (!hasMic() || engine != null) return;
+        if (!hasMic() || session.isRunning()) return;
         GoogleOnDeviceSupport.Result known = model.englishSupport;
         if (known != null && known.status != GoogleOnDeviceSupport.Status.NEEDS_DOWNLOAD
                 && known.status != GoogleOnDeviceSupport.Status.DOWNLOADING
@@ -275,25 +311,15 @@ public class CaptionsFragment extends Fragment implements CaptionListener, MicOw
     }
 
     private void startListening() {
-        if (engine != null || !canStart()) return;
+        if (session.isRunning() || !canStart()) return;
         boolean demo = DemoMode.isOn();
         // Google's English engine is only possible on Android 13+, but lint cannot see canStart()'s check.
         if (!demo && !usesVosk() && Build.VERSION.SDK_INT < 33) return;
-        // A new session starts with an empty page.
-        model.transcript.clear();
-        model.lastFailure = null;
-        model.micSilenced = false;
-        heardReady = false;
         // Two separate engines, never mixed in one session (contract 1.3).
+        CaptionEngine engine;
         if (demo) {
             // Sample captions only; the microphone is never opened (contract 1.9).
             engine = new DemoCaptionEngine(isFilipino());
-            model.micNote = null;
-            engine.start(this);
-            WatchSender.get(requireContext()).sendState(WatchMessages.Mode.CAPTIONS, engine.languageTag());
-            renderTranscript();
-            refresh();
-            return;
         } else if (usesVosk()) {
             VoskModelManager vosk = voskManager();
             engine = new VoskCaptionEngine(vosk.modelDir(), vosk.spec().languageTag);
@@ -301,102 +327,14 @@ public class CaptionsFragment extends Fragment implements CaptionListener, MicOw
             engine = new GoogleOnDeviceEngine(requireContext(), model.englishSupport.languageTag,
                     model.englishSupport.service);
         }
-        String stopped = MicOwner.take(this);
-        model.micNote = stopped == null ? null : getString(R.string.mic_other_stopped, stopped);
-        engine.start(this);
-        WatchSender.get(requireContext()).sendState(WatchMessages.Mode.CAPTIONS, engine.languageTag());
-        renderTranscript();
-        refresh();
-    }
-
-    private void stopListening() {
-        if (engine == null) return;
-        engine.stop();
-        engine = null;
-        endSession();
-    }
-
-    private void endSession() {
-        model.micSilenced = false;
-        MicOwner.release(this);
-        WatchSender.get(requireContext()).sendState(WatchMessages.Mode.IDLE, "");
-        model.transcript.endSegment();
-        CaptionRelay.publishStopped();
-        if (getView() != null) {
-            renderTranscript();
-            refresh();
-        }
-    }
-
-    // ---- MicOwner.User ----
-
-    @Override
-    public String micUserName() {
-        return getString(R.string.captions_title);
-    }
-
-    @Override
-    public void onMicTaken(String byWhom) {
-        stopListening();
-        model.micNote = getString(R.string.mic_taken, byWhom);
-        if (getView() != null) refresh();
-    }
-
-    // ---- CaptionListener ----
-
-    @Override
-    public void onListening() {
-        if (!heardReady) {
-            heardReady = true;
-            refresh();
-        }
-    }
-
-    @Override
-    public void onPartial(String text) {
-        model.transcript.setPartial(text);
-        CaptionRelay.publish(model.transcript.latest(), false);
-        renderTranscript();
-    }
-
-    @Override
-    public void onFinal(String text) {
-        model.transcript.addFinal(text);
-        CaptionRelay.publish(model.transcript.latest(), true);
-        renderTranscript();
-    }
-
-    @Override
-    public void onSegmentEnd() {
-        boolean hadPartial = !model.transcript.partial().isEmpty();
-        model.transcript.endSegment();
-        if (hadPartial) {
-            CaptionRelay.publish(model.transcript.latest(), true);
-            renderTranscript();
-        }
-    }
-
-    @Override
-    public void onMicSilenced(boolean silenced) {
-        model.micSilenced = silenced;
-        if (getView() != null) refresh();
-    }
-
-    @Override
-    public void onFailed(Failure failure) {
-        engine = null;
-        model.lastFailure = failure;
-        if (failure == Failure.LANGUAGE_PACK) {
-            model.englishSupport = null;
-            checkEnglish();
-        }
-        endSession();
+        // A new session starts with an empty page.
+        session.start(engine, demo, isFilipino(), languageName());
     }
 
     // ---- Drawing ----
 
     private void renderTranscript() {
-        Transcript t = model.transcript;
+        Transcript t = session.transcript();
         SpannableStringBuilder text = new SpannableStringBuilder();
         for (String line : t.lines()) {
             newParagraph(text);
@@ -416,7 +354,7 @@ public class CaptionsFragment extends Fragment implements CaptionListener, MicOw
         if (atBottom) {
             captionScroll.post(() -> captionScroll.scrollTo(0, captionText.getBottom()));
         }
-        clearButton.setVisibility(engine == null && !t.isEmpty() ? View.VISIBLE : View.GONE);
+        clearButton.setVisibility(!session.isRunning() && !t.isEmpty() ? View.VISIBLE : View.GONE);
     }
 
     /** Starts a new line after a half-line gap, so each sentence reads as its own paragraph. */
@@ -430,7 +368,7 @@ public class CaptionsFragment extends Fragment implements CaptionListener, MicOw
 
     /** Sets the status line, the message card and the buttons from the current state. */
     private void refresh() {
-        boolean listening = engine != null;
+        boolean listening = session.isRunning();
         boolean unpacking = usesVosk() && voskManager().state() == VoskModelManager.State.UNPACKING;
         // Say so on screen when English runs on AGAP's own model instead of Google's.
         languageNote.setText(englishFallback() ? R.string.captions_en_fallback : R.string.captions_language_note);
@@ -443,12 +381,13 @@ public class CaptionsFragment extends Fragment implements CaptionListener, MicOw
         filipinoButton.setEnabled(!listening && !unpacking);
 
         pausedNote.setVisibility(listening ? View.VISIBLE : View.GONE);
-        clearButton.setVisibility(!listening && !model.transcript.isEmpty() ? View.VISIBLE : View.GONE);
+        backgroundNote.setVisibility(listening && keepsListeningWhenHidden() ? View.VISIBLE : View.GONE);
+        clearButton.setVisibility(!listening && !session.transcript().isEmpty() ? View.VISIBLE : View.GONE);
 
         statusDot.setVisibility(listening ? View.VISIBLE : View.GONE);
         if (listening) {
             int status = DemoMode.isOn() ? R.string.captions_status_sample
-                    : heardReady ? R.string.captions_status_listening : R.string.captions_status_starting;
+                    : session.heardReady() ? R.string.captions_status_listening : R.string.captions_status_starting;
             statusText.setText(getString(status, languageName()));
             statusText.setTextColor(themeColor(R.attr.agapAccent));
             if (!pulse.isStarted()) pulse.start();
@@ -467,13 +406,13 @@ public class CaptionsFragment extends Fragment implements CaptionListener, MicOw
 
     private void showMessage() {
         if (DemoMode.isOn()) {
-            if (engine == null) message(getString(R.string.captions_demo_note)); else hideMessage();
-        } else if (model.micNote != null) {
-            message(model.micNote);
-        } else if (engine != null) {
-            if (model.micSilenced) {
+            if (!session.isRunning()) message(getString(R.string.captions_demo_note)); else hideMessage();
+        } else if (session.micNote() != null) {
+            message(session.micNote());
+        } else if (session.isRunning()) {
+            if (session.micSilenced()) {
                 message(getString(R.string.mic_silenced), 0, null);
-            } else if (usesVosk() && !heardReady) {
+            } else if (usesVosk() && !session.heardReady()) {
                 message(getString(R.string.captions_vosk_loading, languageName()), 0, null);
             } else {
                 hideMessage();
@@ -493,7 +432,7 @@ public class CaptionsFragment extends Fragment implements CaptionListener, MicOw
             message(R.string.captions_checking, 0, null);
         } else if (englishFallback()) {
             showVoskMessage();
-        } else if (model.lastFailure == Failure.RECOGNIZER) {
+        } else if (session.lastFailure() == Failure.RECOGNIZER) {
             message(R.string.captions_failed, 0, null);
         } else {
             switch (model.englishSupport.status) {
@@ -556,14 +495,14 @@ public class CaptionsFragment extends Fragment implements CaptionListener, MicOw
                         });
                 break;
             case INSTALLED:
-                if (model.lastFailure == Failure.MODEL) {
+                if (session.lastFailure() == Failure.MODEL) {
                     message(getString(R.string.captions_vosk_model_failed, language),
                             R.string.captions_setup_again_action, v -> {
-                                model.lastFailure = null;
+                                session.clearFailure();
                                 vosk.discard();
                                 refresh();
                             });
-                } else if (model.lastFailure == Failure.RECOGNIZER) {
+                } else if (session.lastFailure() == Failure.RECOGNIZER) {
                     message(R.string.captions_failed, 0, null);
                 } else {
                     hideMessage();

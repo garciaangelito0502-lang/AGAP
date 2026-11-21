@@ -29,32 +29,26 @@ import java.util.Date;
 import java.util.Locale;
 
 import ph.agap.app.R;
-import ph.agap.app.ui.SlowPulse;
 import ph.agap.app.alerts.AlertDetector;
 import ph.agap.app.alerts.AlertEvent;
-import ph.agap.app.alerts.SoundAlertEngine;
-import ph.agap.app.captions.VoskModelManager;
 import ph.agap.app.demo.DemoMode;
-import ph.agap.app.mic.MicOwner;
-import ph.agap.app.watch.WatchMessages;
-import ph.agap.app.watch.WatchSender;
+import ph.agap.app.listen.AlertsSession;
 import ph.agap.app.settings.SettingsStore;
+import ph.agap.app.ui.SlowPulse;
 import ph.agap.app.ui.info.DemoModeActivity;
 
 /**
  * Sound Alerts: Start/Stop, a listening indicator and the last detected alert. Each alert opens
  * the full-screen alert with its vibration (AlertOverlayFragment), which also saves it to the
- * Event History; listening goes on behind it. Listening stops when this screen leaves the display,
- * and the screen stays on while listening (contract 1.10). In Demonstration Mode the microphone is
- * never opened (contract 1.9).
+ * Event History; listening goes on behind it. The listening itself is AlertsSession's (Phase 11).
+ * With background listening off (the default) it stops when this screen leaves the display, as in
+ * 1.0 (contract 1.10); with it on, it goes on until Stop. The screen stays on while listening here.
+ * In Demonstration Mode the microphone is never opened (contract 1.9).
  */
-public class AlertsFragment extends Fragment implements SoundAlertEngine.Listener, MicOwner.User {
+public class AlertsFragment extends Fragment {
 
     private AlertsViewModel model;
-    @Nullable private SoundAlertEngine engine;
-    private boolean heardReady;
-    private float threshold;
-    private int thresholdPercent;
+    private AlertsSession session;
 
     private View statusDot;
     private TextView statusText;
@@ -67,8 +61,17 @@ public class AlertsFragment extends Fragment implements SoundAlertEngine.Listene
     private TextView sessionCount;
     private TextView closestNow;
     private View captionsPausedNote;
+    private View backgroundNote;
     private MaterialButton startStop;
     private SlowPulse pulse;
+
+    private final Runnable sessionChanged = () -> {
+        if (getView() != null) {
+            showLastEvent();
+            showClosest();
+            refresh();
+        }
+    };
 
     private final ActivityResultLauncher<String> askMic = registerForActivityResult(
             new ActivityResultContracts.RequestPermission(), granted -> {
@@ -83,6 +86,7 @@ public class AlertsFragment extends Fragment implements SoundAlertEngine.Listene
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         model = new ViewModelProvider(requireActivity()).get(AlertsViewModel.class);
+        session = AlertsSession.get(requireContext());
         statusDot = view.findViewById(R.id.status_dot);
         statusText = view.findViewById(R.id.status_text);
         messageCard = view.findViewById(R.id.message_card);
@@ -94,12 +98,13 @@ public class AlertsFragment extends Fragment implements SoundAlertEngine.Listene
         sessionCount = view.findViewById(R.id.session_count);
         closestNow = view.findViewById(R.id.closest_now);
         captionsPausedNote = view.findViewById(R.id.captions_paused_note);
+        backgroundNote = view.findViewById(R.id.background_note);
         startStop = view.findViewById(R.id.start_stop);
 
         pulse = SlowPulse.alpha(statusDot, 0.3f, 1000);
 
         startStop.setOnClickListener(v -> {
-            if (engine == null) startListening(); else stopListening();
+            if (session.isRunning()) session.stop(); else startListening();
         });
         showLastEvent();
         closestNow.setText("");
@@ -108,15 +113,19 @@ public class AlertsFragment extends Fragment implements SoundAlertEngine.Listene
     @Override
     public void onStart() {
         super.onStart();
+        session.addListener(sessionChanged);
         // The threshold may have been changed in Settings meanwhile: show the value that will be used.
         showLastEvent();
+        showClosest();
         refresh();
     }
 
     @Override
     public void onStop() {
-        // Listening only while this screen is on display (contract 1.10).
-        stopListening();
+        session.removeListener(sessionChanged);
+        // Listening only while this screen is on display (contract 1.10), unless background
+        // listening is on (Phase 11): then ListeningService keeps it going.
+        if (!keepsListeningWhenHidden()) session.stop();
         super.onStop();
     }
 
@@ -126,7 +135,11 @@ public class AlertsFragment extends Fragment implements SoundAlertEngine.Listene
         super.onDestroyView();
     }
 
-    // ---- Starting and stopping ----
+    private boolean keepsListeningWhenHidden() {
+        return SettingsStore.from(requireContext()).isBackgroundListeningOn() && !DemoMode.isOn();
+    }
+
+    // ---- Starting ----
 
     private boolean hasMic() {
         return ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.RECORD_AUDIO)
@@ -134,99 +147,14 @@ public class AlertsFragment extends Fragment implements SoundAlertEngine.Listene
     }
 
     private void startListening() {
-        if (engine != null || !hasMic() || DemoMode.isOn()) return;
-        String stopped = MicOwner.take(this);
-        // The Filipino captions model (about 1 GB) is not needed while Sound Alerts listens, often
-        // for a long session: free it now (Phase 8). Filipino captions load it again on their next Start.
-        VoskModelManager.releaseMemory();
-        model.micNote = stopped == null ? null : getString(R.string.mic_other_stopped, stopped);
-        model.failure = null;
-        model.micSilenced = false;
-        model.sessionCount = 0;
-        heardReady = false;
-        SettingsStore settings = SettingsStore.from(requireContext());
-        threshold = settings.getAlertThreshold();
-        thresholdPercent = settings.getAlertThresholdPercent();
-        engine = new SoundAlertEngine(requireContext(), model.annex());
-        engine.start(threshold, this);
-        WatchSender.get(requireContext()).sendState(WatchMessages.Mode.ALERTS, "");
-        showLastEvent();
-        refresh();
-    }
-
-    private void stopListening() {
-        if (engine == null) return;
-        engine.stop();
-        engine = null;
-        model.micSilenced = false;
-        MicOwner.release(this);
-        WatchSender.get(requireContext()).sendState(WatchMessages.Mode.IDLE, "");
-        if (getView() != null) {
-            closestNow.setText("");
-            refresh();
-        }
-    }
-
-    // ---- MicOwner.User ----
-
-    @Override
-    public String micUserName() {
-        return getString(R.string.alerts_title);
-    }
-
-    @Override
-    public void onMicTaken(String byWhom) {
-        stopListening();
-        model.micNote = getString(R.string.mic_taken, byWhom);
-        if (getView() != null) refresh();
-    }
-
-    // ---- SoundAlertEngine.Listener ----
-
-    @Override
-    public void onListening() {
-        heardReady = true;
-        refresh();
-    }
-
-    @Override
-    public void onWindow(AlertDetector.Result result, String topClass, float topScore) {
-        if (result.event != null) {
-            model.lastEvent = result.event;
-            model.sessionCount++;
-            showLastEvent();
-            // The full-screen alert with vibration; it saves the alert once it is on screen.
-            AlertOverlayFragment.show(requireActivity(), result.event, thresholdPercent, false);
-        }
-        if (result.best == null) {
-            closestNow.setText(R.string.alerts_closest_none);
-        } else {
-            closestNow.setText(getString(R.string.alerts_closest, result.best.type.label,
-                    percent(result.best.score), result.best.yamnetClass, topClass, percent(topScore),
-                    percent(threshold)));
-        }
-    }
-
-    @Override
-    public void onMicSilenced(boolean silenced) {
-        model.micSilenced = silenced;
-        refresh();
-    }
-
-    @Override
-    public void onFailed(String reason) {
-        engine = null;
-        model.micSilenced = false;
-        MicOwner.release(this);
-        WatchSender.get(requireContext()).sendState(WatchMessages.Mode.IDLE, "");
-        model.failure = reason;
-        refresh();
+        if (session.isRunning() || !hasMic() || DemoMode.isOn()) return;
+        session.start();
     }
 
     // ---- Drawing ----
 
     private void showLastEvent() {
-        AlertEvent event = model.lastEvent;
+        AlertEvent event = session.lastEvent();
         if (event == null) {
             lastLabel.setText(R.string.alerts_none_yet);
             lastLabel.setTextAppearance(R.style.TextAppearance_AGAP_Body);
@@ -246,21 +174,35 @@ public class AlertsFragment extends Fragment implements SoundAlertEngine.Listene
             lastCard.setCardBackgroundColor(themeColor(row));
             lastCard.setStrokeColor(ColorStateList.valueOf(ink));
         }
-        int percent = engine != null ? thresholdPercent
+        int percent = session.isRunning() ? session.thresholdPercent()
                 : SettingsStore.from(requireContext()).getAlertThresholdPercent();
-        sessionCount.setText(getString(R.string.alerts_session_count, model.sessionCount, percent));
+        sessionCount.setText(getString(R.string.alerts_session_count, session.sessionCount(), percent));
+    }
+
+    private void showClosest() {
+        AlertDetector.Result result = session.lastWindow();
+        if (!session.isRunning() || result == null) {
+            closestNow.setText("");
+        } else if (result.best == null) {
+            closestNow.setText(R.string.alerts_closest_none);
+        } else {
+            closestNow.setText(getString(R.string.alerts_closest, result.best.type.label,
+                    percent(result.best.score), result.best.yamnetClass, session.topClass(),
+                    percent(session.topScore()), percent(session.threshold())));
+        }
     }
 
     private void refresh() {
-        boolean listening = engine != null;
+        boolean listening = session.isRunning();
         View root = getView();
         if (root == null) return;
         root.setKeepScreenOn(listening);
         captionsPausedNote.setVisibility(listening ? View.VISIBLE : View.GONE);
+        backgroundNote.setVisibility(listening && keepsListeningWhenHidden() ? View.VISIBLE : View.GONE);
 
         statusDot.setVisibility(listening ? View.VISIBLE : View.GONE);
         if (listening) {
-            statusText.setText(heardReady ? R.string.alerts_status_listening : R.string.alerts_status_starting);
+            statusText.setText(session.heardReady() ? R.string.alerts_status_listening : R.string.alerts_status_starting);
             statusText.setTextColor(themeColor(R.attr.agapAccent));
             if (!pulse.isStarted()) pulse.start();
         } else {
@@ -275,16 +217,17 @@ public class AlertsFragment extends Fragment implements SoundAlertEngine.Listene
     }
 
     private void showMessage() {
-        if (DemoMode.isOn() && engine == null) {
+        boolean listening = session.isRunning();
+        if (DemoMode.isOn() && !listening) {
             message(getString(R.string.alerts_demo_note), R.string.alerts_demo_open,
                     v -> startActivity(new Intent(requireContext(), DemoModeActivity.class)));
-        } else if (engine != null && model.micSilenced) {
+        } else if (listening && session.micSilenced()) {
             message(getString(R.string.mic_silenced), 0, null);
-        } else if (model.micNote != null) {
-            message(model.micNote, 0, null);
-        } else if (model.failure != null && engine == null) {
-            message(getString(R.string.alerts_failed, model.failure), 0, null);
-        } else if (engine == null && !hasMic()) {
+        } else if (session.micNote() != null) {
+            message(session.micNote(), 0, null);
+        } else if (session.failure() != null && !listening) {
+            message(getString(R.string.alerts_failed, session.failure()), 0, null);
+        } else if (!listening && !hasMic()) {
             boolean blocked = model.askedForMic
                     && !shouldShowRequestPermissionRationale(Manifest.permission.RECORD_AUDIO);
             if (blocked) {

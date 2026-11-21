@@ -21,8 +21,13 @@ public final class AlertRecorder {
      * @return the record that was saved, or null for a demonstration alert
      */
     public AlertRecord shown(AlertEvent event, long shownAtMillis, int thresholdPercent, boolean demo) {
+        return shown(event, shownAtMillis, thresholdPercent, demo, ShownVia.APP_SCREEN);
+    }
+
+    /** As above, saying how the alert was shown (Phase 11). */
+    public AlertRecord shown(AlertEvent event, long shownAtMillis, int thresholdPercent, boolean demo, ShownVia via) {
         if (demo) return null;
-        AlertRecord record = AlertRecord.of(event, shownAtMillis, thresholdPercent);
+        AlertRecord record = AlertRecord.of(event, shownAtMillis, thresholdPercent, via);
         store.save(record);
         return record;
     }

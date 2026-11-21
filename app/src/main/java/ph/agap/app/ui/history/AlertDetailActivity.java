@@ -74,6 +74,12 @@ public class AlertDetailActivity extends BaseActivity {
         addRow(rows, R.string.detail_shown, HistoryFormat.timeMillis(this, record.shownAtMillis), false);
         addRow(rows, R.string.detail_response,
                 getString(R.string.detail_response_ms, record.responseTimeMillis()), true);
+        // Phase 11: how it was shown; a notification's "shown" time is measured differently.
+        addRow(rows, R.string.detail_shown_via, record.via().displayName, false);
+        TextView note = findViewById(R.id.detail_note);
+        if (note != null) {
+            note.setText(record.via().isDrawnByAgap() ? R.string.detail_note : R.string.detail_note_notification);
+        }
         addRow(rows, R.string.detail_heard_as, record.yamnetClass, false);
         addRow(rows, R.string.detail_threshold, getString(R.string.detail_percent, record.thresholdPercent), false);
     }

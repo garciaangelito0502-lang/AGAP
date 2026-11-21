@@ -14,7 +14,7 @@ import java.util.Locale;
 /**
  * The Event History as a CSV file for a spreadsheet (Excel, Google Sheets): one row per alert,
  * oldest first so the rows follow the order of the trials, with both times to the millisecond and
- * the response time. Plain Java, so the format is tested on the computer.
+ * the response time, and how each alert was shown (last column, added in 1.1). Plain Java, so the format is tested on the computer.
  *
  * Format: RFC 4180 (comma-separated, fields with a comma or quote are quoted, CRLF line ends),
  * UTF-8 with a byte-order mark so Excel shows letters like "ñ" correctly.
@@ -23,7 +23,8 @@ public final class HistoryCsv {
 
     static final String[] HEADER = {
             "No.", "Date", "Alert", "Category", "Confidence (%)", "Heard as (YAMNet)", "Threshold (%)",
-            "Sound detected", "Alert shown", "Response time (ms)", "Detected (epoch ms)", "Shown (epoch ms)"};
+            "Sound detected", "Alert shown", "Response time (ms)", "Detected (epoch ms)", "Shown (epoch ms)",
+            "Shown as"};
 
     private static final DateTimeFormatter DATE = DateTimeFormatter.ofPattern("yyyy-MM-dd", Locale.ROOT);
     private static final DateTimeFormatter TIME = DateTimeFormatter.ofPattern("HH:mm:ss.SSS", Locale.ROOT);
@@ -62,7 +63,8 @@ public final class HistoryCsv {
                 TIME.format(shown),
                 Long.toString(r.responseTimeMillis()),
                 Long.toString(r.detectedAtMillis),
-                Long.toString(r.shownAtMillis)};
+                Long.toString(r.shownAtMillis),
+                r.via().displayName};
     }
 
     /** Quotes a field that holds a comma, quote or line break; quotes inside are doubled. */

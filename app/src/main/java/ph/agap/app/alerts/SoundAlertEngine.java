@@ -71,6 +71,8 @@ public final class SoundAlertEngine {
     private final Object micLock = new Object();
     @Nullable private AudioRecord record; // guarded by micLock
     private volatile boolean running;
+    /** The alert threshold, 0-1. Can change while listening (Settings, with background listening on). */
+    private volatile float threshold;
 
     public SoundAlertEngine(Context context, AnnexA annex) {
         this.context = context.getApplicationContext();
@@ -81,10 +83,17 @@ public final class SoundAlertEngine {
     public void start(float threshold, Listener listener) {
         if (running) return;
         running = true;
+        this.threshold = threshold;
         AlertDetector detector = new AlertDetector(annex);
         worker = new Thread(() -> listen(detector, threshold, listener), "AGAP-SoundAlerts");
         worker.start();
         Log.i(TAG, "start, threshold " + threshold);
+    }
+
+    /** Uses a new alert threshold (0-1) from the next audio window on. */
+    public void setThreshold(float threshold) {
+        this.threshold = threshold;
+        Log.i(TAG, "threshold now " + threshold);
     }
 
     /**
@@ -272,7 +281,7 @@ public final class SoundAlertEngine {
             }
             if (annex.alertFor(c.categoryName()) != null) mapped.put(c.categoryName(), c.score());
         }
-        AlertDetector.Result r = detector.evaluate(mapped, threshold, now);
+        AlertDetector.Result r = detector.evaluate(mapped, this.threshold, now);
 
         // Class names and scores only, for tuning (contract 1.12); never audio.
         if (r.event != null) {

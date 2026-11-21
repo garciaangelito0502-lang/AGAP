@@ -59,4 +59,17 @@ public class AlertRecorderTest {
         assertEquals("Doorbell", saved.get(0).label);
         assertEquals("Phone Ringing", saved.get(1).label);
     }
+
+    @Test
+    public void howTheAlertWasShownIsSaved() {
+        // Phase 11: alerts outside AGAP are saved with the way they were shown.
+        recorder.shown(doorbell(1_000L), 1_060L, 50, false);
+        recorder.shown(doorbell(2_000L), 2_040L, 50, false, ShownVia.LOCK_SCREEN);
+        recorder.shown(doorbell(3_000L), 3_005L, 50, false, ShownVia.NOTIFICATION);
+        assertNull(recorder.shown(doorbell(4_000L), 4_010L, 50, true, ShownVia.POPUP));
+        assertEquals(3, saved.size());
+        assertEquals(ShownVia.APP_SCREEN, saved.get(0).via());
+        assertEquals(ShownVia.LOCK_SCREEN, saved.get(1).via());
+        assertEquals(ShownVia.NOTIFICATION, saved.get(2).via());
+    }
 }

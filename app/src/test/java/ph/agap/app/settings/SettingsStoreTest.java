@@ -27,6 +27,16 @@ public class SettingsStoreTest {
         assertTrue(store.isVibrationOn());
         assertEquals(50, store.getAlertThresholdPercent());
         assertEquals(0.5f, store.getAlertThreshold(), 0.0001f);
+        // Phase 11: off by default, so AGAP listens only while its screen is open, as in 1.0.
+        assertFalse(store.isBackgroundListeningOn());
+    }
+
+    @Test
+    public void backgroundListeningIsKept() {
+        store.setBackgroundListeningOn(true);
+        assertTrue(store.isBackgroundListeningOn());
+        store.setBackgroundListeningOn(false);
+        assertFalse(store.isBackgroundListeningOn());
     }
 
     @Test

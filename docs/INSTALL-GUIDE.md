@@ -1,4 +1,4 @@
-# How to install AGAP 1.0
+# How to install AGAP 1.1
 
 This guide is for the research team. It takes about 20 minutes for the phone and 15 for the watch. You need the
 internet only once, in step 5. After that AGAP works with no Wi-Fi and no mobile data.
@@ -7,7 +7,10 @@ internet only once, in step 5. After that AGAP works with no Wi-Fi and no mobile
 
 - The test phone (Infinix Hot 70, or any phone with Android 10 or newer) with **at least 1.5 GB of free storage**
   (Settings > Storage). The app file is 426 MB, and Filipino captions need about 1 GB more once they are set up.
-- The two files: `agap-phone-1.0.apk` (426 MB) and, for the watch, `agap-watch-1.0.apk` (5 MB).
+- The two files: `agap-phone-1.1.apk` (426 MB) and, for the watch, `agap-watch-1.1.apk` (5 MB).
+
+**Already have AGAP 1.0?** Skip step 1: 1.1 installs over 1.0 and keeps your Event History and settings (steps 2
+and 3, then step 10 if you want background listening). Update the watch the same way (step 8).
 - For the watch: a Wear OS 3 or newer watch (Galaxy Watch4 or newer, Pixel Watch) already paired with the phone,
   and a computer with the free Android "platform tools" (adb). If you have no computer for this, I can help you by
   video call.
@@ -17,19 +20,20 @@ internet only once, in step 5. After that AGAP works with no Wi-Fi and no mobile
 ### 1. Remove a test build first (only if you installed one)
 
 If an AGAP test build (0.1, 0.9 or 0.9.1) is on the phone, remove it: **Settings > Apps > AGAP > Uninstall**.
-Version 1.0 is signed differently, and Android will not install it over a test build ("App not installed").
+Versions 1.0 and 1.1 are signed differently from the test builds, and Android will not install them over a test
+build ("App not installed").
 Uninstalling deletes the test build's Event History. If you still need it, open **History** first and tap the
 download icon at the top (**Export history**): the file goes to the phone's Download/AGAP folder.
 
 ### 2. Copy the app to the phone
 
 Connect the phone to the computer with a USB cable, choose **File transfer** on the phone, and copy
-`agap-phone-1.0.apk` into the phone's **Download** folder. (Sending the file by chat apps often fails because of
+`agap-phone-1.1.apk` into the phone's **Download** folder. (Sending the file by chat apps often fails because of
 its size.)
 
 ### 3. Install it
 
-1. On the phone, open the **Files** app, go to **Download** and tap `agap-phone-1.0.apk`.
+1. On the phone, open the **Files** app, go to **Download** and tap `agap-phone-1.1.apk`.
 2. The first time, Android asks whether the Files app may install apps. Tap **Settings**, turn on
    **Allow from this source**, and go back.
 3. Tap **Install**. If the phone shows a security scan, let it finish, then tap **Install** again or **Done**.
@@ -41,7 +45,7 @@ in step 4, so you can tap **OK** or **Launch**. If the microphone question never
 use permissions** on that notice (or find the same switch in Settings > Apps > AGAP).
 
 With a computer and USB debugging turned on, you can do steps 2 and 3 in one go instead:
-`adb install agap-phone-1.0.apk`.
+`adb install -r agap-phone-1.1.apk` (`-r` keeps 1.0's history).
 
 ### 4. Allow the microphone
 
@@ -97,13 +101,13 @@ it stops listening. Tap **Dismiss** after every alert.
    ```
    adb pair 192.168.1.23:41234          (then type the pairing code)
    adb connect 192.168.1.23:<port shown under "IP address & port">
-   adb install agap-watch-1.0.apk
+   adb install -r agap-watch-1.1.apk
    ```
    It says `Success`.
 5. On the watch, open **AGAP** and allow notifications. Turn **Wireless debugging** off again to save battery.
 
-The watch and phone files must both be the 1.0 files. A test watch app and a 1.0 phone app (or the other way
-round) are signed differently and will not connect: uninstall the old one first.
+The watch and phone files must both be release files (1.0 or 1.1, best both 1.1). A test watch app and a release
+phone app (or the other way round) are signed differently and will not connect: uninstall the old one first.
 
 ### 9. Check the watch link
 
@@ -115,6 +119,37 @@ round) are signed differently and will not connect: uninstall the old one first.
 
 Keep AGAP open on the watch during sessions: with it closed, alerts arrive only as a notification (K-022).
 
+## Background listening (optional, new in 1.1)
+
+### 10. Turn it on only if you want it
+
+With background listening **off** (as installed), AGAP works exactly like 1.0. Turn it on only if you want AGAP to
+keep listening after you leave it or the screen turns off. The group's formal test trials can stay with it off.
+
+1. In AGAP, tap the settings icon at the top right, scroll to **Background listening** and turn on **Keep
+   listening when I leave AGAP**.
+2. Android asks whether AGAP may send notifications: tap **Allow**.
+3. Under the switch, every row that says **Not allowed yet** has an **Allow** button:
+   - **Alerts on the lock screen** (only on Android 14 and newer): opens Android's page; turn AGAP on.
+   - **Popups over other apps** (optional): opens "Display over other apps". On some phones this is a list: find
+     **AGAP** in it, open it and turn it on.
+   - **No battery limits**: tap **Allow** in Android's question, or choose **No restrictions** if the phone shows its
+     own battery page.
+   - **Home-screen widget** (optional): **Add** asks the home screen to place it. If nothing happens, add it by
+     hand (touch and hold an empty spot on the home screen, **Widgets**, **AGAP**). On Xiaomi phones the Add
+     button works only after **Settings > Apps > AGAP > Other permissions > Home screen shortcuts** is allowed.
+4. Phone makers' own battery savers can still close AGAP in the background. On the **Infinix** (XOS), look in
+   **Settings > Apps > AGAP** (and in **Phone Master**, if the phone has it) for **auto-start** or **background
+   activity** and allow it, and lock AGAP in the recent-apps list (pull its card down or tap its lock icon). These
+   Infinix steps were not tried by me; tell me what the menus are called on your phone. On a Xiaomi phone (seen on
+   HyperOS): **Settings > Apps > AGAP** has **Background autostart** and **Pause app activity if unused** (turn the
+   second one off), and the battery page's **No restrictions**.
+5. Check: open **Alerts**, tap **Start**, press the Home button. A notification **AGAP is listening: Sound Alerts**
+   stays at the top. Play a test sound: the alert appears as a popup or notification and vibrates. Tap **Stop** in
+   the notification (pull the notification down to see the button).
+
+AGAP never starts listening by itself, not even after a restart: open it and tap **Start**.
+
 ## If something goes wrong
 
 | What you see | What to do |
@@ -123,5 +158,6 @@ Keep AGAP open on the watch during sessions: with it closed, alerts arrive only 
 | "There was a problem parsing the package" | The file did not copy completely. Copy it again and compare its SHA-256 with [RELEASE.md](RELEASE.md). |
 | Start stays grey on Captions | Read the message above it: the microphone is not allowed (step 4), the English pack is missing (step 5), or Filipino is not set up (step 6). |
 | "Not enough free storage to set up…" | Free some space (photos, videos, apps), then tap **Check again**. |
-| The watch says "Phone not connected" | Bluetooth on, watch paired, AGAP open on the phone, both 1.0 files. |
+| The watch says "Phone not connected" | Bluetooth on, watch paired, AGAP open on the phone, both release files (1.0 or 1.1). |
+| Background listening stops by itself | The notification is gone: the phone closed AGAP. Allow "No battery limits" and the phone maker's auto-start (step 10), then open AGAP and tap Start again. |
 | Anything else | Write down what you did and what the screen said, take a screenshot, and send it to me. |

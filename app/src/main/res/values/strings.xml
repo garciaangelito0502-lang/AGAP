@@ -13,7 +13,7 @@
     <string name="home_greeting_morning">Good morning!</string>
     <string name="home_greeting_afternoon">Good afternoon!</string>
     <string name="home_greeting_evening">Good evening!</string>
-    <string name="home_intro">Choose a mode. AGAP listens only while its screen is open.</string>
+    <string name="home_intro">Choose a mode. AGAP listens only after you tap Start.</string>
     <string name="home_captions_title">Live Captions</string>
     <string name="home_captions_text">Speech to text in English or Filipino</string>
     <string name="home_alerts_title">Sound Alerts</string>
@@ -203,6 +203,8 @@
     <string name="detail_heard_as">Heard as (YAMNet)</string>
     <string name="detail_threshold">Alert threshold</string>
     <string name="detail_percent">%1$d%%</string>
+    <string name="detail_shown_via">Shown as</string>
+    <string name="detail_note_notification">Shown as a notification: the alert time is when AGAP handed the notification to Android, which does not tell an app when it appears. Compare response times only between alerts shown the same way.</string>
     <string name="detail_note">Both times come from the phone\'s clock, to the millisecond. Response time = alert shown minus sound detected.</string>
 
     <!-- Demonstration Mode -->
@@ -223,6 +225,67 @@
     <!-- Settings -->
     <string name="settings_section_display">Display</string>
     <string name="settings_section_alerts">Alerts</string>
+
+    <!-- Background listening (Phase 11) -->
+    <string name="settings_section_background">Background listening</string>
+    <string name="settings_background">Keep listening when I leave AGAP</string>
+    <string name="settings_background_text">Sound Alerts and Live Captions keep going when you open another app or the screen turns off. Start them in AGAP first; stop them in AGAP, from the notification or from the widget. Uses more battery. When this is off, AGAP listens only while its screen is open.</string>
+    <string name="bg_need_notifications">Notifications</string>
+    <string name="bg_need_notifications_text">Shows each alert, and the \"AGAP is listening\" notice with its Stop button.</string>
+    <string name="bg_need_lock_screen">Alerts on the lock screen</string>
+    <string name="bg_need_lock_screen_text">Shows the full alert and turns the screen on when the phone is locked.</string>
+    <string name="bg_need_overlay">Popups over other apps (optional)</string>
+    <string name="bg_need_overlay_text">Shows alerts as a large card, and captions in a floating window, over the app you are using. Android calls this \"Display over other apps\".</string>
+    <string name="bg_need_battery">No battery limits</string>
+    <string name="bg_need_battery_text">Keeps Android from stopping AGAP while it listens in the background.</string>
+    <string name="bg_need_allowed">Allowed</string>
+    <string name="bg_need_not_allowed">Not allowed yet</string>
+    <string name="bg_need_allow">Allow</string>
+    <string name="bg_widget">Home-screen widget (optional)</string>
+    <string name="bg_widget_text">Shows whether AGAP is listening and the newest alert, with a Stop button.</string>
+    <string name="bg_widget_placed">On your home screen</string>
+    <string name="bg_widget_not_placed">Not added yet</string>
+    <string name="bg_widget_by_hand">Add it from your home screen: touch and hold an empty spot, tap Widgets, then find AGAP.</string>
+    <string name="bg_widget_add">Add</string>
+    <string name="bg_need_phone_maker">Some phones (Infinix, Xiaomi and others) also have their own battery settings that close apps in the background. There, allow AGAP to run in the background and to start automatically, and lock AGAP in the recent-apps list. AGAP never starts listening by itself, not even after a restart: open it and tap Start.</string>
+    <string name="listen_background_note">Keeps listening when you leave AGAP. Stop it here, from the notification, or from the widget.</string>
+    <string name="home_status_listening">Listening now: %1$s. It goes on when you leave AGAP; stop it in AGAP or from the notification.</string>
+    <string name="home_status_captions_language">Live Captions (%1$s)</string>
+    <string name="home_status_mic_off_background">Microphone off. Background listening is on: after you start Live Captions or Sound Alerts, AGAP keeps listening when you leave it.</string>
+
+    <string name="notif_channel_listening">Listening</string>
+    <string name="notif_channel_listening_text">Shows that AGAP is listening in the background, with a Stop button.</string>
+    <string name="notif_channel_alerts">%1$s alerts</string>
+    <string name="notif_channel_alerts_text">Sound alerts while AGAP is in the background. AGAP vibrates in the category\'s own pattern.</string>
+    <string name="notif_channel_list">Alerts already shown as a popup</string>
+    <string name="notif_channel_list_text">A copy of each alert shown as a popup over another app, kept in the notification list.</string>
+    <string name="notif_listening_alerts">AGAP is listening: Sound Alerts</string>
+    <string name="notif_listening_alerts_text">Alerts show here, as a popup, on the lock screen and on the watch. Tap to open AGAP.</string>
+    <string name="notif_listening_captions">AGAP is listening: Live Captions (%1$s)</string>
+    <string name="notif_listening_captions_waiting">Words will show here as they are heard.</string>
+    <string name="notif_stop">Stop</string>
+    <string name="notif_alert_text">%1$s · %2$d%% · %3$s</string>
+
+    <string name="popup_open">Open AGAP</string>
+    <string name="popup_dismiss">Dismiss</string>
+    <string name="popup_description">Alert: %1$s, %2$s</string>
+
+    <string name="floating_title">Live Captions · %1$s</string>
+    <string name="floating_open">Open</string>
+    <string name="floating_stop">Stop</string>
+    <string name="floating_waiting">Listening. Words will show here.</string>
+    <string name="floating_drag">Live Captions. Drag here to move the window.</string>
+
+    <string name="widget_description">AGAP: whether it is listening, and the newest alert</string>
+    <string name="widget_listening_alerts">Listening: Sound Alerts</string>
+    <string name="widget_listening_captions">Listening: Live Captions (%1$s)</string>
+    <string name="widget_not_listening">Not listening</string>
+    <string name="widget_no_alerts">No alerts yet</string>
+    <string name="widget_no_alerts_text">Alerts will show here.</string>
+    <string name="widget_last_alert">Last alert: %1$s</string>
+    <string name="widget_last_details">%1$s · %2$s</string>
+    <string name="widget_open">Open AGAP</string>
+    <string name="widget_stop">Stop</string>
     <string name="settings_text_size">Text size</string>
     <string name="settings_text_size_sample">Captions look like this.</string>
     <string name="settings_text_size_small_a">A</string>
@@ -246,7 +309,7 @@
     <string name="settings_threshold_value">%1$d%%</string>
 
     <!-- About -->
-    <string name="about_text">AGAP (Advancing Greater Access to Communication for Persons with Hearing Impairments) is a research prototype made for a student study at Pasig City Science High School.\n\nIt is a supplementary tool. It is not a medical device, and it is not the only way to notice emergencies. Keep using other ways to notice alarms and warnings.\n\nAGAP works without the internet. It does not record or save audio, has no user accounts, and keeps its alert history on this phone.</string>
+    <string name="about_text">AGAP (Advancing Greater Access to Communication for Persons with Hearing Impairments) is a research prototype made for a student study at Pasig City Science High School.\n\nIt is a supplementary tool. It is not a medical device, and it is not the only way to notice emergencies. Keep using other ways to notice alarms and warnings.\n\nAGAP works without the internet. It does not record or save audio, has no user accounts, and keeps its alert history on this phone.\n\nWith background listening on (Settings), AGAP keeps listening after you leave it, and shows \"AGAP is listening\" in the notifications until you tap Stop. The phone, or its battery saver, can still close AGAP in the background, and AGAP never starts listening by itself.</string>
     <string name="about_credits_title">Credits and licences</string>
     <string name="about_credits">YAMNet sound model, Google: Apache License 2.0.\nMediaPipe Audio Classifier, Google: Apache License 2.0.\nVosk speech recognition library, Alpha Cephei: Apache License 2.0.\nVosk Filipino speech model (vosk-model-tl-ph-generic-0.6, by Alpha Cephei and contributors): CC BY-NC-SA 4.0. It may be used for non-commercial purposes only.\nVosk small English speech model (vosk-model-small-en-us-0.15, Alpha Cephei), used only on phones without Google\'s offline English: Apache License 2.0.\nAndroidX and Material Components for Android, Google: Apache License 2.0.\nMaterial icons, Google: Apache License 2.0.</string>
     <string name="about_version">Version %1$s</string>

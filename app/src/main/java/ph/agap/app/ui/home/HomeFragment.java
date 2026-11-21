@@ -29,6 +29,9 @@ import ph.agap.app.captions.GoogleOnDeviceSupport;
 import ph.agap.app.captions.VoskModelManager;
 import ph.agap.app.captions.VoskModelSpec;
 import ph.agap.app.demo.DemoMode;
+import ph.agap.app.listen.AlertsSession;
+import ph.agap.app.listen.CaptionsSession;
+import ph.agap.app.settings.SettingsStore;
 import ph.agap.app.ui.MainActivity;
 import ph.agap.app.ui.captions.CaptionsViewModel;
 import ph.agap.app.ui.info.DemoModeActivity;
@@ -39,8 +42,8 @@ import ph.agap.app.watch.WatchSender;
 
 /**
  * Home: the two modes, a status card (what works offline right now, and the microphone), and the
- * other screens. AGAP never listens on Home: the microphone is used only on the Captions and
- * Alerts tabs (contract 1.10), so the status says so.
+ * other screens. Listening starts only on the Captions and Alerts tabs (contract 1.10); with
+ * background listening on (Phase 11) it can go on while Home is shown, and the status says so.
  */
 public class HomeFragment extends Fragment {
 
@@ -69,9 +72,19 @@ public class HomeFragment extends Fragment {
         if (getView() != null) showStatus();
     };
 
+    /** Start and stop only; the alerts session also reports every audio window, which Home ignores. */
+    private boolean shownListening;
+    private final Runnable listeningChanged = () -> {
+        boolean now = AlertsSession.get(requireContext()).isRunning()
+                || CaptionsSession.get(requireContext()).isListeningForReal();
+        if (now != shownListening && getView() != null) showStatus();
+    };
+
     @Override
     public void onStart() {
         super.onStart();
+        AlertsSession.get(requireContext()).addListener(listeningChanged);
+        CaptionsSession.get(requireContext()).addListener(listeningChanged);
         WatchSender watch = WatchSender.get(requireContext());
         watch.addListener(watchChanged);
         watch.refresh();
@@ -80,6 +93,8 @@ public class HomeFragment extends Fragment {
 
     @Override
     public void onStop() {
+        AlertsSession.get(requireContext()).removeListener(listeningChanged);
+        CaptionsSession.get(requireContext()).removeListener(listeningChanged);
         WatchSender.get(requireContext()).removeListener(watchChanged);
         super.onStop();
     }
@@ -90,9 +105,22 @@ public class HomeFragment extends Fragment {
         boolean mic = ContextCompat.checkSelfPermission(context, Manifest.permission.RECORD_AUDIO)
                 == PackageManager.PERMISSION_GRANTED;
         statusRows.removeAllViews();
+        shownListening = AlertsSession.get(context).isRunning() || CaptionsSession.get(context).isListeningForReal();
         if (DemoMode.isOn()) addStatus(false, R.string.home_status_demo);
         addStatus(true, R.string.home_status_offline);
-        addStatus(mic, mic ? R.string.home_status_mic_off : R.string.home_status_mic_not_allowed);
+        boolean background = SettingsStore.from(context).isBackgroundListeningOn();
+        CaptionsSession captions = CaptionsSession.get(context);
+        if (AlertsSession.get(context).isRunning()) {
+            // Phase 11: a session that goes on while the user is elsewhere in AGAP or outside it.
+            addStatus(true, getString(R.string.home_status_listening, getString(R.string.alerts_title)));
+        } else if (captions.isListeningForReal()) {
+            addStatus(true, getString(R.string.home_status_listening,
+                    getString(R.string.home_status_captions_language, captions.languageName())));
+        } else if (!mic) {
+            addStatus(false, R.string.home_status_mic_not_allowed);
+        } else {
+            addStatus(true, background ? R.string.home_status_mic_off_background : R.string.home_status_mic_off);
+        }
         addStatus(true, R.string.home_status_alerts);
         addEnglishStatus(context, mic);
         boolean filipino = VoskModelManager.isInstalled(context, VoskModelSpec.FILIPINO);

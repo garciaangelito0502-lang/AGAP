@@ -40,7 +40,7 @@ public class HistoryCsvTest {
         String text = csv();
         assertEquals(0xFEFF, text.charAt(0));
         assertEquals("No.,Date,Alert,Category,Confidence (%),Heard as (YAMNet),Threshold (%),Sound detected,"
-                + "Alert shown,Response time (ms),Detected (epoch ms),Shown (epoch ms)\r\n", text.substring(1));
+                + "Alert shown,Response time (ms),Detected (epoch ms),Shown (epoch ms),Shown as\r\n", text.substring(1));
     }
 
     @Test
@@ -50,7 +50,16 @@ public class HistoryCsvTest {
         String[] row = HistoryCsv.row(1, record(1, "Fire Alarm", "Emergency", "Fire alarm", 0.594f,
                 detected, detected + 130), MANILA);
         assertArrayEquals(new String[]{"1", "2026-11-07", "Fire Alarm", "Emergency", "59.4", "Fire alarm", "50",
-                "04:11:58.191", "04:11:58.321", "130", "1793995918191", "1793995918321"}, row);
+                "04:11:58.191", "04:11:58.321", "130", "1793995918191", "1793995918321", "App screen"}, row);
+    }
+
+    @Test
+    public void lastColumnSaysHowTheAlertWasShown() {
+        AlertRecord r = record(1, "Doorbell", "Household/Entry", "Doorbell", 0.8f, 1_000L, 1_040L);
+        r.shownVia = ShownVia.NOTIFICATION.name();
+        String[] row = HistoryCsv.row(1, r, MANILA);
+        assertEquals("Notification", row[row.length - 1]);
+        assertEquals(HistoryCsv.HEADER.length, row.length);
     }
 
     @Test
@@ -73,6 +82,16 @@ public class HistoryCsvTest {
         assertTrue(lines[1].startsWith("1,") && lines[1].contains(",Fire Alarm,"));
         assertTrue(lines[2].startsWith("2,") && lines[2].contains(",Knocking,"));
         assertTrue(lines[3].startsWith("3,") && lines[3].contains(",Doorbell,"));
+    }
+
+    @Test
+    public void alertsFromVersion10ReadAsShownOnTheAppScreen() {
+        // Rows saved by 1.0 get the column's default; an unknown value is treated the same way.
+        assertEquals(ShownVia.APP_SCREEN, ShownVia.fromStored("APP_SCREEN"));
+        assertEquals(ShownVia.APP_SCREEN, ShownVia.fromStored(""));
+        assertEquals(ShownVia.LOCK_SCREEN, ShownVia.fromStored("LOCK_SCREEN"));
+        assertTrue(ShownVia.POPUP.isDrawnByAgap());
+        assertTrue(!ShownVia.NOTIFICATION.isDrawnByAgap());
     }
 
     @Test

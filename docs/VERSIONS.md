@@ -1,14 +1,15 @@
-# Software versions (AGAP 1.0)
+# Software versions (AGAP 1.1)
 
 For the research write-up (the Methods ask for software versions) and for rebuilding the same app later. Recorded
-2026-11-08 for the release tagged `v1.0`.
+2026-11-08 for the release tagged `v1.0`; updated 2026-11-21 for `v1.1` (no tool, library or model changed; only
+AGAP's own code, its database schema 1 to 2, and the versions below).
 
 ## AGAP
 
 | Part | Version |
 |---|---|
-| Phone app | 1.0 (version code 11), package `ph.agap.app`, Android 10 (API 29) or newer, built for API 36 |
-| Watch app | 1.0 (version code 3), package `ph.agap.app`, Wear OS 3 (API 30) or newer, built for API 36 |
+| Phone app | 1.1 (version code 12), package `ph.agap.app`, Android 10 (API 29) or newer, built for API 36; Event History database schema 2. Release 1.0 was code 11, schema 1 |
+| Watch app | 1.1 (version code 4), package `ph.agap.app`, Wear OS 3 (API 30) or newer, built for API 36. Release 1.0 was code 3 |
 | Release files | [RELEASE.md](RELEASE.md) (sizes, SHA-256, signing certificate) |
 
 ## Build tools

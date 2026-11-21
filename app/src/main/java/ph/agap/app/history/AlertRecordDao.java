@@ -23,6 +23,11 @@ public interface AlertRecordDao {
     @Query("SELECT * FROM alert_events WHERE id = :id")
     AlertRecord byId(long id);
 
+    /** The newest alert, or null if there is none (the home-screen widget). */
+    @Nullable
+    @Query("SELECT * FROM alert_events ORDER BY detectedAtMillis DESC, id DESC LIMIT 1")
+    AlertRecord newest();
+
     @Query("SELECT COUNT(*) FROM alert_events")
     int count();
 

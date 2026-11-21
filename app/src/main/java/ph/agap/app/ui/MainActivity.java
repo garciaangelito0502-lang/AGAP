@@ -14,6 +14,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import ph.agap.app.R;
 import ph.agap.app.captions.VoskModelManager;
+import ph.agap.app.listen.AppVisibility;
 import ph.agap.app.ui.alerts.AlertsFragment;
 import ph.agap.app.ui.captions.CaptionsFragment;
 import ph.agap.app.ui.history.HistoryFragment;
@@ -25,13 +26,18 @@ import ph.agap.app.watch.WatchSender;
  * Home and the three main tabs (Captions, Alerts, History). Only one tab's screen exists at a
  * time, which later keeps Live Captions and Sound Alerts from holding the microphone together.
  */
-public class MainActivity extends BaseActivity {
+public class MainActivity extends BaseActivity implements AppVisibility.AlertHost {
 
     private static final String STATE_TAB = "tab";
 
-    /** Intent extra: which tab to open (TAB_CAPTIONS), used by Demonstration Mode's sample captions. */
+    /**
+     * Intent extra: which tab to open. Used by Demonstration Mode's sample captions, and (Phase 11)
+     * by the listening notification, the popup alert, the floating captions and the widget.
+     */
     public static final String EXTRA_TAB = "tab";
     public static final String TAB_CAPTIONS = "captions";
+    public static final String TAB_ALERTS = "alerts";
+    public static final String TAB_HISTORY = "history";
 
     private BottomNavigationView nav;
     private MaterialToolbar bar;
@@ -97,8 +103,13 @@ public class MainActivity extends BaseActivity {
     }
 
     private void openRequestedTab(@Nullable Intent intent) {
-        if (intent != null && TAB_CAPTIONS.equals(intent.getStringExtra(EXTRA_TAB))) {
+        String tab = intent == null ? null : intent.getStringExtra(EXTRA_TAB);
+        if (TAB_CAPTIONS.equals(tab)) {
             nav.setSelectedItemId(R.id.nav_captions);
+        } else if (TAB_ALERTS.equals(tab)) {
+            nav.setSelectedItemId(R.id.nav_alerts);
+        } else if (TAB_HISTORY.equals(tab)) {
+            nav.setSelectedItemId(R.id.nav_history);
         }
     }
 

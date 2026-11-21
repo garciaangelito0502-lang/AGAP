@@ -615,3 +615,86 @@ already on background threads, and no background thread touches a view. Four mai
   the same for phone and watch (checked with `apksigner`), so the Data Layer link works.
 - Test builds were signed with the debug key, so 1.0 cannot be installed over them: the install guide starts with
   uninstalling a test build (K-015). Later 1.0.x builds install over 1.0.
+
+## D-055 Background listening is a change request, built free of charge, off by default (Phase 11)
+
+- Contract 1.10 and the "not included" list exclude listening in the background or with the screen off; section 3
+  lists it as "quoted separately". The group asked for it on 2026-11-21 (alerts as a popup or widget, captions
+  while AGAP is minimized). The owner approved it the same day and built it free of charge for the group (SCOPE-FLAGS).
+- It is one setting, "Keep listening when I leave AGAP", **off by default**. Off, 1.1 behaves like 1.0: listening
+  stops when its screen leaves the display and the screen stays on while listening. The group's Methods place
+  background operation outside the present study, so their test procedure need not change.
+- Screen-off listening is included: it is the same contract line, and a phone in a pocket is the main use.
+
+## D-056 How listening goes on in the background (Phase 11)
+
+- The engines moved from the two screens into app-wide sessions (`listen/AlertsSession`, `listen/CaptionsSession`).
+  The screens only show a session's state. The transcript lives in `CaptionsSession`, in memory only.
+- `ListeningService` is a foreground service of type `microphone` (`FOREGROUND_SERVICE_MICROPHONE`) with the "AGAP is
+  listening" notification and a Stop button. It runs only while the setting is on and Sound Alerts or real Live
+  Captions listen, and it is always started while AGAP is in view: Android 14+ refuses to create a microphone
+  service from the background, and AGAP has no boot receiver, so nothing starts after a restart. It returns
+  `START_NOT_STICKY` (no self-restart; it could not open the microphone anyway) and holds a partial wake lock for its
+  whole run, so listening goes on with the screen off. The sessions keep `MicOwner`'s rule: one feature at a time.
+- Checked against the Android docs on 2026-11-21: foreground service types and the background-start restrictions
+  for microphone services (developer.android.com, "Restrictions on starting a foreground service from the
+  background", "Changes to foreground service types for Android 15"), and the full-screen intent limits
+  (source.android.com, "Full-screen intent limits").
+- Demonstration Mode never runs in the background, and turning it on stops real listening (`AgapApp`).
+- The alert threshold now also applies to a running session (`SoundAlertEngine.setThreshold`), because the user can
+  open Settings while Sound Alerts listens behind it.
+
+## D-057 How an alert is shown when AGAP is not in view, and what "shown" means then (Phase 11)
+
+- `AlertPresenter` picks one way per alert: AGAP in view: the full-screen alert as in 1.0 (`APP_SCREEN`); screen off
+  or locked: the full alert over the lock screen through a full-screen notification (`AlertActivity`,
+  `LOCK_SCREEN`); another app in use with "Display over other apps" allowed: an alert card over that app
+  (`PopupAlert`, `POPUP`); otherwise a heads-up notification (`NOTIFICATION`). Outside AGAP the category's vibration
+  and the watch alert start at once.
+- Each alert is saved once (`AlertLedger`), by the way that showed it first. For AGAP's own screens the "shown" time
+  is still the frame reaching the display (Phase 5). Android does not tell an app when a notification appears, so for
+  `NOTIFICATION` it is the moment AGAP handed the notification to Android. If the lock-screen alert has not drawn
+  within 3 s, the notification counts.
+- New column `shownVia` (Room schema 2, migration 1 to 2 adds it with default `APP_SCREEN`, so the group's 1.0 history
+  is kept and reads as app-screen alerts). It is shown in the detail view ("Shown as") and is the last CSV column.
+- The popup's copy in the notification list goes to a low-importance channel (`alerts_list`): on HyperOS a
+  "silent" notification on a high-importance channel still popped up over the card (K-034).
+
+## D-058 Captions in the background (Phase 11)
+
+- A floating caption window over other apps (`FloatingCaptions`, needs "Display over other apps"): the newest three
+  finished lines and the line being heard, on plain white or black, at the user's text size, draggable by its top
+  bar, with Open and Stop. It shows only while AGAP is not in view; Android keeps such windows off the lock screen.
+- Without that permission the newest line is in the listening notification, updated at most once a second.
+- The notification is private on the lock screen: only "AGAP is listening: Live Captions (...)", never the words,
+  because caption words are someone's speech. There is no setting to show them there; the watch still shows them.
+- Google's on-device English recognizer keeps working from the service with AGAP in the background on my phone
+  (Android 16), so English does not switch to Vosk in the background. Checked again on the Infinix by the group.
+- `CaptionsSession` logs a line count and a word count per finished line, never the words, so a background or
+  screen-off run can be checked from the log.
+
+## D-059 Home-screen widget (Phase 11)
+
+- `AgapWidget`: listening or not, the newest alert from the Event History, Open AGAP, and Stop while listening. No
+  timed updates (`updatePeriodMillis` 0): AGAP redraws it when a session starts or stops and when an alert is saved.
+- It cannot start listening: Android lets AGAP open the microphone only from its own screen (D-056), so Open AGAP
+  goes there. Settings has an "Add" button that asks the launcher to place it (`requestPinAppWidget`); on HyperOS
+  that needs the phone's own "Home screen shortcuts" permission for AGAP (K-036).
+
+## D-060 Versions 1.1 (Phase 11)
+
+- Phone 1.1 (code 12), watch 1.1 (code 4: two waiting texts now say "Start listening in AGAP"). Same release key as
+  1.0 (D-054), so 1.1 installs over 1.0 and keeps the history and settings.
+- `targetSdk` stays 36. Android 17's "background audio hardening" applies to apps that target API 37; raising the
+  target later needs that page read first.
+
+## D-061 Launcher icon from the group's 1.1 logo (Phase 11, 2026-11-21)
+
+- At the owner's request the launcher icon of both apps is now the group's logo for 1.1
+  (`design/agap-logo_for_v1.1.jpg`, outside this repo, 2000x2000): the ear mascot above the AGAP wordmark, on a
+  plain purple (#420B8B). It replaces the cut-out wordmark of D-036.
+- Adaptive icon: background layer the logo's purple (`ic_launcher_background`); foreground the whole logo at 70% of
+  the 108dp layer, so the mascot and the wordmark stay inside the circle, squircle and rounded-square masks (checked
+  on a preview of both shapes) and the logo's own purple meets the background without a seam. The monochrome layer
+  (Android 13+ themed icons) is the logo's light parts (outline and ear) in white. PNGs for the five densities.
+- The logo inside the app (Home's top bar, About) stays the wordmark of D-036; the group did not ask to change it.

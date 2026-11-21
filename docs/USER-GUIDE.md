@@ -1,12 +1,14 @@
-# AGAP 1.0 user guide
+# AGAP 1.1 user guide
 
 AGAP helps a deaf or hard-of-hearing person with two things, with no internet: **Live Captions** turns speech into
 text on the screen, and **Sound Alerts** shows and vibrates an alert when it hears one of 13 important sounds. A
 Wear OS watch can show the same alerts and captions. AGAP is a research prototype and a supplementary tool: it is not
 a medical device and not the only way to notice an emergency.
 
-AGAP listens **only while its Captions or Alerts screen is open**, and keeps the screen on while it listens. It
-never records or saves sound, and only one of the two features listens at a time. Installing: [INSTALL-GUIDE.md](INSTALL-GUIDE.md).
+As installed, AGAP listens **only while its Captions or Alerts screen is open**, and keeps the screen on while it
+listens. Version 1.1 adds **background listening** (Settings, off until you turn it on): then AGAP keeps listening
+after you leave it or the screen turns off, until you tap Stop. It never records or saves sound, and only one of the
+two features listens at a time. Installing: [INSTALL-GUIDE.md](INSTALL-GUIDE.md).
 
 ## The bottom bar
 
@@ -62,8 +64,9 @@ vibration (Emergency repeats until you do, at most one minute). In trials, Dismi
 
 Every real alert is saved, including wrong ones, newest first and grouped by day: name, group, confidence and time.
 Tap an alert for its **details**: date, confidence, the exact time the sound was detected and the alert was shown (to
-the millisecond, from the phone's clock), the **response time** (shown minus detected), what YAMNet heard, and the
-threshold in use. The top bar has **Export history** (download icon), which saves a CSV file in the phone's
+the millisecond, from the phone's clock), the **response time** (shown minus detected), how the alert was shown
+(**Shown as**, new in 1.1; every 1.0 alert reads "App screen"), what YAMNet heard, and the threshold in use. The CSV
+export has "Shown as" as its last column. The top bar has **Export history** (download icon), which saves a CSV file in the phone's
 Download/AGAP folder and offers to share it, and **Clear history** (bin icon), which asks before deleting.
 Demonstration Mode alerts are never saved.
 
@@ -93,12 +96,40 @@ again after AGAP restarts.
 - **Vibration**: vibrate with each alert (on or off). The alert screen then says "Vibration: Off".
 - **Alert threshold**: 10% to 90% in steps of 5 (50% to start with). Higher means fewer false alerts but more missed
   quiet sounds. It applies from the next Start.
+- **Background listening** (new in 1.1): **Keep listening when I leave AGAP**, and what it needs from the phone
+  (see the next section).
 - **About AGAP and credits**: the version, what AGAP is and is not, and the licences of the sound and speech models.
+
+## Background listening (1.1)
+
+Turn on **Settings > Background listening > Keep listening when I leave AGAP**. Then start Sound Alerts or Live
+Captions as usual and leave AGAP (Home button, another app, or the power button). AGAP keeps listening until you tap
+**Stop** in AGAP, in the **AGAP is listening** notification (pull it down to see the button), in the floating caption
+window, or on the widget. The Captions and Alerts screens say "Keeps listening when you leave AGAP" while this is on.
+
+- **Alerts while AGAP is not on screen**: the alert vibrates in its group's pattern and goes to the watch at once.
+  With the phone locked or the screen off, the full alert screen appears over the lock screen and turns the screen
+  on. With another app open, a large alert card appears over it (if **Popups over other apps** is allowed; close it
+  with **Dismiss**, or **Open AGAP**), otherwise a notification pops up; tapping the notification shows the full
+  alert. Every alert is saved to Event History, with **Shown as**: App screen, Lock screen, Popup over another app,
+  or Notification.
+- **Captions while AGAP is not on screen**: a floating window shows the newest lines over the app you are using
+  (drag it by its top bar; **Open** goes back to AGAP, **Stop** ends captions). Without popups allowed, the newest
+  line is in the notification. Captions are never shown on the lock screen; the watch still shows them. When you
+  come back to AGAP the whole session is on the Captions screen.
+- **Widget**: shows whether AGAP is listening and the newest alert, with **Open AGAP** and **Stop**. It cannot start
+  listening: Android lets AGAP start the microphone only from its own screen.
+- **Response times**: an alert shown only as a notification is timed when AGAP hands it to Android, and a lock-screen
+  alert includes waking the screen. Compare response times only between alerts with the same "Shown as".
+- **Battery**: listening in the background uses battery all the time it runs. The phone, or its battery saver, can
+  still close AGAP; then the notification disappears and AGAP must be opened and started again. AGAP never starts
+  listening by itself, not even after a restart.
+- Demonstration Mode never runs in the background, and turning it on stops real listening.
 
 ## The watch
 
 Open **AGAP** on the watch and keep it open during sessions. It shows "Phone not connected" (keep the phone near,
-Bluetooth on, AGAP open on the phone), "Phone connected", or "Sound Alerts on". With Live Captions running on the
+Bluetooth on, listening started in AGAP on the phone), "Phone connected", or "Sound Alerts on". With Live Captions running on the
 phone it shows the captions in large text. Each alert fills the watch screen in the group's colour and shape and
 vibrates in the group's pattern; tap it to close (this does not close it on the phone). The watch has no microphone
 of its own in AGAP: the phone does all the listening.

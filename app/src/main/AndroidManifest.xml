@@ -2,8 +2,24 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <!-- Live Captions and Sound Alerts listen only while their screen is open (contract 1.10). -->
+    <!-- Live Captions and Sound Alerts listen while their screen is open (contract 1.10), and with
+         background listening on (Phase 11, off by default) also after the user leaves AGAP. -->
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
+
+    <!-- Background listening (Phase 11): a foreground service of type "microphone" keeps AGAP
+         listening, and a partial wake lock keeps it going with the screen off. -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MICROPHONE" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <!-- Alerts and the "AGAP is listening" notice; the full alert over the lock screen. -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />
+    <!-- Optional, turned on by the user: alert cards and floating captions over other apps. -->
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+    <!-- Asks the user to let AGAP run in the background without battery limits (never forced). -->
+    <uses-permission
+        android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS"
+        tools:ignore="BatteryLife" />
 
     <!-- One vibration pattern per alert category (contract 1.5). -->
     <uses-permission android:name="android.permission.VIBRATE" />
@@ -27,6 +43,7 @@
     <!-- No INTERNET permission: AGAP works fully offline (contract 1.2).
          allowBackup is off so settings and the alert history never leave the phone. -->
     <application
+        android:name=".listen.AgapApp"
         android:allowBackup="false"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:icon="@mipmap/ic_launcher"
@@ -73,6 +90,42 @@
             android:label="@string/detail_title"
             android:parentActivityName=".ui.MainActivity"
             android:screenOrientation="portrait" />
+        <!-- The full alert when AGAP is not in view: over the lock screen, or from an alert
+             notification (Phase 11). Its own task, so closing it goes back to what the user had open. -->
+        <activity
+            android:name=".listen.AlertActivity"
+            android:excludeFromRecents="true"
+            android:exported="false"
+            android:launchMode="singleTask"
+            android:showWhenLocked="true"
+            android:taskAffinity="ph.agap.app.alert"
+            android:theme="@style/Theme.AGAP.AlertHost"
+            android:turnScreenOn="true" />
+
+        <!-- Keeps AGAP listening in the background (Phase 11). Started only while AGAP is in view. -->
+        <service
+            android:name=".listen.ListeningService"
+            android:exported="false"
+            android:foregroundServiceType="microphone" />
+
+        <!-- Stop button of the listening notification and of the widget. -->
+        <receiver
+            android:name=".listen.StopReceiver"
+            android:exported="false" />
+
+        <!-- Home-screen widget: listening status and the newest alert (Phase 11). -->
+        <receiver
+            android:name=".listen.AgapWidget"
+            android:exported="true"
+            android:label="@string/app_name">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/agap_widget_info" />
+        </receiver>
+
         <activity
             android:name=".ui.info.AboutActivity"
             android:label="@string/about_title"

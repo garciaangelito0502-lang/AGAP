@@ -44,6 +44,9 @@ import ph.agap.app.alerts.AlertCategory;
 import ph.agap.app.alerts.AlertEvent;
 import ph.agap.app.history.AlertRecorder;
 import ph.agap.app.history.HistoryRepository;
+import ph.agap.app.history.ShownVia;
+import ph.agap.app.listen.AlertActivity;
+import ph.agap.app.listen.AlertLedger;
 import ph.agap.app.ui.DemoBanner;
 import ph.agap.app.ui.SlowPulse;
 import ph.agap.app.vibration.AlertVibrator;
@@ -57,6 +60,10 @@ import ph.agap.app.watch.WatchSender;
  * The "alert shown" time is taken when Android reports that the frame showing the alert has been
  * handed to the display (frame-commit callback), so the response time the group reads from the
  * Event History is honest. Real alerts are saved then; Demonstration Mode alerts never are.
+ *
+ * Phase 11: the same screen also shows alerts over the lock screen (in AlertActivity). Those were
+ * raised while AGAP was not in view, so their vibration and watch alert have already started, and
+ * they are saved through AlertLedger so that each is saved once.
  */
 public class AlertOverlayFragment extends DialogFragment {
 
@@ -70,13 +77,23 @@ public class AlertOverlayFragment extends DialogFragment {
         final AlertEvent event;
         final int thresholdPercent;
         final boolean demo;
+        final ShownVia via;
+        /** Not 0 for an alert raised while AGAP was not in view (AlertLedger). */
+        final long ledgerId;
         long drawnAt;
         boolean recorded;
 
-        Shown(AlertEvent event, int thresholdPercent, boolean demo) {
+        Shown(AlertEvent event, int thresholdPercent, boolean demo, ShownVia via, long ledgerId) {
             this.event = event;
             this.thresholdPercent = thresholdPercent;
             this.demo = demo;
+            this.via = via;
+            this.ledgerId = ledgerId;
+        }
+
+        /** Its vibration and watch alert started when it was raised (AlertPresenter). */
+        boolean announced() {
+            return ledgerId != 0;
         }
     }
 
@@ -95,6 +112,16 @@ public class AlertOverlayFragment extends DialogFragment {
      * @param demo             true for a Demonstration Mode alert: shown and vibrated, never saved
      */
     public static void show(FragmentActivity activity, AlertEvent event, int thresholdPercent, boolean demo) {
+        show(activity, event, thresholdPercent, demo, ShownVia.APP_SCREEN, 0);
+    }
+
+    /**
+     * As above, saying where the alert is shown (Phase 11).
+     *
+     * @param ledgerId not 0 for an alert raised while AGAP was not in view (AlertLedger)
+     */
+    public static void show(FragmentActivity activity, AlertEvent event, int thresholdPercent, boolean demo,
+                            ShownVia via, long ledgerId) {
         FragmentManager fm = activity.getSupportFragmentManager();
         if (fm.isStateSaved()) {
             Log.w(LOG, "screen not in view; alert not shown: " + event.label());
@@ -102,11 +129,11 @@ public class AlertOverlayFragment extends DialogFragment {
         }
         Fragment existing = fm.findFragmentByTag(TAG);
         if (existing instanceof AlertOverlayFragment && existing.getView() != null) {
-            ((AlertOverlayFragment) existing).present(new Shown(event, thresholdPercent, demo));
+            ((AlertOverlayFragment) existing).present(new Shown(event, thresholdPercent, demo, via, ledgerId));
             return;
         }
         AlertOverlayFragment fragment = new AlertOverlayFragment();
-        fragment.first = new Shown(event, thresholdPercent, demo);
+        fragment.first = new Shown(event, thresholdPercent, demo, via, ledgerId);
         // showNow: the view exists when this returns, so an alert right after this one finds it.
         fragment.showNow(fm, TAG);
     }
@@ -167,6 +194,9 @@ public class AlertOverlayFragment extends DialogFragment {
         vibrator.stop();
         recordNow(System.currentTimeMillis(), "dismissed before drawn");
         super.onDismiss(dialog);
+        // Over the lock screen the alert is the whole screen: close it with the alert.
+        FragmentActivity activity = getActivity();
+        if (activity instanceof AlertActivity && !activity.isFinishing()) activity.finish();
     }
 
     @Override
@@ -183,10 +213,12 @@ public class AlertOverlayFragment extends DialogFragment {
         recordNow(System.currentTimeMillis(), "replaced before drawn");
         current = shown;
         countThisScreen++;
-        // The watch gets it at the same time, with its own screen and vibration (contract 1.11).
-        WatchSender.get(requireContext()).sendAlert(shown.event, shown.demo);
+        if (!shown.announced()) {
+            // The watch gets it at the same time, with its own screen and vibration (contract 1.11).
+            WatchSender.get(requireContext()).sendAlert(shown.event, shown.demo);
+        }
         bind(shown);
-        vibrator.play(shown.event.category());
+        if (!shown.announced()) vibrator.play(shown.event.category());
         measureShown(shown);
     }
 
@@ -294,8 +326,12 @@ public class AlertOverlayFragment extends DialogFragment {
     private void record(Shown shown, long shownAtMillis, String how) {
         if (shown.recorded) return;
         shown.recorded = true;
-        recorder.shown(shown.event, shownAtMillis, shown.thresholdPercent, shown.demo);
-        Log.i(LOG, (shown.demo ? "demo alert (not saved) " : "alert ") + shown.event.label()
+        if (shown.ledgerId != 0) {
+            AlertLedger.record(requireContext().getApplicationContext(), shown.ledgerId, shownAtMillis, shown.via);
+            return;
+        }
+        recorder.shown(shown.event, shownAtMillis, shown.thresholdPercent, shown.demo, shown.via);
+        Log.i(LOG, shown.via.name() + " " + (shown.demo ? "demo alert (not saved) " : "alert ") + shown.event.label()
                 + " shown " + (shownAtMillis - shown.event.detectedAtMillis) + " ms after detection (" + how + ")");
     }
 

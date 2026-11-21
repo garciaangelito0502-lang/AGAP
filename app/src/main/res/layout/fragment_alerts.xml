@@ -141,6 +141,34 @@
             android:textAppearance="@style/TextAppearance.AGAP.BodySecondary" />
     </LinearLayout>
 
+    <!-- Background listening is on (Phase 11) -->
+    <LinearLayout
+        android:id="@+id/background_note"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/bg_note"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:padding="12dp"
+        android:visibility="gone">
+
+        <ImageView
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginEnd="12dp"
+            android:importantForAccessibility="no"
+            android:src="@drawable/ic_mic"
+            app:tint="?attr/agapAccent" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/listen_background_note"
+            android:textAppearance="@style/TextAppearance.AGAP.BodySecondary" />
+    </LinearLayout>
+
     <com.google.android.material.button.MaterialButton
         android:id="@+id/start_stop"
         android:layout_width="match_parent"

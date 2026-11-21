@@ -1,4 +1,21 @@
-# AGAP 1.0 release
+# AGAP releases
+
+## 1.1 (2026-11-21): background listening
+
+Built 2026-11-21 from the commit tagged `v1.1`. Signed with the same release key as 1.0 (same certificate below), so
+it installs over 1.0 and keeps the Event History and settings.
+
+| File | App | Version (code) | Size | SHA-256 |
+|---|---|---|---|---|
+| `agap-phone-1.1.apk` | Phone (Android 10 or newer) | 1.1 (12) | 426,430,156 bytes | `efd26fc8bdf76d3572dfa9f63d2d022e229e8f296724d4773cd35a2b3347f98a` |
+| `agap-watch-1.1.apk` | Watch (Wear OS 3 or newer) | 1.1 (4) | 5,399,206 bytes | `5459aa82afe20665c974ec3e547ed02893bc689487b4de68e7e238d59840d004` |
+
+Permissions of the phone app (`aapt2 dump badging`): `RECORD_AUDIO`, `VIBRATE`, and for background listening
+`FOREGROUND_SERVICE`, `FOREGROUND_SERVICE_MICROPHONE`, `WAKE_LOCK`, `POST_NOTIFICATIONS`, `USE_FULL_SCREEN_INTENT`,
+`SYSTEM_ALERT_WINDOW`, `REQUEST_IGNORE_BATTERY_OPTIMIZATIONS` (plus AndroidX's internal receiver permission). Still no
+`INTERNET`. Watch: `VIBRATE`, `POST_NOTIFICATIONS`, `USE_FULL_SCREEN_INTENT`, as in 1.0.
+
+## 1.0 (2026-11-08)
 
 Built 2026-11-08 from the commit tagged `v1.0`. Both files are signed with AGAP's release key (D-054).
 

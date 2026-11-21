@@ -4,7 +4,8 @@ import android.content.Context;
 import android.content.SharedPreferences;
 
 /**
- * The four user settings (contract 1.7), stored on the phone in SharedPreferences.
+ * The four user settings (contract 1.7), plus background listening (Phase 11, off by default),
+ * stored on the phone in SharedPreferences.
  * Values read back are always clamped to their valid range, so a damaged or old file
  * cannot put the app in a state the screens do not expect.
  */
@@ -15,6 +16,7 @@ public final class SettingsStore {
     static final String KEY_HIGH_CONTRAST = "high_contrast";
     static final String KEY_VIBRATION = "vibration_on";
     static final String KEY_THRESHOLD = "alert_threshold_percent";
+    static final String KEY_BACKGROUND = "background_listening";
 
     /** Text size steps, as multipliers of the phone's own font size. */
     private static final float[] TEXT_SCALES = {0.85f, 1.0f, 1.2f, 1.45f, 1.75f};
@@ -78,6 +80,18 @@ public final class SettingsStore {
 
     public void setAlertThresholdPercent(int percent) {
         prefs.edit().putInt(KEY_THRESHOLD, normaliseThreshold(percent)).apply();
+    }
+
+    /**
+     * Keep listening when the user leaves AGAP or the screen turns off (Phase 11). Off by default,
+     * so AGAP works as in 1.0 (listening only while its screen is open) unless the user turns it on.
+     */
+    public boolean isBackgroundListeningOn() {
+        return prefs.getBoolean(KEY_BACKGROUND, false);
+    }
+
+    public void setBackgroundListeningOn(boolean on) {
+        prefs.edit().putBoolean(KEY_BACKGROUND, on).apply();
     }
 
     /** The threshold as a classifier score between 0 and 1. */

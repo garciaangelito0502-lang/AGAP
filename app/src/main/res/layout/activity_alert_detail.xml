@@ -109,6 +109,7 @@
                     app:tint="?attr/agapAccent" />
 
                 <TextView
+                    android:id="@+id/detail_note"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
