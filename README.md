@@ -7,6 +7,29 @@ researchers of Pasig City Science High School.
 AGAP is a research prototype and a supplementary tool. It is not a medical device and not the only way to detect
 emergencies.
 
+## Screenshots
+
+Version 1.1 on an Android emulator. The captions and alerts shown are samples from Demonstration Mode, not real
+detections.
+
+<table>
+  <tr>
+    <td align="center" width="33%"><img src="docs/screenshots/home.png" alt="Home screen" width="240"><br>Home</td>
+    <td align="center" width="33%"><img src="docs/screenshots/captions.png" alt="Live Captions screen" width="240"><br>Live Captions</td>
+    <td align="center" width="33%"><img src="docs/screenshots/alerts.png" alt="Sound Alerts screen" width="240"><br>Sound Alerts</td>
+  </tr>
+  <tr>
+    <td align="center" width="33%"><img src="docs/screenshots/alert-emergency.png" alt="Emergency alert screen" width="240"><br>Emergency alert</td>
+    <td align="center" width="33%"><img src="docs/screenshots/alert-traffic.png" alt="Traffic alert screen" width="240"><br>Traffic alert</td>
+    <td align="center" width="33%"><img src="docs/screenshots/alert-household.png" alt="Household/Entry alert screen" width="240"><br>Household/Entry alert</td>
+  </tr>
+  <tr>
+    <td align="center" width="33%"><img src="docs/screenshots/categories.png" alt="Sound Categories screen" width="240"><br>Sound Categories</td>
+    <td align="center" width="33%"><img src="docs/screenshots/vibration.png" alt="Vibration Patterns screen" width="240"><br>Vibration Patterns</td>
+    <td align="center" width="33%"><img src="docs/screenshots/settings.png" alt="Settings screen" width="240"><br>Settings</td>
+  </tr>
+</table>
+
 ## Features
 
 - **Live Captions:** speech to text in English (Google's offline speech recognition on the phone, or AGAP's own
